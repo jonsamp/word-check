@@ -25,7 +25,10 @@
       "channel": "preview"
     },
     "production": {
-      "channel": "production"
+      "channel": "production",
+      "ios": {
+        "simulator": true
+      }
     }
   },
   "submit": {

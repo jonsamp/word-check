@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "appjs-one",
     "name": "Word Check",
     "slug": "word-check",
     "privacy": "public",
@@ -21,12 +22,12 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "2",
-      "bundleIdentifier": "jonsamp.words",
+      "bundleIdentifier": "appjsone.words",
       "supportsTablet": true
     },
     "android": {
       "versionCode": 5,
-      "package": "com.jonsamp.wordcheck",
+      "package": "com.appjsone.wordcheck",
       "permissions": [],
       "icon": "./assets/images/icon-1.png",
       "adaptiveIcon": {

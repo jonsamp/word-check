@@ -88,13 +88,13 @@ export default function Search(
     try {
       const dictionary = await AsyncStorage.getItem('@wordcheck:dictionary');
 
-      // if (searchValue === 'Appjs') {
-      //   return setResult({
-      //     isValid: true,
-      //     definition: 'the best conf',
-      //     id: 'appjs-id',
-      //   });
-      // }
+      if (searchValue === 'Appjs') {
+        return setResult({
+          isValid: true,
+          definition: 'the best conf',
+          id: 'appjs-id',
+        });
+      }
 
       if (dictionary === 'NWL2020' || !dictionary) {
         const result = await lookUpWordAsync(Dictionary.NWL2020, searchValue);
