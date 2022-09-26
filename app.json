@@ -1,6 +1,5 @@
 {
   "expo": {
-    "owner": "appjs-one",
     "name": "Word Check",
     "slug": "word-check",
     "privacy": "public",
