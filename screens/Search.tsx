@@ -307,8 +307,8 @@ export default function Search(
               </RNView>
               <RNView style={styles.def}>
                 <Text style={type.body}>
-                  {capitalizeFirstLetter(
-                    result.definition.split('[')[0].split(', also')[0]
+                  Definition: {capitalizeFirstLetter(
+                    result.definition
                   ).trim()}
                   .
                 </Text>
