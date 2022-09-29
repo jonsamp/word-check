@@ -11,7 +11,6 @@
       }
     },
     "preview-simulator": {
-      "distribution": "internal",
       "channel": "preview",
       "ios": {
         "simulator": true
@@ -24,11 +23,17 @@
       "distribution": "internal",
       "channel": "preview"
     },
-    "production": {
+    "production-simulator": {
       "channel": "production",
       "ios": {
         "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
       }
+    },
+    "production": {
+      "channel": "production"
     }
   },
   "submit": {
