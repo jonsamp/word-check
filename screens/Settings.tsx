@@ -9,6 +9,7 @@ import {
   View as RNView,
 } from 'react-native';
 // import * as Linking from 'expo-linking';
+import * as Updates from 'expo-updates';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text } from '../components/Themed';
@@ -228,6 +229,8 @@ export default function Settings({
             </RNView>
           </View>
         </TouchableOpacity>
+        <Text>Channel: {Updates.channel === '' ? 'default' : Updates.channel}</Text>
+        <Text style={{ marginTop: 16 }}>Branch: {Updates.manifest?.metadata.branchName ?? 'default'}</Text>
       </ScrollView>
       {/* <View style={{ padding: 16 }}>
         <Text style={type.title}>About Word Check</Text>
