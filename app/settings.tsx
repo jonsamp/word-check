@@ -13,7 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from '../components/Themed';
 import { type } from '../constants/Type';
 import { BlueCheckIcon, SettingsCogIcon } from '../components/Icons';
-import { RootStackParamList } from '../types';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export default function Settings() {

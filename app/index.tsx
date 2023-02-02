@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack } from 'expo-router'
+
 
 import useColorScheme from '../hooks/useColorScheme';
 import { View, Text } from '../components/Themed';
@@ -174,7 +174,6 @@ export default function Home() {
         flex: 1,
       }}
     >
-      <Stack.Screen options={{ headerShown: false }} />
       <View
         style={[
           styles.displayHorizontal,

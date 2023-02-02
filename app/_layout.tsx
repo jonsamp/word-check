@@ -51,13 +51,15 @@ export default function Layout() {
   return (
     <ThemeProvider value={DarkTheme}>
       <Stack>
-        <Stack.Screen name="index" />
+        <Stack.Screen name="index" options={{
+          headerShown: false,
+        }} />
         <Stack.Screen
           name="settings"
           options={{
             // Set the presentation mode to modal for our modal route.
             presentation: "modal",
-            headerShown: false
+            headerShown: false,
           }}
         />
       </Stack>
