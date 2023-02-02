@@ -5,7 +5,7 @@
     "privacy": "public",
     "scheme": "wordcheck",
     "platforms": ["ios", "android", "web"],
-    "version": "46.0",
+    "version": "47.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon-1.png",
@@ -21,12 +21,12 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "2",
-      "bundleIdentifier": "appjsone.words",
+      "bundleIdentifier": "jonsamp.words",
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 5,
-      "package": "com.appjsone.wordcheck",
+      "versionCode": 6,
+      "package": "com.jonsamp.wordcheck",
       "permissions": [],
       "icon": "./assets/images/icon-1.png",
       "adaptiveIcon": {
