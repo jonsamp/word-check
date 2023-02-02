@@ -8,15 +8,14 @@ import {
   Image,
   View as RNView,
 } from 'react-native';
-import { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Stack } from 'expo-router'
 
 import useColorScheme from '../hooks/useColorScheme';
 import { View, Text } from '../components/Themed';
 import { useThemeColor } from '../components/Themed';
 import { type } from '../constants/Type';
-import { RootStackParamList } from '../types';
 import AppIconImage from '../assets/images/icon-1.png';
 import DarkAppIconImage from '../assets/images/icon-dark.png';
 import {
@@ -26,10 +25,9 @@ import {
   XIcon,
 } from '../components/Icons';
 import { Dictionary, lookUpWordAsync } from '../constants/database';
+import { Link } from 'expo-router';
 
-export default function Search(
-  props: StackScreenProps<RootStackParamList, 'Search'>
-) {
+export default function Home() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -176,6 +174,7 @@ export default function Search(
         flex: 1,
       }}
     >
+      <Stack.Screen options={{ headerShown: false }} />
       <View
         style={[
           styles.displayHorizontal,
@@ -223,9 +222,9 @@ export default function Search(
             </Text>
           </RNView>
         </View>
-        <TouchableOpacity onPress={() => props.navigation.push('Settings')}>
+        <Link href="/settings">
           <SettingsIcon />
-        </TouchableOpacity>
+        </Link>
       </View>
       <View style={styles.displayHorizontal}>
         <TextInput

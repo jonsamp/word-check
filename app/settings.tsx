@@ -1,4 +1,3 @@
-import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -8,8 +7,7 @@ import {
   Platform,
   View as RNView,
 } from 'react-native';
-// import * as Linking from 'expo-linking';
-import * as Updates from 'expo-updates';
+import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text } from '../components/Themed';
@@ -18,9 +16,8 @@ import { BlueCheckIcon, SettingsCogIcon } from '../components/Icons';
 import { RootStackParamList } from '../types';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export default function Settings({
-  navigation,
-}: StackScreenProps<RootStackParamList, 'Settings'>) {
+export default function Settings() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [currentDictionary, setCurrentDictionary] = useState<
     'NWL2020' | 'CSW21' | 'NWL2018' | 'CSW15' | undefined
@@ -95,7 +92,7 @@ export default function Settings({
           </RNView>
           <Text style={[type.titleTwo, { marginLeft: 4 }]}>Settings</Text>
         </RNView>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={router.back}>
           <Text style={type.title}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -230,24 +227,6 @@ export default function Settings({
           </View>
         </TouchableOpacity>
       </ScrollView>
-      {/* <View style={{ padding: 16 }}>
-        <Text style={type.title}>About Word Check</Text>
-        <Text style={[type.body, { marginTop: 8, marginBottom: 16 }]}>
-          Made by Jon Samp in Brooklyn, NY.
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL('https://www.buymeacoffee.com/jonsamp');
-          }}
-        >
-          <Image
-            source={{
-              uri: 'https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png',
-            }}
-            style={{ height: 50, width: 180 }}
-          />
-        </TouchableOpacity>
-      </View> */}
     </View>
   );
 }

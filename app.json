@@ -4,7 +4,7 @@
     "slug": "word-check",
     "privacy": "public",
     "scheme": "wordcheck",
-    "platforms": ["ios", "android"],
+    "platforms": ["ios", "android", "web"],
     "version": "46.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
