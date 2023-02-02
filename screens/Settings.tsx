@@ -229,8 +229,6 @@ export default function Settings({
             </RNView>
           </View>
         </TouchableOpacity>
-        <Text>Channel: {Updates.channel === '' ? 'default' : Updates.channel}</Text>
-        <Text style={{ marginTop: 16 }}>Branch: {Updates.manifest?.metadata.branchName ?? 'default'}</Text>
       </ScrollView>
       {/* <View style={{ padding: 16 }}>
         <Text style={type.title}>About Word Check</Text>
