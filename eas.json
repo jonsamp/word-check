@@ -13,7 +13,8 @@
     "preview-simulator": {
       "channel": "preview",
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "resourceClass": "m1-medium"
       },
       "android": {
         "buildType": "apk"
@@ -33,7 +34,10 @@
       }
     },
     "production": {
-      "channel": "production"
+      "channel": "production-this-is-a-test",
+      "ios": {
+        "resourceClass": "m1-medium"
+      }
     }
   },
   "submit": {
