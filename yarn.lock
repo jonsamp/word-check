@@ -1464,11 +1464,6 @@
     tmp "^0.0.33"
     tslib "^1.10.0"
 
-"@expo/html-elements@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@expo/html-elements/-/html-elements-0.3.1.tgz#eecff358ba24e2799cbf3c26f3faecbf792b83ce"
-  integrity sha512-v7fxt+PzQvRU0hYec5lPTbrmoVl9t21WZHRa3IjfpvPbYFqReuh8rSs80vjKB3uQxM47MOjNn3TFUsMCbnGnhg==
-
 "@expo/image-utils@0.3.20":
   version "0.3.20"
   resolved "https://registry.yarnpkg.com/@expo/image-utils/-/image-utils-0.3.20.tgz#b8777a2ca18e331f084e62ee8e0f047a6fc52c16"
