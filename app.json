@@ -5,7 +5,7 @@
     "privacy": "public",
     "scheme": "wordcheck",
     "platforms": ["ios", "android", "web"],
-    "version": "47.0",
+    "version": "48.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon-1.png",
@@ -15,7 +15,6 @@
       "backgroundColor": "#151617"
     },
     "updates": {
-      "fallbackToCacheTimeout": 3000,
       "url": "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0"
     },
     "assetBundlePatterns": ["**/*"],

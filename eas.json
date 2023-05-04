@@ -14,15 +14,19 @@
       "channel": "preview",
       "ios": {
         "simulator": true,
-        "resourceClass": "m1-medium"
+        "resourceClass": "m-medium"
       },
       "android": {
         "buildType": "apk"
       }
     },
     "preview": {
-      "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "developmentClient": true,
+      "ios": {
+        "resourceClass": "m-large",
+        "simulator": true
+      }
     },
     "production-simulator": {
       "channel": "production",
