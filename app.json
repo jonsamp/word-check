@@ -3,7 +3,7 @@
     "name": "Word Check",
     "slug": "word-check",
     "privacy": "public",
-    "scheme": "wordcheck",
+    "scheme": "word-check",
     "platforms": ["ios", "android", "web"],
     "version": "48.0",
     "orientation": "default",
