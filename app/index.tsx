@@ -174,6 +174,7 @@ export default function Home() {
         flex: 1,
       }}
     >
+      <View style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#1AABAA', borderRadius: 8, marginBottom: 16 }}><Text style={{ color: 'white', fontWeight: '500' }}>This is a change for jon/pr-1</Text></View>
       <View
         style={[
           styles.displayHorizontal,
