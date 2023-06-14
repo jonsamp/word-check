@@ -54,7 +54,7 @@ export default function Home() {
           if (result?.isValid && definition && typeof definition === 'string') {
             setResult({
               ...result,
-              definition: definition.replace(/\.$/, ''),
+              definition: definition.replace(/\.$/g, ''),
             });
           }
         } catch (error) {

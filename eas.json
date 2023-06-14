@@ -7,40 +7,63 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "simulator": true
-      }
-    },
-    "preview-simulator": {
-      "channel": "preview",
-      "ios": {
-        "simulator": true,
-        "resourceClass": "m-medium"
+        "resourceClass": "large"
       },
       "android": {
+        "resourceClass": "large"
+      }
+    },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "large",
+        "simulator": true
+      },
+      "android": {
+        "resourceClass": "large",
         "buildType": "apk"
       }
     },
     "preview": {
       "channel": "preview",
-      "developmentClient": true,
       "ios": {
-        "resourceClass": "m-large",
+        "resourceClass": "large"
+      },
+      "android": {
+        "resourceClass": "large"
+      }
+    },
+    "preview-simulator": {
+      "channel": "preview",
+      "resourceClass": "large",
+      "ios": {
+        "resourceClass": "large",
         "simulator": true
+      },
+      "android": {
+        "resourceClass": "large",
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "ios": {
+        "resourceClass": "large"
+      },
+      "android": {
+        "resourceClass": "large"
       }
     },
     "production-simulator": {
       "channel": "production",
       "ios": {
+        "resourceClass": "large",
         "simulator": true
       },
       "android": {
+        "resourceClass": "large",
         "buildType": "apk"
-      }
-    },
-    "production": {
-      "channel": "production-this-is-a-test",
-      "ios": {
-        "resourceClass": "m1-medium"
       }
     }
   },
