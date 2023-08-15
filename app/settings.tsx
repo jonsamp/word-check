@@ -22,6 +22,8 @@ export default function Settings() {
     'NWL2020' | 'CSW21' | 'NWL2018' | 'CSW15' | undefined
   >();
 
+  console.log('just testing')
+
   useEffect(function didMount() {
     async function getDictionary() {
       const result = await AsyncStorage.getItem('@wordcheck:dictionary');
