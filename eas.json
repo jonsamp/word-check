@@ -47,22 +47,14 @@
       }
     },
     "production": {
-      "channel": "production",
-      "ios": {
-        "resourceClass": "large"
-      },
-      "android": {
-        "resourceClass": "large"
-      }
+      "channel": "production"
     },
     "production-simulator": {
       "channel": "production",
       "ios": {
-        "resourceClass": "large",
         "simulator": true
       },
       "android": {
-        "resourceClass": "large",
         "buildType": "apk"
       }
     }
