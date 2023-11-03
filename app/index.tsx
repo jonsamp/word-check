@@ -184,14 +184,6 @@ export default function Home() {
         ]}
       >
         <View style={styles.displayHorizontal}>
-          <RNView
-            style={{
-              shadowColor: 'black',
-              shadowRadius: 2,
-              shadowOffset: { height: 1, width: 0 },
-              shadowOpacity: 0.25,
-            }}
-          >
             <RNView
               style={{
                 borderRadius: 7,
@@ -206,7 +198,6 @@ export default function Home() {
                 source={isDark ? DarkAppIconImage : AppIconImage}
                 style={{ width: 40, height: 40 }}
               />
-            </RNView>
           </RNView>
           <RNView>
             <Text
