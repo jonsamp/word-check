@@ -175,38 +175,23 @@ export default function Home() {
       }}
     >
       <View
-        style={[
-          styles.displayHorizontal,
-          {
-            marginBottom: 16,
-            justifyContent: 'space-between',
-          },
-        ]}
+        className='flex-row items-center justify-between mb-4'
       >
         <View style={styles.displayHorizontal}>
             <RNView
-              style={{
-                borderRadius: 7,
-                overflow: 'hidden',
-                marginRight: 12,
-                justifyContent: 'center',
-                height: 40,
-                width: 40,
-              }}
+            className='rounded-lg overflow-hidden mr-3'
             >
               <Image
                 source={isDark ? DarkAppIconImage : AppIconImage}
-                style={{ width: 40, height: 40 }}
+                className='w-11 h-11'
               />
           </RNView>
           <RNView>
             <Text
               style={[
                 styles.header,
-                {
-                  top: 8,
-                },
               ]}
+              className='top-2'
             >
               Word Check
             </Text>
@@ -294,7 +279,7 @@ export default function Home() {
                   {capitalizeFirstLetter(searchValue)}
                 </Text>
               </RNView>
-              <RNView style={styles.def}>
+              <RNView className='mb-2'>
                 <Text style={type.body}>
                   {capitalizeFirstLetter(
                     result.definition.split('[')[0].split(', also')[0]

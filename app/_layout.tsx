@@ -13,6 +13,8 @@ import Regular from '../assets/fonts/sentinel-book.otf';
 
 import { Dictionary, loadDictionaryAsync } from '../constants/database';
 
+import "../global.css"
+
 export const unstable_settings = {
   // Ensure any route can link back to `/`
   initialRouteName: "index",
