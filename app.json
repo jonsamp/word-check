@@ -19,7 +19,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "2",
+      "buildNumber": "4",
       "bundleIdentifier": "jonsamp.words",
       "supportsTablet": true
     },
