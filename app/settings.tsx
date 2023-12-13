@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  Image,
   StyleSheet,
   TouchableOpacity,
   Platform,
   View as RNView,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from '../components/Themed';
 import { type } from '../constants/Type';
 import { BlueCheckIcon, SettingsCogIcon } from '../components/Icons';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 
 export default function Settings() {
   const router = useRouter();
