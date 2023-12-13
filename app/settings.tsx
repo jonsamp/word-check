@@ -10,14 +10,14 @@ import {
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { View, Text } from '../components/Themed';
+import { View, Text, useThemeColor } from '../components/Themed';
 import { type } from '../constants/Type';
 import { BlueCheckIcon, SettingsCogIcon } from '../components/Icons';
-// import { ScrollView } from 'react-native-gesture-handler';
 
 export default function Settings() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const textSecondaryColor = useThemeColor('textSecondary');
   const [currentDictionary, setCurrentDictionary] = useState<
     'NWL2020' | 'CSW21' | 'NWL2018' | 'CSW15' | undefined
   >();
@@ -225,6 +225,9 @@ export default function Settings() {
             </RNView>
           </View>
         </TouchableOpacity>
+        <View style={[styles.versionContainer, { borderTopColor: textSecondaryColor }]}>
+          <Text style={type.body}>App version 50.0.0</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -233,5 +236,11 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  versionContainer: {
+    marginTop: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });
