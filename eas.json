@@ -36,7 +36,7 @@
       }
     },
     "production": {
-      "channel": "production",
+      "channel": "production-2",
       "ios": {
         "image": "latest"
       },
