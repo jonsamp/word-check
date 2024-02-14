@@ -30,7 +30,7 @@
       }
     },
     "production": {
-      "channel": "production-test",
+      "channel": "production",
       "ios": {
         "image": "latest"
       },
