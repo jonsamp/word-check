@@ -18,7 +18,13 @@
       }
     },
     "preview": {
-      "channel": "preview"
+      "channel": "preview",
+      "ios": {
+        "image": "latest"
+      },
+      "android": {
+        "image": "default"
+      }
     },
     "preview-simulator": {
       "channel": "preview",
