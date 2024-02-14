@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 0.46.0"
+    "version": ">= 7.1.2"
   },
   "build": {
     "development": {
