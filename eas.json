@@ -30,7 +30,13 @@
       }
     },
     "production": {
-      "channel": "production"
+      "channel": "2-2-24-test-channel",
+      "ios": {
+        "image": "latest"
+      },
+      "android": {
+        "image": "latest"
+      }
     },
     "production-simulator": {
       "channel": "production",
