@@ -19,6 +19,7 @@
     },
     "preview": {
       "channel": "preview",
+      "config": "config.yml",
       "ios": {
         "image": "latest"
       },

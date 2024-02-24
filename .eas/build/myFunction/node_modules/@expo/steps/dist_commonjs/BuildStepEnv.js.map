@@ -1,0 +1,1 @@
+{"version":3,"file":"BuildStepEnv.js","sourceRoot":"","sources":["../src/BuildStepEnv.ts"],"names":[],"mappings":"","sourcesContent":["export type BuildStepEnv = Record<string, string | undefined>;\n"]}

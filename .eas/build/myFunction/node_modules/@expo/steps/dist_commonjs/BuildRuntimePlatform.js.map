@@ -1,0 +1,1 @@
+{"version":3,"file":"BuildRuntimePlatform.js","sourceRoot":"","sources":["../src/BuildRuntimePlatform.ts"],"names":[],"mappings":";;;AAAA,IAAY,oBAGX;AAHD,WAAY,oBAAoB;IAC9B,yCAAiB,CAAA;IACjB,uCAAe,CAAA;AACjB,CAAC,EAHW,oBAAoB,oCAApB,oBAAoB,QAG/B","sourcesContent":["export enum BuildRuntimePlatform {\n  DARWIN = 'darwin',\n  LINUX = 'linux',\n}\n"]}

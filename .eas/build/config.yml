@@ -1,0 +1,16 @@
+build:
+  name: My example config
+  steps:
+    - eas/checkout
+    - run:
+        name: Install dependencies
+        command: npm install
+    - my_function
+    - run:
+        name: Finished
+        command: echo Finished
+
+functions:
+  my_function:
+    name: My function
+    path: ./myFunction

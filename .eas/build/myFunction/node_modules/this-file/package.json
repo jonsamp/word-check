@@ -1,0 +1,38 @@
+{
+  "name": "this-file",
+  "version": "2.0.3",
+  "main": "./lib/index.js",
+  "module": "./es/index.js",
+  "repository": "git@github.com:fwh1990/this-file.git",
+  "author": "原罪",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./es/index.js"
+    },
+    "./": "./"
+  },
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "scripts": {
+    "prepublishOnly": "ts-prepublish",
+    "test": "sh ./scripts/test.sh"
+  },
+  "files": [
+    "package.json",
+    "es",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.3.1",
+    "jest": "^27.0.1",
+    "ts-node": "^10.0.0",
+    "ts-prepublish": "^2.0.0",
+    "typescript": "^4.2.4"
+  }
+}
