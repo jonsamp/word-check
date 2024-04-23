@@ -94,6 +94,8 @@ export default function Home() {
         });
       }
 
+      console.log({dictionary});
+
       if (dictionary === 'NWL2020' || !dictionary) {
         const result = await lookUpWordAsync(Dictionary.NWL2020, searchValue);
 
@@ -298,7 +300,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: {
     ...type.largeTitle,
-    fontFamily: 'SemiBold',
+    fontFamily: 'sentinel-semibold',
     marginBottom: 16,
     fontSize: 24,
   },

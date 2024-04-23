@@ -1,6 +1,6 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite/next';
 
 export enum Dictionary {
   NWL2020 = 'NWL2020',
@@ -71,34 +71,24 @@ export async function lookUpWordAsync(
   dictionary: Dictionary = Dictionary.NWL2020,
   word: string
 ): Promise<{ word: string; definition: string | null } | null> {
-  const db = SQLite.openDatabase(`${dictionary}.db`);
+  const db = SQLite.openDatabaseSync(`${dictionary}.db`);
 
   return new Promise((resolve, reject) => {
     try {
-      db.exec(
-        [
-          {
-            sql: 'select * from words where word = ?',
-            args: [word.toUpperCase()],
-          },
-        ],
-        true,
-        (error?: Error | null, resultSet?: any) => {
-          if (error) {
-            return reject(error);
-          }
-
-          if (resultSet?.[0].error) {
-            return reject(resultSet?.[0].error);
-          }
-
-          if (resultSet?.[0]?.rows?.[0]) {
-            return resolve(resultSet?.[0]?.rows?.[0]);
-          }
-
+      async function getResultAsync() {
+        const result = await db.getFirstAsync(
+          `select * from words where word = '${word.toUpperCase()}'`
+        ) as { word: string; definition: string | null } | null;
+        
+        if (result && result.word) {
+          return resolve({ word: result.word, definition: result?.definition ?? null });
+        } else {
           return resolve(null);
         }
-      );
+      }
+      
+      getResultAsync();
+
     } catch (error) {
       return reject(error);
     }

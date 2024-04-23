@@ -3,38 +3,31 @@ import {
   ThemeProvider,
   DarkTheme
 } from "@react-navigation/native";
-import React, { useEffect, useState } from 'react';
-import * as Font from 'expo-font';
-
-import Bold from '../assets/fonts/sentinel-bold.otf';
-import SemiBold from '../assets/fonts/sentinel-semibold.otf';
-import Italic from '../assets/fonts/sentinel-bookItalic.otf';
-import Regular from '../assets/fonts/sentinel-book.otf';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { Dictionary, loadDictionaryAsync } from '../constants/database';
 
 import "../global.css"
+import { View } from "react-native";
 
-export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: "index",
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [fontsLoaded, fontError] = useFonts({
+    Regular: require('../assets/fonts/sentinel-book.otf'),
+    Italic: require('../assets/fonts/sentinel-bookItalic.otf'),
+    SemiBold: require('../assets/fonts/sentinel-semibold.otf'),
+    Bold: require('../assets/fonts/sentinel-bold.otf'),
+  });
 
   useEffect(() => {
     async function prepare() {
       try {
         await loadDictionaryAsync(Dictionary.NWL2020);
         await loadDictionaryAsync(Dictionary.CSW21);
-
-        await Font.loadAsync({
-          Bold,
-          SemiBold,
-          Italic,
-          Regular,
-        });
       } catch (e) {
         console.warn(e);
       } finally {
@@ -45,12 +38,19 @@ export default function Layout() {
 
     prepare();
   }, []);
+  
+    const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
-  if (!appIsReady) {
+  if (!appIsReady || !fontsLoaded) {
     return null;
   }
 
   return (
+    <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
     <ThemeProvider value={DarkTheme}>
       <Stack>
         <Stack.Screen name="index" options={{
@@ -66,5 +66,6 @@ export default function Layout() {
         />
       </Stack>
     </ThemeProvider>
+    </View>
   );
 }
