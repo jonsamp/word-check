@@ -41,7 +41,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "dd591e49-d2d1-4ce0-bef9-49746a819ec0"
+        "projectId": "93429e94-accd-4d60-8a5c-0f292c313b74"
       }
     },
     "plugins": ["expo-font", "expo-asset", "expo-router"],
