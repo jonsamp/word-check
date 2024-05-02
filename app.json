@@ -45,6 +45,6 @@
       }
     },
     "plugins": ["expo-font", "expo-asset", "expo-router"],
-    "owner": "jonsamp"
+    "owner": "jonexpo"
   }
 }
