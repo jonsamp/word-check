@@ -89,7 +89,7 @@ export default function Settings() {
           <RNView style={{ top: -1 }}>
             <SettingsCogIcon />
           </RNView>
-          <Text style={[type.titleTwo, { marginLeft: 4 }]}>Settings 123456</Text>
+          <Text style={[type.titleTwo, { marginLeft: 4 }]}>Settings 1234567</Text>
         </RNView>
         <TouchableOpacity onPress={router.back}>
           <Text style={type.title}>Done</Text>
