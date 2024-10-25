@@ -9,6 +9,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+yarn-error.log
 
 # macOS
 .DS_Store
@@ -20,3 +21,7 @@ dist/
 # OSX
 #
 .DS_Store
+
+# Use CNG
+ios/
+android/

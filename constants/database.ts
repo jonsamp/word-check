@@ -1,6 +1,6 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
-import * as SQLite from 'expo-sqlite/next';
+import * as SQLite from 'expo-sqlite';
 
 export enum Dictionary {
   NWL2020 = 'NWL2020',

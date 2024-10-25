@@ -2,9 +2,12 @@
   "expo": {
     "name": "Word Check",
     "slug": "word-check",
-    "privacy": "public",
     "scheme": "wordcheck",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "51.0.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
@@ -17,7 +20,6 @@
     "updates": {
       "url": "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "1",
       "bundleIdentifier": "jonsamp.words",
