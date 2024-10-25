@@ -19,13 +19,7 @@
     },
     "preview": {
       "channel": "preview",
-      "config": "config.yml",
-      "ios": {
-        "image": "latest"
-      },
-      "android": {
-        "image": "default"
-      }
+      "config": "config.yml"
     },
     "preview-simulator": {
       "channel": "preview",
@@ -37,13 +31,7 @@
       }
     },
     "production": {
-      "channel": "main",
-      "ios": {
-        "image": "latest"
-      },
-      "android": {
-        "image": "latest"
-      }
+      "channel": "main"
     },
     "production-simulator": {
       "channel": "production",
