@@ -3,11 +3,21 @@
     "version": ">= 7.1.2"
   },
   "build": {
+    "base": {
+      "ios": {
+        "image": "latest"
+      },
+      "android": {
+        "image": "latest"
+      }
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal"
     },
     "development-simulator": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
@@ -18,10 +28,12 @@
       }
     },
     "preview": {
+      "extends": "base",
       "channel": "preview",
       "config": "config.yml"
     },
     "preview-simulator": {
+      "extends": "base",
       "channel": "preview",
       "ios": {
         "simulator": true
@@ -31,9 +43,11 @@
       }
     },
     "production": {
+      "extends": "base",
       "channel": "main"
     },
     "production-simulator": {
+      "extends": "base",
       "channel": "production",
       "ios": {
         "simulator": true
