@@ -1,3 +1,3 @@
-declare module '*.db' {
+declare module "*.db" {
   export default db;
 }

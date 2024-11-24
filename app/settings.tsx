@@ -1,66 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
   TouchableOpacity,
   Platform,
   View as RNView,
   ScrollView,
-} from 'react-native';
-import { useRouter } from 'expo-router'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { useRouter } from "expo-router";
 
-import { View, Text, useThemeColor } from '../components/Themed';
-import { type } from '../constants/Type';
-import { BlueCheckIcon, SettingsCogIcon } from '../components/Icons';
+import { View, Text, useThemeColor } from "../components/Themed";
+import { type } from "../constants/Type";
+import { BlueCheckIcon, BookIcon } from "../components/Icons";
+import { Dictionary } from "../constants/database";
+import { useDictionary } from "../contexts/DictionaryContext";
 
 export default function Settings() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const textSecondaryColor = useThemeColor('textSecondary');
-  const [currentDictionary, setCurrentDictionary] = useState<
-    'NWL2020' | 'CSW21' | 'NWL2018' | 'CSW15' | undefined
-  >();
-
-  useEffect(function didMount() {
-    async function getDictionary() {
-      const result = await AsyncStorage.getItem('@wordcheck:dictionary');
-
-      if (result === 'NWL2020') {
-        setCurrentDictionary('NWL2020');
-      } else if (result === 'CSW21') {
-        setCurrentDictionary('CSW21');
-      } else if (result === 'NWL2018') {
-        setCurrentDictionary('NWL2018');
-      } else if (result === 'CSW15') {
-        setCurrentDictionary('CSW15');
-      } else {
-        setCurrentDictionary('NWL2020');
-      }
-    }
-
-    getDictionary();
-  }, []);
-
-  async function setDictionary(key: string) {
-    try {
-      await AsyncStorage.setItem('@wordcheck:dictionary', key);
-
-      if (key === 'NWL2020') {
-        setCurrentDictionary('NWL2020');
-      } else if (key === 'CSW21') {
-        setCurrentDictionary('CSW21');
-      } else if (key === 'NWL2018') {
-        setCurrentDictionary('NWL2018');
-      } else if (key === 'CSW15') {
-        setCurrentDictionary('CSW15');
-      } else {
-        setCurrentDictionary('NWL2020');
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  const textSecondaryColor = useThemeColor("textSecondary");
+  const borderColor = useThemeColor("border");
+  const { currentDictionary, setDictionary } = useDictionary();
 
   return (
     <View
@@ -70,58 +29,66 @@ export default function Settings() {
           paddingTop: Platform.select({ ios: 0, android: insets.top }),
         },
       ]}
+      colorKey="backgroundSecondary"
     >
       <View
-        colorKey='backgroundSecondary'
+        colorKey="backgroundSecondary"
         style={{
           padding: 16,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <RNView
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
           <RNView style={{ top: -1 }}>
-            <SettingsCogIcon />
+            <BookIcon />
           </RNView>
-          <Text style={[type.titleTwo, { marginLeft: 4 }]}>Settings</Text>
+          <Text style={[type.titleTwo, { marginLeft: 8 }]}>Dictionaries</Text>
         </RNView>
         <TouchableOpacity onPress={router.back}>
           <Text style={type.title}>Done</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
-        <Text style={type.title}>Dictionaries</Text>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          paddingTop: 0,
+          paddingBottom: 60,
+          flex: 1,
+        }}
+      >
         <TouchableOpacity
-          onPress={() => setDictionary('NWL2020')}
+          onPress={() => setDictionary(Dictionary.NWL2023)}
           style={{ marginBottom: 16, marginTop: 16 }}
         >
           <View
-            colorKey='backgroundSecondary'
             style={{
               padding: 16,
               borderRadius: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: "row",
+              justifyContent: "space-between",
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor,
             }}
           >
             <RNView style={{ flex: 1 }}>
               <Text style={[type.title, { marginBottom: 4 }]}>
-                NASPA Word List 2020 Edition
+                NASPA Word List (NWL) 2023 Edition
               </Text>
-              <Text style={type.body}>
-                Contains 191,852 words. This list is for use in the United
-                States, Canada, and Thailand.
+              <Text style={{ ...type.body, color: textSecondaryColor }}>
+                Contains 196,601 words. The sixth edition of NWL. This list is
+                for use in the United States and Canada.
               </Text>
             </RNView>
             <RNView
               style={{
-                opacity: currentDictionary === 'NWL2020' ? 1 : 0,
+                opacity: currentDictionary === Dictionary.NWL2023 ? 1 : 0,
                 marginLeft: 16,
               }}
             >
@@ -130,30 +97,31 @@ export default function Settings() {
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setDictionary('CSW21')}
+          onPress={() => setDictionary(Dictionary.CSW24)}
           style={{ marginBottom: 16 }}
         >
           <View
-            colorKey='backgroundSecondary'
             style={{
               padding: 16,
               borderRadius: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: "row",
+              justifyContent: "space-between",
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor,
             }}
           >
             <RNView style={{ flex: 1 }}>
               <Text style={[type.title, { marginBottom: 4 }]}>
-                Collins Scrabble Word List 2021 Edition
+                Collins Scrabble Words (CSW) 2024 Edition
               </Text>
-              <Text style={type.body}>
-                Contains 279,077 words. This list is for use outside of the
-                United States, Canada, and Thailand.
+              <Text style={{ ...type.body, color: textSecondaryColor }}>
+                Contains 280,887 words. This list is for use outside of the
+                United States and Canada.
               </Text>
             </RNView>
             <RNView
               style={{
-                opacity: currentDictionary === 'CSW21' ? 1 : 0,
+                opacity: currentDictionary === Dictionary.CSW24 ? 1 : 0,
                 marginLeft: 16,
               }}
             >
@@ -162,30 +130,32 @@ export default function Settings() {
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setDictionary('NWL2018')}
+          onPress={() => setDictionary(Dictionary.NSWL2023)}
           style={{ marginBottom: 16 }}
         >
           <View
-            colorKey='backgroundSecondary'
             style={{
               padding: 16,
               borderRadius: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: "row",
+              justifyContent: "space-between",
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor,
             }}
           >
             <RNView style={{ flex: 1 }}>
               <Text style={[type.title, { marginBottom: 4 }]}>
-                NASPA Word List 2018 Edition
+                NASPA School Word List (NSWL) 2023 Edition
               </Text>
-              <Text style={type.body}>
-                Contains 192,111 words. This list is for use in the United
-                States, Canada, and Thailand.
+              <Text style={{ ...type.body, color: textSecondaryColor }}>
+                Contains 195,747 words. This list is for use in the United
+                States, Canada, and Thailand, with words appropriate for school
+                use.
               </Text>
             </RNView>
             <RNView
               style={{
-                opacity: currentDictionary === 'NWL2018' ? 1 : 0,
+                opacity: currentDictionary === Dictionary.NSWL2023 ? 1 : 0,
                 marginLeft: 16,
               }}
             >
@@ -193,41 +163,6 @@ export default function Settings() {
             </RNView>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setDictionary('CSW15')}
-          style={{ marginBottom: 16 }}
-        >
-          <View
-            colorKey='backgroundSecondary'
-            style={{
-              padding: 16,
-              borderRadius: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <RNView style={{ flex: 1 }}>
-              <Text style={[type.title, { marginBottom: 4 }]}>
-                Collins Scrabble Word List 2015 Edition
-              </Text>
-              <Text style={type.body}>
-                Contains 276,663 words and is the latest approved Scrabble word
-                list for use outside of the United States, Canada, and Thailand.
-              </Text>
-            </RNView>
-            <RNView
-              style={{
-                opacity: currentDictionary === 'CSW15' ? 1 : 0,
-                marginLeft: 16,
-              }}
-            >
-              <BlueCheckIcon />
-            </RNView>
-          </View>
-        </TouchableOpacity>
-        <View style={[styles.versionContainer, { borderTopColor: textSecondaryColor }]}>
-          <Text style={type.body}>App version 50.0.0</Text>
-        </View>
       </ScrollView>
     </View>
   );

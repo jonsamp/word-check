@@ -1,96 +1,85 @@
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
-import * as SQLite from 'expo-sqlite';
+import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
+import * as SQLite from "expo-sqlite";
+import Storage from "expo-sqlite/kv-store";
 
 export enum Dictionary {
-  NWL2020 = 'NWL2020',
-  CSW21 = 'CSW21',
+  NWL2023 = "NWL2023",
+  CSW24 = "CSW24",
+  NSWL2023 = "NSWL2023",
 }
 
-async function getFileInfoAsync(filename: string) {
-  return await FileSystem.getInfoAsync(
-    `${FileSystem.documentDirectory}${filename}`
-  );
-}
-
-export async function loadDictionariesAsync() {}
+export const DB_DICTIONARY_KEY = "dictionary";
 
 export async function loadDictionaryAsync(dictionary: Dictionary) {
-  const sqliteDirectory = await getFileInfoAsync('SQLite');
+  const sqliteDirectory = await FileSystem.getInfoAsync(
+    `${FileSystem.documentDirectory}SQLite`,
+  );
 
   if (!sqliteDirectory.exists) {
     await FileSystem.makeDirectoryAsync(
-      FileSystem.documentDirectory + 'SQLite'
+      FileSystem.documentDirectory + "SQLite",
     );
   }
 
-  const databaseFile = await getFileInfoAsync(`SQLite/${dictionary}.db`);
+  const dictionaryAssets = {
+    [Dictionary.NWL2023]: require("../assets/databases/NWL2023.db"),
+    [Dictionary.CSW24]: require("../assets/databases/CSW24.db"),
+    [Dictionary.NSWL2023]: require("../assets/databases/NSWL2023.db"),
+  };
 
-  if (!databaseFile.exists) {
-    if (dictionary === Dictionary.NWL2020) {
-      const databaseAsset = Asset.fromModule(
-        require('../assets/databases/NWL2020.db')
-      );
+  const databaseAsset = Asset.fromModule(dictionaryAssets[dictionary]);
+  const dbPath = `${FileSystem.documentDirectory}SQLite/${dictionary}.db`;
 
-      if (databaseAsset.localUri) {
-        // in production, copy from the build
-        FileSystem.copyAsync({
-          from: databaseAsset.localUri,
-          to: `${FileSystem.documentDirectory}SQLite/${dictionary}.db`,
-        });
-      } else {
-        // in development, download from local server
-        FileSystem.downloadAsync(
-          databaseAsset.uri,
-          `${FileSystem.documentDirectory}SQLite/${dictionary}.db`
-        );
-      }
-    } else if (dictionary === Dictionary.CSW21) {
-      const databaseAsset = Asset.fromModule(
-        require('../assets/databases/CSW21.db')
-      );
-
-      if (databaseAsset.localUri) {
-        // in production, copy from the build
-        FileSystem.copyAsync({
-          from: databaseAsset.localUri,
-          to: `${FileSystem.documentDirectory}SQLite/${dictionary}.db`,
-        });
-      } else {
-        // in development, download from local server
-        FileSystem.downloadAsync(
-          databaseAsset.uri,
-          `${FileSystem.documentDirectory}SQLite/${dictionary}.db`
-        );
-      }
+  try {
+    if (databaseAsset.localUri) {
+      // in production, copy from the build
+      await FileSystem.copyAsync({
+        from: databaseAsset.localUri,
+        to: dbPath,
+      });
+    } else {
+      // in development, download from local server
+      await FileSystem.downloadAsync(databaseAsset.uri, dbPath);
     }
+  } catch (error) {
+    console.error(`Failed to load dictionary ${dictionary}:`, error);
+    throw error;
   }
 }
 
-export async function lookUpWordAsync(
-  dictionary: Dictionary = Dictionary.NWL2020,
-  word: string
-): Promise<{ word: string; definition: string | null } | null> {
+export function lookUpWord(
+  searchValue: string,
+): { word: string; definition: string | null; isValid: boolean } | null {
+  const defaultDictionary = Dictionary.NWL2023;
+  const dictionary =
+    Storage.getItemSync(DB_DICTIONARY_KEY) ?? defaultDictionary;
   const db = SQLite.openDatabaseSync(`${dictionary}.db`);
 
-  return new Promise((resolve, reject) => {
-    try {
-      async function getResultAsync() {
-        const result = await db.getFirstAsync(
-          `select * from words where word = '${word.toUpperCase()}'`
-        ) as { word: string; definition: string | null } | null;
-        
-        if (result && result.word) {
-          return resolve({ word: result.word, definition: result?.definition ?? null });
-        } else {
-          return resolve(null);
-        }
-      }
-      
-      getResultAsync();
+  try {
+    const sanitizedSearchValue = searchValue.toUpperCase().trim();
+    const statement = db.prepareSync("SELECT * FROM words WHERE word = ?");
+    const response = statement.executeSync<{
+      word: string;
+      definition: string | null;
+    }>([sanitizedSearchValue]);
+    const row = response.getFirstSync();
 
-    } catch (error) {
-      return reject(error);
+    if (row?.word) {
+      return {
+        isValid: true,
+        word: row.word,
+        definition: row.definition ?? null,
+      };
+    } else {
+      return {
+        isValid: false,
+        word: sanitizedSearchValue,
+        definition: null,
+      };
     }
-  });
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }

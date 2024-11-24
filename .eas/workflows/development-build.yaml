@@ -1,0 +1,17 @@
+name: Development Build
+
+on:
+  push: 
+    branches: ["*"]
+
+jobs:
+  development-build:
+    type: build
+    params:
+      platform: ios
+      profile: development
+  development-build-simulator:
+    type: build
+    params:
+      platform: ios
+      profile: development-simulator

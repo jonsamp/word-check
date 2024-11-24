@@ -1,7 +1,4 @@
 {
-  "cli": {
-    "version": ">= 7.1.2"
-  },
   "build": {
     "base": {
       "ios": {
@@ -57,7 +54,7 @@
       }
     }
   },
-  "submit": {
-    "production": {}
+  "cli": {
+    "appVersionSource": "remote"
   }
 }

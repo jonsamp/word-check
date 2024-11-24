@@ -1,30 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
   ScrollView,
-  ActivityIndicator,
   TouchableOpacity,
-  Image,
   View as RNView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Image } from "expo-image";
+import * as SplashScreen from "expo-splash-screen";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
 import { useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
-import AppIconImage from "../assets/images/icon-1.png";
+import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
-import {
-  SettingsIcon,
-  CancelIcon,
-  CheckIcon,
-  XIcon,
-} from "../components/Icons";
-import { Dictionary, lookUpWordAsync } from "../constants/database";
+import { CancelIcon, XIcon, BookIcon, CheckIcon } from "../components/Icons";
+import { Dictionary, lookUpWord } from "../constants/database";
 import { Link } from "expo-router";
+import { useDictionary } from "../contexts/DictionaryContext";
+
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  duration: 500,
+  fade: true,
+});
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -32,139 +34,31 @@ export default function Home() {
   const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
-  const [searchValue, onChangeText] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [result, setResult] = React.useState<
-    | { isValid: boolean; definition?: string | null; id?: number | string }
-    | undefined
-  >(undefined);
-
-  useEffect(
-    function resultDidUpdate() {
-      async function setDefinitionAsync() {
-        try {
-          const rawData = await fetch(
-            `https://api.dictionaryapi.dev/api/v2/entries/en/${searchValue}`
-          );
-
-          const data = await rawData.json();
-          const definition =
-            data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition;
-
-          if (result?.isValid && definition && typeof definition === "string") {
-            setResult({
-              ...result,
-              definition: definition.replace(/\.$/g, ""),
-            });
-          }
-        } catch (error) {
-          if (result?.isValid) {
-            setResult({
-              ...result,
-              definition: "No definition available",
-            });
-          }
-        }
-      }
-
-      if (result?.isValid && !result?.definition) {
-        setDefinitionAsync();
-      }
-    },
-    [result]
-  );
+  const backgroundButtonColor = useThemeColor("backgroundButton");
+  const borderColor = useThemeColor("border");
+  const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
+  const { currentDictionary } = useDictionary();
+  const [searchValue, setSearchValue] = useState("");
+  const [result, setResult] = useState<{
+    isValid: boolean;
+    definition?: string | null;
+    word: string;
+  } | null>(null);
+  const definition = result?.definition?.split("[")[0].split(", also")[0] ?? "";
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
   }
 
   async function handleSubmit() {
-    setResult(undefined);
-    setLoading(true);
-
-    try {
-      const dictionary = await AsyncStorage.getItem("@wordcheck:dictionary");
-
-      if (searchValue === "Appjs") {
-        return setResult({
-          isValid: true,
-          definition: "the best conf",
-          id: "appjs-id",
-        });
-      }
-
-      if (dictionary === "NWL2020" || !dictionary) {
-        const result = await lookUpWordAsync(Dictionary.NWL2020, searchValue);
-
-        if (result === null) {
-          return setResult({
-            isValid: false,
-            definition: undefined,
-            id: undefined,
-          });
-        }
-
-        return setResult({
-          isValid: true,
-          definition: result.definition,
-          id: result.word,
-        });
-      } else if (dictionary === "CSW21") {
-        const result = await lookUpWordAsync(Dictionary.CSW21, searchValue);
-
-        if (result === null) {
-          return setResult({
-            isValid: false,
-            definition: undefined,
-            id: undefined,
-          });
-        }
-
-        return setResult({
-          isValid: true,
-          definition: result.definition,
-          id: result.word,
-        });
-      } else if (dictionary === "CSW15") {
-        const response = await fetch(
-          `https://s3-us-west-2.amazonaws.com/words.alexmeub.com/csw2015/${searchValue.toLowerCase()}.json`
-        );
-
-        const json = await response.json();
-
-        setResult({
-          isValid: true,
-          definition: json.definition,
-          id: json.index,
-        });
-      } else if (dictionary === "NWL2018") {
-        const response = await fetch(
-          `https://s3-us-west-2.amazonaws.com/words.alexmeub.com/otcwl2018/${searchValue.toLowerCase()}.json`
-        );
-
-        const json = await response.json();
-
-        setResult({
-          isValid: true,
-          definition: json.definition,
-          id: json.index,
-        });
-      } else {
-        alert("No dictionary selected. Please select one in settings.");
-      }
-    } catch (error) {
-      setResult({
-        isValid: false,
-        definition: undefined,
-        id: undefined,
-      });
-    } finally {
-      setLoading(false);
-    }
+    if (!searchValue) return;
+    const result = lookUpWord(searchValue);
+    setResult(result ?? null);
   }
 
   return (
     <View
+      onLayout={SplashScreen.hide}
       style={{
         padding: 16,
         paddingLeft: insets.left + 16,
@@ -172,13 +66,19 @@ export default function Home() {
         paddingRight: insets.right + 16,
         flex: 1,
       }}
+      colorKey="backgroundSecondary"
     >
-      <View className="flex-row items-center justify-between mb-4">
-        <View style={styles.displayHorizontal}>
+      <RNView className="flex-row items-center justify-between mb-4">
+        <RNView style={styles.displayHorizontal}>
           <RNView className="rounded-lg overflow-hidden mr-3">
             <Image
               source={isDark ? DarkAppIconImage : AppIconImage}
-              className="w-11 h-11"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 8,
+                overflow: "hidden",
+              }}
             />
           </RNView>
           <RNView>
@@ -186,26 +86,32 @@ export default function Home() {
               Word Check
             </Text>
           </RNView>
-        </View>
+        </RNView>
         <Link href="/settings">
-          <SettingsIcon />
+          <RNView
+            className="p-2 rounded-lg"
+            style={{ backgroundColor: backgroundButtonColor }}
+          >
+            <BookIcon />
+          </RNView>
         </Link>
-      </View>
+      </RNView>
       <View style={styles.displayHorizontal}>
         <TextInput
           style={[
             styles.searchInput,
             {
               color: textColor,
-              borderColor: textSecondaryColor,
+              borderColor,
+              backgroundColor: backgroundSecondaryColor,
             },
           ]}
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
           onSubmitEditing={() => handleSubmit()}
           onChangeText={(text) => {
-            setResult(undefined);
-            onChangeText(text);
+            setResult(null);
+            setSearchValue(text.trim());
           }}
           value={searchValue}
           placeholder="Search"
@@ -216,12 +122,10 @@ export default function Home() {
             style={{
               position: "absolute",
               right: 0,
-              padding: 8,
-              marginRight: -8,
             }}
             onPress={() => {
-              setResult(undefined);
-              onChangeText("");
+              setResult(null);
+              setSearchValue("");
             }}
           >
             <CancelIcon />
@@ -229,20 +133,7 @@ export default function Home() {
         )}
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {loading && <ActivityIndicator color={textSecondaryColor} size={24} />}
-        {!loading && result && (
-          <View
-            style={[styles.displayHorizontal, styles.validationContainer]}
-            colorKey="backgroundSecondary"
-          >
-            {result.isValid ? <CheckIcon /> : <XIcon />}
-            <Text style={styles.validationText}>
-              {capitalizeFirstLetter(searchValue)} is{" "}
-              {result.isValid ? "a playable word." : "not a playable word."}
-            </Text>
-          </View>
-        )}
-        {!loading && !result && !searchValue && (
+        {!result && !searchValue && (
           <Text
             style={[
               type.body,
@@ -257,30 +148,62 @@ export default function Home() {
             Tap "Search" to check if a word is playable.
           </Text>
         )}
-        {!loading && result && result.isValid && result.definition && (
-          <View>
-            <View
-              key={result.id}
-              style={styles.definitionContainer}
-              colorKey="backgroundSecondary"
-            >
-              <RNView>
-                <Text style={type.titleTwo}>
-                  {capitalizeFirstLetter(searchValue)}
-                </Text>
-              </RNView>
+        {result && (
+          <View
+            className="rounded-2xl"
+            style={{
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor,
+            }}
+          >
+            <RNView className="items-center gap-4 rounded-xl py-12">
               <RNView className="mb-2">
-                <Text style={type.body}>
-                  {capitalizeFirstLetter(
-                    result.definition.split("[")[0].split(", also")[0]
-                  ).trim()}
-                  .
-                </Text>
+                {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
-            </View>
+              <Text style={{ ...type.largeTitle, padding: 0 }}>
+                {capitalizeFirstLetter(result.word.toLowerCase())}
+              </Text>
+              <Text style={{ ...type.body, marginTop: -12 }}>
+                is {result.isValid ? "a playable word" : "not a playable word"}
+              </Text>
+            </RNView>
+            {definition && (
+              <RNView
+                style={{
+                  borderTopWidth: StyleSheet.hairlineWidth,
+                  borderTopColor: borderColor,
+                  width: "100%",
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                }}
+              >
+                <RNView style={styles.definitionContainer}>
+                  <RNView>
+                    <Text style={type.headline}>Definition</Text>
+                  </RNView>
+                  <RNView>
+                    <Text style={type.body}>
+                      {capitalizeFirstLetter(definition)}.
+                    </Text>
+                  </RNView>
+                </RNView>
+              </RNView>
+            )}
           </View>
         )}
       </ScrollView>
+      <Text
+        className="text-center text-sm opacity-50 bottom-5"
+        style={{ ...type.footnote, bottom: insets.bottom }}
+      >
+        {!currentDictionary && "NASPA Word List (NWL) 2023 Edition"}
+        {currentDictionary === Dictionary.NWL2023 &&
+          "NASPA Word List (NWL) 2023 Edition"}
+        {currentDictionary === Dictionary.CSW24 &&
+          "Collins Scrabble Words (CSW) 2024 Edition"}
+        {currentDictionary === Dictionary.NSWL2023 &&
+          "NASPA School Word List (NSWL) 2023 Edition"}
+      </Text>
     </View>
   );
 }

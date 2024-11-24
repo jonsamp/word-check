@@ -1,4 +1,4 @@
-node_modules/**/*
+node_modules
 .expo
 .expo-shared
 npm-debug.*
@@ -21,7 +21,11 @@ dist/
 # OSX
 #
 .DS_Store
-
 # Use CNG
 ios/
 android/
+
+todo.md
+
+# Database files
+*.db
