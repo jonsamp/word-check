@@ -47,7 +47,12 @@
         "projectId": "dd591e49-d2d1-4ce0-bef9-49746a819ec0"
       }
     },
-    "plugins": ["expo-font", "expo-asset", "expo-router"],
+    "plugins": [
+      "expo-font",
+      "expo-asset",
+      "expo-router",
+      "expo-sqlite"
+    ],
     "owner": "jonsamp"
   }
 }
