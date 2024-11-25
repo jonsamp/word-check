@@ -9,7 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -61,15 +61,12 @@ export default function Home() {
     <View
       onLayout={SplashScreen.hide}
       style={{
-        padding: 16,
-        paddingLeft: insets.left + 16,
         paddingTop: insets.top + 8,
-        paddingRight: insets.right + 16,
         flex: 1,
       }}
       colorKey="backgroundSecondary"
     >
-      <RNView className="flex-row items-center justify-between mb-4">
+      <RNView className="flex-row items-center justify-between mb-6 px-4">
         <RNView style={styles.displayHorizontal}>
           <RNView className="rounded-lg overflow-hidden mr-3">
             <Image
@@ -100,7 +97,7 @@ export default function Home() {
           </RNView>
         </Link>
       </RNView>
-      <RNView style={styles.displayHorizontal}>
+      <RNView className="px-4 flex-row items-center">
         <TextInput
           style={{
             color: textColor,
@@ -132,7 +129,7 @@ export default function Home() {
           <TouchableOpacity
             style={{
               position: "absolute",
-              right: 12,
+              right: 24,
             }}
             onPress={() => {
               setResult(null);
@@ -151,7 +148,7 @@ export default function Home() {
               {
                 textAlign: "center",
                 marginHorizontal: 60,
-                marginTop: 60,
+                marginTop: 32,
                 color: textSecondaryColor,
               },
             ]}
@@ -161,12 +158,21 @@ export default function Home() {
         )}
         {result && (
           <Animated.View
-            entering={FadeInUp.duration(600).springify()}
+            entering={FadeInDown.duration(600).springify()}
             className="rounded-2xl"
             style={{
               borderWidth: StyleSheet.hairlineWidth,
               borderColor,
               backgroundColor,
+              shadowColor: "#000",
+              marginHorizontal: 16,
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 3,
             }}
           >
             <RNView className="items-center gap-4 rounded-xl py-12">
@@ -256,7 +262,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 32,
+    marginTop: 24,
   },
   validationContainer: {
     padding: 16,

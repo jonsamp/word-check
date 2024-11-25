@@ -7,6 +7,11 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 import { View, Text, useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
@@ -14,10 +19,85 @@ import { BlueCheckIcon, BookIcon } from "../components/Icons";
 import { Dictionary } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
 
+function AnimatedDictionaryButton({
+  title,
+  description,
+  isSelected,
+  onPress,
+  borderColor,
+}: {
+  title: string;
+  description: string;
+  isSelected: boolean;
+  onPress: () => void;
+  borderColor: string;
+}) {
+  const backgroundColor = useThemeColor("background");
+  const textSecondaryColor = useThemeColor("textSecondary");
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.975, {
+      damping: 15,
+      stiffness: 400,
+    });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, {
+      damping: 15,
+      stiffness: 400,
+    });
+  };
+
+  return (
+    <TouchableOpacity
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={onPress}
+      style={{ marginBottom: 16 }}
+      activeOpacity={1}
+    >
+      <Animated.View
+        style={[
+          {
+            padding: 24,
+            borderRadius: 12,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor,
+            backgroundColor,
+          },
+          animatedStyle,
+        ]}
+      >
+        <RNView style={{ flex: 1 }}>
+          <Text style={[type.title, { marginBottom: 4 }]}>{title}</Text>
+          <Text style={{ ...type.body, color: textSecondaryColor }}>
+            {description}
+          </Text>
+        </RNView>
+        <RNView
+          style={{
+            opacity: isSelected ? 1 : 0,
+            marginLeft: 16,
+          }}
+        >
+          <BlueCheckIcon />
+        </RNView>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+
 export default function Settings() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
   const { currentDictionary, setDictionary } = useDictionary();
 
@@ -60,111 +140,34 @@ export default function Settings() {
       <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingTop: 0,
+          paddingTop: 8,
           paddingBottom: 60,
           flex: 1,
         }}
       >
-        <TouchableOpacity
+        <AnimatedDictionaryButton
+          title="NASPA Word List (NWL) 2023 Edition"
+          description="Contains 196,601 words. The sixth edition of NWL. This list is for use in the United States and Canada."
+          isSelected={currentDictionary === Dictionary.NWL2023}
           onPress={() => setDictionary(Dictionary.NWL2023)}
-          style={{ marginBottom: 16, marginTop: 16 }}
-        >
-          <View
-            style={{
-              padding: 24,
-              borderRadius: 12,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor,
-            }}
-          >
-            <RNView style={{ flex: 1 }}>
-              <Text style={[type.title, { marginBottom: 4 }]}>
-                NASPA Word List (NWL) 2023 Edition
-              </Text>
-              <Text style={{ ...type.body, color: textSecondaryColor }}>
-                Contains 196,601 words. The sixth edition of NWL. This list is
-                for use in the United States and Canada.
-              </Text>
-            </RNView>
-            <RNView
-              style={{
-                opacity: currentDictionary === Dictionary.NWL2023 ? 1 : 0,
-                marginLeft: 16,
-              }}
-            >
-              <BlueCheckIcon />
-            </RNView>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
+          borderColor={borderColor}
+        />
+
+        <AnimatedDictionaryButton
+          title="Collins Scrabble Words (CSW) 2024 Edition"
+          description="Contains 280,887 words. This list is for use outside of the United States and Canada."
+          isSelected={currentDictionary === Dictionary.CSW24}
           onPress={() => setDictionary(Dictionary.CSW24)}
-          style={{ marginBottom: 16 }}
-        >
-          <View
-            style={{
-              padding: 24,
-              borderRadius: 12,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor,
-            }}
-          >
-            <RNView style={{ flex: 1 }}>
-              <Text style={[type.title, { marginBottom: 4 }]}>
-                Collins Scrabble Words (CSW) 2024 Edition
-              </Text>
-              <Text style={{ ...type.body, color: textSecondaryColor }}>
-                Contains 280,887 words. This list is for use outside of the
-                United States and Canada.
-              </Text>
-            </RNView>
-            <RNView
-              style={{
-                opacity: currentDictionary === Dictionary.CSW24 ? 1 : 0,
-                marginLeft: 16,
-              }}
-            >
-              <BlueCheckIcon />
-            </RNView>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
+          borderColor={borderColor}
+        />
+
+        <AnimatedDictionaryButton
+          title="NASPA School Word List (NSWL) 2023 Edition"
+          description="Contains 195,747 words. This list is for use in the United States, Canada, and Thailand, with words appropriate for school use."
+          isSelected={currentDictionary === Dictionary.NSWL2023}
           onPress={() => setDictionary(Dictionary.NSWL2023)}
-          style={{ marginBottom: 16 }}
-        >
-          <View
-            style={{
-              padding: 24,
-              borderRadius: 12,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor,
-            }}
-          >
-            <RNView style={{ flex: 1 }}>
-              <Text style={[type.title, { marginBottom: 4 }]}>
-                NASPA School Word List (NSWL) 2023 Edition
-              </Text>
-              <Text style={{ ...type.body, color: textSecondaryColor }}>
-                Contains 195,747 words. This list is for use in the United
-                States, Canada, and Thailand, with words appropriate for school
-                use.
-              </Text>
-            </RNView>
-            <RNView
-              style={{
-                opacity: currentDictionary === Dictionary.NSWL2023 ? 1 : 0,
-                marginLeft: 16,
-              }}
-            >
-              <BlueCheckIcon />
-            </RNView>
-          </View>
-        </TouchableOpacity>
+          borderColor={borderColor}
+        />
       </ScrollView>
     </View>
   );
