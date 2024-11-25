@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -159,11 +160,13 @@ export default function Home() {
           </Text>
         )}
         {result && (
-          <View
+          <Animated.View
+            entering={FadeInUp.duration(600).springify()}
             className="rounded-2xl"
             style={{
               borderWidth: StyleSheet.hairlineWidth,
               borderColor,
+              backgroundColor,
             }}
           >
             <RNView className="items-center gap-4 rounded-xl py-12">
@@ -205,7 +208,7 @@ export default function Home() {
                 </RNView>
               </RNView>
             )}
-          </View>
+          </Animated.View>
         )}
       </ScrollView>
       <Text

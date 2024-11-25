@@ -35,7 +35,7 @@ const config: ExpoConfig = {
     },
   },
   runtimeVersion: {
-    policy: "fingerprint",
+    policy: "appVersion",
   },
   extra: {
     eas: {
@@ -52,7 +52,7 @@ const config: ExpoConfig = {
       {
         backgroundColor: "#FFFFFF",
         image: "./assets/images/splash.png",
-        imageWidth: 300,
+        resizeMode: "contain",
         dark: {
           backgroundColor: "#151617",
         },
