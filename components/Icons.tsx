@@ -1,5 +1,5 @@
 import React from "react";
-import { Path, Svg, Rect } from "react-native-svg";
+import { Path, Svg } from "react-native-svg";
 import { useThemeColor } from "../components/Themed";
 
 export function XIcon() {
@@ -18,7 +18,7 @@ export function XIcon() {
 }
 
 export function BookIcon() {
-  const stroke = useThemeColor("text");
+  const stroke = useThemeColor("textSecondary");
   return (
     <Svg width="28" height="28" viewBox="0 0 24 24" fill="none">
       <Path
@@ -61,7 +61,7 @@ export function BlueCheckIcon() {
 }
 
 export function CancelIcon() {
-  const foregroundColor = useThemeColor("text");
+  const foregroundColor = useThemeColor("textSecondary");
   return (
     <Svg width={32} height={32} viewBox="0 0 24 24" fill="none">
       <Path

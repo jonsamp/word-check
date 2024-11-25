@@ -34,7 +34,9 @@ export default function Settings() {
       <View
         colorKey="backgroundSecondary"
         style={{
-          padding: 16,
+          paddingTop: 24,
+          paddingBottom: 16,
+          paddingHorizontal: 24,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -69,8 +71,8 @@ export default function Settings() {
         >
           <View
             style={{
-              padding: 16,
-              borderRadius: 8,
+              padding: 24,
+              borderRadius: 12,
               flexDirection: "row",
               justifyContent: "space-between",
               borderWidth: StyleSheet.hairlineWidth,
@@ -102,8 +104,8 @@ export default function Settings() {
         >
           <View
             style={{
-              padding: 16,
-              borderRadius: 8,
+              padding: 24,
+              borderRadius: 12,
               flexDirection: "row",
               justifyContent: "space-between",
               borderWidth: StyleSheet.hairlineWidth,
@@ -135,8 +137,8 @@ export default function Settings() {
         >
           <View
             style={{
-              padding: 16,
-              borderRadius: 8,
+              padding: 24,
+              borderRadius: 12,
               flexDirection: "row",
               justifyContent: "space-between",
               borderWidth: StyleSheet.hairlineWidth,

@@ -36,7 +36,7 @@ export default function Home() {
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundButtonColor = useThemeColor("backgroundButton");
   const borderColor = useThemeColor("border");
-  const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
+  const backgroundColor = useThemeColor("background");
   const { currentDictionary } = useDictionary();
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState<{
@@ -82,7 +82,10 @@ export default function Home() {
             />
           </RNView>
           <RNView>
-            <Text style={[styles.header]} className="top-2">
+            <Text
+              style={{ ...styles.header, color: textColor }}
+              className="top-2"
+            >
               Word Check
             </Text>
           </RNView>
@@ -96,16 +99,23 @@ export default function Home() {
           </RNView>
         </Link>
       </RNView>
-      <View style={styles.displayHorizontal}>
+      <RNView style={styles.displayHorizontal}>
         <TextInput
-          style={[
-            styles.searchInput,
-            {
-              color: textColor,
-              borderColor,
-              backgroundColor: backgroundSecondaryColor,
-            },
-          ]}
+          style={{
+            color: textColor,
+            borderWidth: StyleSheet.hairlineWidth,
+            backgroundColor,
+            borderColor,
+            paddingLeft: 20,
+            paddingRight: 50,
+            paddingVertical: 20,
+            borderRadius: 12,
+            overflow: "hidden",
+            ...type.body,
+            fontSize: 24,
+            lineHeight: 24,
+            flex: 1,
+          }}
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
           onSubmitEditing={() => handleSubmit()}
@@ -121,7 +131,7 @@ export default function Home() {
           <TouchableOpacity
             style={{
               position: "absolute",
-              right: 0,
+              right: 12,
             }}
             onPress={() => {
               setResult(null);
@@ -131,7 +141,7 @@ export default function Home() {
             <CancelIcon />
           </TouchableOpacity>
         )}
-      </View>
+      </RNView>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {!result && !searchValue && (
           <Text
@@ -163,7 +173,13 @@ export default function Home() {
               <Text style={{ ...type.largeTitle, padding: 0 }}>
                 {capitalizeFirstLetter(result.word.toLowerCase())}
               </Text>
-              <Text style={{ ...type.body, marginTop: -12 }}>
+              <Text
+                style={{
+                  ...type.body,
+                  marginTop: -12,
+                  color: textSecondaryColor,
+                }}
+              >
                 is {result.isValid ? "a playable word" : "not a playable word"}
               </Text>
             </RNView>
@@ -182,7 +198,7 @@ export default function Home() {
                     <Text style={type.headline}>Definition</Text>
                   </RNView>
                   <RNView>
-                    <Text style={type.body}>
+                    <Text style={{ ...type.body, color: textSecondaryColor }}>
                       {capitalizeFirstLetter(definition)}.
                     </Text>
                   </RNView>
@@ -193,8 +209,12 @@ export default function Home() {
         )}
       </ScrollView>
       <Text
-        className="text-center text-sm opacity-50 bottom-5"
-        style={{ ...type.footnote, bottom: insets.bottom }}
+        className="text-center text-sm bottom-5"
+        style={{
+          ...type.footnote,
+          bottom: insets.bottom,
+          color: textSecondaryColor,
+        }}
       >
         {!currentDictionary && "NASPA Word List (NWL) 2023 Edition"}
         {currentDictionary === Dictionary.NWL2023 &&
@@ -218,14 +238,6 @@ const styles = StyleSheet.create({
   displayHorizontal: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  searchInput: {
-    ...type.body,
-    height: 40,
-    fontSize: 28,
-    lineHeight: 28,
-    borderBottomWidth: 1,
-    flex: 1,
   },
   searchButton: {
     backgroundColor: "#000",
