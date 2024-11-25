@@ -9,7 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -35,7 +35,6 @@ export default function Home() {
   const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
-  const backgroundButtonColor = useThemeColor("backgroundButton");
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
   const { currentDictionary } = useDictionary();
@@ -66,7 +65,7 @@ export default function Home() {
       }}
       colorKey="backgroundSecondary"
     >
-      <RNView className="flex-row items-center justify-between mb-6 px-4">
+      <RNView className="flex-row items-center justify-between mb-6 px-5">
         <RNView style={styles.displayHorizontal}>
           <RNView className="rounded-lg overflow-hidden mr-3">
             <Image
@@ -82,17 +81,14 @@ export default function Home() {
           <RNView>
             <Text
               style={{ ...styles.header, color: textColor }}
-              className="top-2"
+              className="top-3"
             >
               Word Check
             </Text>
           </RNView>
         </RNView>
         <Link href="/settings">
-          <RNView
-            className="p-2 rounded-lg"
-            style={{ backgroundColor: backgroundButtonColor }}
-          >
+          <RNView className="p-2">
             <BookIcon />
           </RNView>
         </Link>
@@ -107,7 +103,7 @@ export default function Home() {
             paddingLeft: 20,
             paddingRight: 50,
             paddingVertical: 20,
-            borderRadius: 12,
+            borderRadius: 10,
             overflow: "hidden",
             ...type.body,
             fontSize: 24,
@@ -170,7 +166,7 @@ export default function Home() {
                 width: 0,
                 height: 2,
               },
-              shadowOpacity: 0.1,
+              shadowOpacity: 0.05,
               shadowRadius: 8,
               elevation: 3,
             }}
@@ -221,7 +217,7 @@ export default function Home() {
         className="text-center text-sm bottom-5"
         style={{
           ...type.footnote,
-          bottom: insets.bottom,
+          bottom: insets.bottom + 8,
           color: textSecondaryColor,
         }}
       >

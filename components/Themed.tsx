@@ -26,7 +26,6 @@ type ThemeProps = {
     | "textSecondary"
     | "background"
     | "backgroundSecondary"
-    | "backgroundButton"
     | "border"
     | "success"
     | "danger";
