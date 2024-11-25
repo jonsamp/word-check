@@ -1,6 +1,6 @@
 import { ExpoConfig } from "expo/config";
 
-const isDevelopment = process.env.EAS_BUILD_PROFILE === "development";
+const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 const config: ExpoConfig = {
   name: "Word Check",
@@ -11,26 +11,26 @@ const config: ExpoConfig = {
   version: "2024.52.0",
   orientation: "default",
   userInterfaceStyle: "automatic",
-  icon: isDevelopment
-    ? "./assets/images/icon-dev.png"
-    : "./assets/images/icon.png",
+  icon: isProduction
+    ? "./assets/images/icon.png"
+    : "./assets/images/icon-dev.png",
   updates: {
     url: "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0",
   },
   ios: {
-    bundleIdentifier: `jonsamp.words${isDevelopment ? "-dev" : ""}`,
+    bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
     supportsTablet: true,
   },
   android: {
-    package: `com.jonsamp.wordcheck${isDevelopment ? "-dev" : ""}`,
+    package: `com.jonsamp.wordcheck${isProduction ? "" : "-dev"}`,
     permissions: [],
-    icon: isDevelopment
-      ? "./assets/images/icon-dev.png"
-      : "./assets/images/icon.png",
+    icon: isProduction
+      ? "./assets/images/icon.png"
+      : "./assets/images/icon-dev.png",
     adaptiveIcon: {
-      foregroundImage: isDevelopment
-        ? "./assets/images/adaptive-foreground-dev.png"
-        : "./assets/images/adaptive-foreground.png",
+      foregroundImage: isProduction
+        ? "./assets/images/adaptive-foreground.png"
+        : "./assets/images/adaptive-foreground-dev.png",
       backgroundImage: "./assets/images/adaptive-background.png",
     },
   },

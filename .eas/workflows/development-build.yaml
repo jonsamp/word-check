@@ -1,9 +1,5 @@
 name: Development Build
 
-on:
-  push: 
-    branches: ["*"]
-
 jobs:
   development-build:
     type: build
