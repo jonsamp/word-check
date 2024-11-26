@@ -54,6 +54,9 @@
       }
     }
   },
+  "submit": {
+    "production": {}
+  },
   "cli": {
     "appVersionSource": "remote"
   }

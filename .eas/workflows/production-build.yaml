@@ -1,0 +1,12 @@
+name: Production build and submit
+
+jobs:
+  production-build:
+    type: build
+    params:
+      platform: ios
+      profile: production
+  submit:
+    type: submit
+    params:
+      platform: ios
