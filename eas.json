@@ -2,10 +2,12 @@
   "build": {
     "base": {
       "ios": {
-        "image": "latest"
+        "image": "latest",
+        "autoIncrement": true
       },
       "android": {
-        "image": "latest"
+        "image": "latest",
+        "autoIncrement": true
       }
     },
     "development": {

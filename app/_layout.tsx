@@ -3,6 +3,7 @@ import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { vexo } from "vexo-analytics";
 
 import { Dictionary, loadDictionaryAsync } from "../constants/database";
 
@@ -11,6 +12,8 @@ import { View } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 
 SplashScreen.preventAutoHideAsync();
+
+vexo("73eed99e-9cb2-49fa-bacb-6dee903403c7");
 
 export default function Layout() {
   const [appIsReady, setAppIsReady] = useState(false);

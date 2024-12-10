@@ -155,7 +155,7 @@ export default function Settings() {
 
         <AnimatedDictionaryButton
           title="Collins Scrabble Words (CSW) 2024 Edition"
-          description="Contains 280,887 words. This list is for use outside of the United States and Canada."
+          description="Contains 280,887 words. This list is for use outside the United States and Canada."
           isSelected={currentDictionary === Dictionary.CSW24}
           onPress={() => setDictionary(Dictionary.CSW24)}
           borderColor={borderColor}
@@ -163,7 +163,7 @@ export default function Settings() {
 
         <AnimatedDictionaryButton
           title="NASPA School Word List (NSWL) 2023 Edition"
-          description="Contains 195,747 words. This list is for use in the United States, Canada, and Thailand, with words appropriate for school use."
+          description="Contains 195,747 words. This list is appropriate for school use."
           isSelected={currentDictionary === Dictionary.NSWL2023}
           onPress={() => setDictionary(Dictionary.NSWL2023)}
           borderColor={borderColor}

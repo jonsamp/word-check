@@ -7,6 +7,8 @@ jobs:
       platform: ios
       profile: production
   submit:
+    needs: [production-build]
     type: submit
     params:
       platform: ios
+      build_id: ${{ jobs.production-build.outputs.build_id }}
