@@ -11,3 +11,8 @@ jobs:
     params:
       platform: ios
       profile: development-simulator
+  publish-update:
+    type: update
+    needs: [development-build, development-build-simulator]
+    params:
+      channel: development
