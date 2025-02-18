@@ -22,7 +22,7 @@ const config: ExpoConfig = {
     supportsTablet: true,
   },
   android: {
-    package: `com.jonsamp.wordcheck${isProduction ? "" : "-dev"}`,
+    package: `com.jonsamp.wordcheck${isProduction ? "" : "_dev"}`,
     permissions: [],
     icon: isProduction
       ? "./assets/images/icon.png"
