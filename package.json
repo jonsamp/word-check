@@ -22,7 +22,7 @@
     "expo-splash-screen": "~0.29.13",
     "expo-sqlite": "~15.0.3",
     "expo-status-bar": "~2.0.0",
-    "expo-updates": "~0.26.9",
+    "expo-updates": "^0.27.0",
     "nativewind": "^4.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
