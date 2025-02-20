@@ -99,6 +99,7 @@ export default function Settings() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const borderColor = useThemeColor("border");
+  const textSecondaryColor = useThemeColor("textSecondary");
   const { currentDictionary, setDictionary } = useDictionary();
 
   return (
@@ -168,6 +169,17 @@ export default function Settings() {
           onPress={() => setDictionary(Dictionary.NSWL2023)}
           borderColor={borderColor}
         />
+
+        <Text
+          style={{
+            ...type.callout,
+            color: textSecondaryColor,
+            marginTop: 16,
+            textAlign: "center",
+          }}
+        >
+          App version 2025.52.2 (1)
+        </Text>
       </ScrollView>
     </View>
   );
