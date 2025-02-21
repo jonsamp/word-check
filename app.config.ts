@@ -3,12 +3,12 @@ import { ExpoConfig } from "expo/config";
 const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 const config: ExpoConfig = {
+  version: "2024.52.3",
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
   newArchEnabled: true,
-  platforms: ["ios", "android", "web"],
-  version: "2024.52.3",
+  platforms: ["ios", "android"],
   orientation: "default",
   userInterfaceStyle: "automatic",
   icon: isProduction
