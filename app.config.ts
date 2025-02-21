@@ -38,7 +38,7 @@ const config: ExpoConfig = {
     },
   },
   runtimeVersion: {
-    policy: "fingerprint",
+    policy: "appVersion",
   },
   extra: {
     eas: {
