@@ -20,6 +20,9 @@ const config: ExpoConfig = {
   ios: {
     bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
     supportsTablet: true,
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     package: `com.jonsamp.wordcheck${isProduction ? "" : "_dev"}`,
@@ -35,7 +38,7 @@ const config: ExpoConfig = {
     },
   },
   runtimeVersion: {
-    policy: "appVersion",
+    policy: "fingerprint",
   },
   extra: {
     eas: {
