@@ -8,7 +8,7 @@ const config: ExpoConfig = {
   scheme: "wordcheck",
   newArchEnabled: true,
   platforms: ["ios", "android", "web"],
-  version: "2024.52.2",
+  version: "2024.52.3",
   orientation: "default",
   userInterfaceStyle: "automatic",
   icon: isProduction
