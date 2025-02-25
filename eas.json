@@ -28,6 +28,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "sampjon@gmail.com",
+        "ascAppId": "1489890340",
+        "appleTeamId": "NLUVE3B2AS"
+      }
+    }
   }
 }
