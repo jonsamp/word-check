@@ -1,0 +1,15 @@
+{
+  "configurations": [
+    {
+      "type": "radon-ide",
+      "request": "launch",
+      "name": "Radon IDE panel",
+      "isExpo": true,
+      "eas": {
+        "ios": {
+          "profile": "development-simulator"
+        }
+      }
+    }
+  ]
+}
