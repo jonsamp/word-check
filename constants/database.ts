@@ -12,13 +12,21 @@ export enum Dictionary {
 export const DB_DICTIONARY_KEY = "dictionary";
 
 export async function loadDictionaryAsync(dictionary: Dictionary) {
+  const dbPath = `${FileSystem.documentDirectory}SQLite/${dictionary}.db`;
+
+  // Skip if database already exists
+  const dbInfo = await FileSystem.getInfoAsync(dbPath);
+  if (dbInfo.exists) {
+    return;
+  }
+
   const sqliteDirectory = await FileSystem.getInfoAsync(
-    `${FileSystem.documentDirectory}SQLite`,
+    `${FileSystem.documentDirectory}SQLite`
   );
 
   if (!sqliteDirectory.exists) {
     await FileSystem.makeDirectoryAsync(
-      FileSystem.documentDirectory + "SQLite",
+      FileSystem.documentDirectory + "SQLite"
     );
   }
 
@@ -29,7 +37,9 @@ export async function loadDictionaryAsync(dictionary: Dictionary) {
   };
 
   const databaseAsset = Asset.fromModule(dictionaryAssets[dictionary]);
-  const dbPath = `${FileSystem.documentDirectory}SQLite/${dictionary}.db`;
+
+  // Ensure asset is downloaded/ready
+  await databaseAsset.downloadAsync();
 
   try {
     if (databaseAsset.localUri) {
@@ -49,14 +59,14 @@ export async function loadDictionaryAsync(dictionary: Dictionary) {
 }
 
 export function lookUpWord(
-  searchValue: string,
+  searchValue: string
 ): { word: string; definition: string | null; isValid: boolean } | null {
   const defaultDictionary = Dictionary.NWL2023;
   const dictionary =
     Storage.getItemSync(DB_DICTIONARY_KEY) ?? defaultDictionary;
-  const db = SQLite.openDatabaseSync(`${dictionary}.db`);
 
   try {
+    const db = SQLite.openDatabaseSync(`${dictionary}.db`);
     const sanitizedSearchValue = searchValue.toUpperCase().trim();
     const statement = db.prepareSync("SELECT * FROM words WHERE word = ?");
     const response = statement.executeSync<{
@@ -79,7 +89,7 @@ export function lookUpWord(
       };
     }
   } catch (error) {
-    console.error(error);
+    console.error(`Database error for ${dictionary}:`, error);
     return null;
   }
 }
