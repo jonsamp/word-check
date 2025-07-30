@@ -3,7 +3,7 @@ import { ExpoConfig } from "expo/config";
 const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 const config: ExpoConfig = {
-  version: "2024.52.4",
+  version: "2024.53.0",
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
