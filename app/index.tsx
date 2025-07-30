@@ -44,7 +44,8 @@ export default function Home() {
     definition?: string | null;
     word: string;
   } | null>(null);
-  const definition = result?.definition?.split("[")[0].split(", also")[0] ?? "";
+  const definition =
+    result?.definition?.split("[")[0].split(", also")[0]?.trim() ?? "";
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
