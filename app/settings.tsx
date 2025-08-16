@@ -56,13 +56,13 @@ function AnimatedDictionaryButton({
 
   return (
     <TouchableOpacity
-      // onPressIn={handlePressIn}
-      // onPressOut={handlePressOut}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       onPress={onPress}
       style={{ marginBottom: 16 }}
       activeOpacity={1}
     >
-      <RNView
+      <RNView // Used to be Animated.View, but that caused the following error: "TypeError: Cannot read property '__nativeTag' of null"
         style={[
           {
             padding: 24,
@@ -73,7 +73,7 @@ function AnimatedDictionaryButton({
             borderColor,
             backgroundColor,
           },
-          // animatedStyle,
+          animatedStyle,
         ]}
       >
         <RNView style={{ flex: 1 }}>
