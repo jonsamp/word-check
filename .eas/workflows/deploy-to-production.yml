@@ -1,8 +1,9 @@
 name: Deploy to production
 
-on:
-  push:
-    branches: ["main"]
+# Disabling while upgrading to Expo 54
+# on:
+#   push:
+#     branches: ["main"]
 
 jobs:
   fingerprint:

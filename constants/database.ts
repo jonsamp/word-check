@@ -1,5 +1,5 @@
 import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
+import { File, Directory, Paths } from "expo-file-system";
 import * as SQLite from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
 
@@ -12,22 +12,17 @@ export enum Dictionary {
 export const DB_DICTIONARY_KEY = "dictionary";
 
 export async function loadDictionaryAsync(dictionary: Dictionary) {
-  const dbPath = `${FileSystem.documentDirectory}SQLite/${dictionary}.db`;
+  const sqliteDirectory = new Directory(Paths.document, "SQLite");
+  const dbFile = new File(sqliteDirectory, `${dictionary}.db`);
 
   // Skip if database already exists
-  const dbInfo = await FileSystem.getInfoAsync(dbPath);
-  if (dbInfo.exists) {
+  if (dbFile.exists) {
     return;
   }
 
-  const sqliteDirectory = await FileSystem.getInfoAsync(
-    `${FileSystem.documentDirectory}SQLite`
-  );
-
+  // Create SQLite directory if it doesn't exist
   if (!sqliteDirectory.exists) {
-    await FileSystem.makeDirectoryAsync(
-      FileSystem.documentDirectory + "SQLite"
-    );
+    sqliteDirectory.create();
   }
 
   const dictionaryAssets = {
@@ -44,13 +39,19 @@ export async function loadDictionaryAsync(dictionary: Dictionary) {
   try {
     if (databaseAsset.localUri) {
       // in production, copy from the build
-      await FileSystem.copyAsync({
-        from: databaseAsset.localUri,
-        to: dbPath,
-      });
+      const sourceFile = new File(Paths.bundle, databaseAsset.localUri);
+      sourceFile.copy(dbFile);
     } else {
       // in development, download from local server
-      await FileSystem.downloadAsync(databaseAsset.uri, dbPath);
+      await File.downloadFileAsync(databaseAsset.uri, sqliteDirectory);
+      // Rename the downloaded file to match our expected name
+      const downloadedFile = new File(
+        sqliteDirectory,
+        Paths.basename(databaseAsset.uri)
+      );
+      if (downloadedFile.exists) {
+        downloadedFile.move(dbFile);
+      }
     }
   } catch (error) {
     console.error(`Failed to load dictionary ${dictionary}:`, error);

@@ -1,0 +1,16 @@
+name: Testflight
+
+jobs:
+  build_ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: production
+  send_to_testflight:
+    name: Send to Testflight
+    needs: [build_ios]
+    type: testflight
+    params:
+      build_id: ${{ needs.build_ios.outputs.build_id }}
+      internal_groups: ["Beta"]

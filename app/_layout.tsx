@@ -3,7 +3,7 @@ import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { vexo, customEvent } from "vexo-analytics";
+// import { vexo, customEvent } from "vexo-analytics";
 
 import { Dictionary, loadDictionaryAsync } from "../constants/database";
 
@@ -13,7 +13,7 @@ import { DictionaryProvider } from "../contexts/DictionaryContext";
 
 SplashScreen.preventAutoHideAsync();
 
-vexo("73eed99e-9cb2-49fa-bacb-6dee903403c7");
+// vexo("73eed99e-9cb2-49fa-bacb-6dee903403c7");
 
 export default function Layout() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -31,9 +31,9 @@ export default function Layout() {
         await loadDictionaryAsync(Dictionary.CSW24);
         await loadDictionaryAsync(Dictionary.NSWL2023);
       } catch (e) {
-        customEvent("dictionary_load_error", {
-          error: JSON.stringify(e),
-        });
+        // customEvent("dictionary_load_error", {
+        //   error: JSON.stringify(e),
+        // });
         console.warn(e);
       } finally {
         setAppIsReady(true);

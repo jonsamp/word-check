@@ -56,13 +56,13 @@ function AnimatedDictionaryButton({
 
   return (
     <TouchableOpacity
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+      // onPressIn={handlePressIn}
+      // onPressOut={handlePressOut}
       onPress={onPress}
       style={{ marginBottom: 16 }}
       activeOpacity={1}
     >
-      <Animated.View
+      <RNView
         style={[
           {
             padding: 24,
@@ -73,7 +73,7 @@ function AnimatedDictionaryButton({
             borderColor,
             backgroundColor,
           },
-          animatedStyle,
+          // animatedStyle,
         ]}
       >
         <RNView style={{ flex: 1 }}>
@@ -90,7 +90,7 @@ function AnimatedDictionaryButton({
         >
           <BlueCheckIcon />
         </RNView>
-      </Animated.View>
+      </RNView>
     </TouchableOpacity>
   );
 }
@@ -178,7 +178,7 @@ export default function Settings() {
             textAlign: "center",
           }}
         >
-          App version 2025.52.2 (1)
+          App version 2025.54.0 (0)
         </Text>
       </ScrollView>
     </View>
