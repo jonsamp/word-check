@@ -62,6 +62,14 @@ const config: ExpoConfig = {
         imageWidth: 150,
       },
     ],
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          buildReactNativeFromSource: false,
+        },
+      },
+    ],
   ],
   owner: "jonsamp",
 };
