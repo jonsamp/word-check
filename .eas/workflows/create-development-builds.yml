@@ -10,12 +10,14 @@ jobs:
   ios_device_development_build:
     name: Build iOS device
     type: build
+    image: macos-sequoia-15.5-xcode-26.0
     params:
       platform: ios
       profile: development
   ios_simulator_development_build:
     name: Build iOS simulator
     type: build
+    image: macos-sequoia-15.5-xcode-26.0
     params:
       platform: ios
       profile: development-simulator
