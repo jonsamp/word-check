@@ -38,7 +38,7 @@ export default function Home() {
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
-  const { currentDictionary } = useDictionary();
+  const { currentDictionary, setDictionary } = useDictionary();
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState<{
     isValid: boolean;
@@ -50,6 +50,19 @@ export default function Home() {
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
+  }
+
+  function getDictionaryDisplayName(dictionary: Dictionary) {
+    switch (dictionary) {
+      case Dictionary.NWL2023:
+        return "NWL '23";
+      case Dictionary.CSW24:
+        return "CSW '24";
+      case Dictionary.NSWL2023:
+        return "NSWL '23";
+      default:
+        return "NWL '23";
+    }
   }
 
   async function handleSubmit() {
@@ -99,11 +112,33 @@ export default function Home() {
             </Text>
           </RNView>
         </RNView>
-        <Link href="/settings">
-          <RNView style={{ padding: 8 }}>
-            <BookIcon />
-          </RNView>
-        </Link>
+        <Host>
+          <ContextMenu>
+            <ContextMenu.Trigger>
+              <Button variant="bordered" style={{ width: 100, height: 40 }}>
+                <RNView
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>{getDictionaryDisplayName(currentDictionary)}</Text>
+                </RNView>
+              </Button>
+            </ContextMenu.Trigger>
+            <ContextMenu.Items>
+              <Button onPress={() => setDictionary(Dictionary.NWL2023)}>
+                NASPA Word List (NWL) 2023
+              </Button>
+              <Button onPress={() => setDictionary(Dictionary.CSW24)}>
+                Collins Scrabble Words (CSW) 2024
+              </Button>
+              <Button onPress={() => setDictionary(Dictionary.NSWL2023)}>
+                NASPA School Word List (NSWL) 2023
+              </Button>
+            </ContextMenu.Items>
+          </ContextMenu>
+        </Host>
       </RNView>
       <RNView
         style={{
@@ -131,7 +166,7 @@ export default function Home() {
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
           onSubmitEditing={() => handleSubmit()}
-          onChangeText={text => {
+          onChangeText={(text) => {
             setResult(null);
             setSearchValue(text.trim());
           }}
@@ -170,39 +205,6 @@ export default function Home() {
             Tap "Search" to check if a word is playable.
           </Text>
         )}
-        <Host>
-          <ContextMenu style={{ width: 150, height: 50 }}>
-            <ContextMenu.Items>
-              <Button
-                systemImage="person.crop.circle.badge.xmark"
-                onPress={() => console.log("Pressed1")}
-              >
-                Hello
-              </Button>
-              <Button
-                variant="bordered"
-                systemImage="heart"
-                onPress={() => console.log("Pressed2")}
-              >
-                Love it
-              </Button>
-              <Picker
-                label="Doggos"
-                options={["very", "veery", "veeery", "much"]}
-                variant="menu"
-                selectedIndex={1}
-                // onOptionSelected={({ nativeEvent: { index } }) =>
-                //   setSelectedIndex(index)
-                // }
-              />
-            </ContextMenu.Items>
-            <ContextMenu.Trigger>
-              <Button variant="bordered" style={{ width: 150, height: 50 }}>
-                Show Menu
-              </Button>
-            </ContextMenu.Trigger>
-          </ContextMenu>
-        </Host>
         {result && (
           <Animated.View
             entering={FadeInDown.duration(600).springify()}
