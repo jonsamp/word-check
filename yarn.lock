@@ -1591,6 +1591,11 @@
   dependencies:
     cross-spawn "^7.0.3"
 
+"@expo/ui@~0.2.0-alpha.4":
+  version "0.2.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/@expo/ui/-/ui-0.2.0-alpha.4.tgz#1594c53f37cf813589f004e94075b9f527530f58"
+  integrity sha512-2aYoTC+ePNwU4e+VvIbVTCV82Unal4xoL3M2IyoPC47obmn+/T8N+EXY5ZvT+0huiIwzuuP2B9G0MgogrnAQTg==
+
 "@expo/vector-icons@^14.0.0":
   version "14.1.0"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-14.1.0.tgz#d3dddad8b6ea60502e0fe5485b86751827606ce4"
