@@ -50,7 +50,6 @@ const config: ExpoConfig = {
     "expo-asset",
     "expo-router",
     "expo-sqlite",
-    "react-native-bottom-tabs",
     [
       "expo-splash-screen",
       {
@@ -68,7 +67,6 @@ const config: ExpoConfig = {
       {
         ios: {
           buildReactNativeFromSource: false,
-          useFrameworks: "static",
         },
       },
     ],

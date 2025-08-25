@@ -62,7 +62,7 @@ function AnimatedDictionaryButton({
       style={{ marginBottom: 16 }}
       activeOpacity={1}
     >
-      <RNView // Used to be Animated.View, but that caused the following error: "TypeError: Cannot read property '__nativeTag' of null"
+      <Animated.View
         style={[
           {
             padding: 24,
@@ -90,7 +90,7 @@ function AnimatedDictionaryButton({
         >
           <BlueCheckIcon />
         </RNView>
-      </RNView>
+      </Animated.View>
     </TouchableOpacity>
   );
 }

@@ -66,9 +66,19 @@ export default function Home() {
       }}
       colorKey="backgroundSecondary"
     >
-      <RNView className="flex-row items-center justify-between mb-6 px-5">
+      <RNView
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 24,
+          paddingHorizontal: 20,
+        }}
+      >
         <RNView style={styles.displayHorizontal}>
-          <RNView className="rounded-lg overflow-hidden mr-3">
+          <RNView
+            style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}
+          >
             <Image
               source={isDark ? DarkAppIconImage : AppIconImage}
               style={{
@@ -80,21 +90,24 @@ export default function Home() {
             />
           </RNView>
           <RNView>
-            <Text
-              style={{ ...styles.header, color: textColor }}
-              className="top-3"
-            >
+            <Text style={[{ ...styles.header, color: textColor }, { top: 12 }]}>
               Word Check
             </Text>
           </RNView>
         </RNView>
         <Link href="/settings">
-          <RNView className="p-2">
+          <RNView style={{ padding: 8 }}>
             <BookIcon />
           </RNView>
         </Link>
       </RNView>
-      <RNView className="px-4 flex-row items-center">
+      <RNView
+        style={{
+          paddingHorizontal: 16,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
         <TextInput
           style={{
             color: textColor,
@@ -156,8 +169,8 @@ export default function Home() {
         {result && (
           <Animated.View
             entering={FadeInDown.duration(600).springify()}
-            className="rounded-2xl"
             style={{
+              borderRadius: 16,
               borderWidth: StyleSheet.hairlineWidth,
               borderColor,
               backgroundColor,
@@ -172,8 +185,15 @@ export default function Home() {
               elevation: 3,
             }}
           >
-            <RNView className="items-center gap-4 rounded-xl py-12">
-              <RNView className="mb-2">
+            <RNView
+              style={{
+                alignItems: "center",
+                gap: 16,
+                borderRadius: 12,
+                paddingVertical: 48,
+              }}
+            >
+              <RNView style={{ marginBottom: 8 }}>
                 {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
               <Text style={{ ...type.largeTitle, padding: 0 }}>
@@ -215,8 +235,8 @@ export default function Home() {
         )}
       </ScrollView>
       <Text
-        className="text-center text-sm bottom-5"
         style={{
+          textAlign: "center",
           ...type.footnote,
           bottom: insets.bottom + 8,
           color: textSecondaryColor,

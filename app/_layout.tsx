@@ -7,7 +7,6 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { Dictionary, loadDictionaryAsync } from "../constants/database";
 
-import "../global.css";
 import { View } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 
