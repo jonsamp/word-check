@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { Host, Button, ContextMenu, Picker } from "@expo/ui/swift-ui";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -18,7 +19,7 @@ import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, BookIcon, CheckIcon } from "../components/Icons";
-import { Dictionary, lookUpWord } from "../constants/database";
+import { Dictionary, databaseManager } from "../constants/database";
 import { Link } from "expo-router";
 import { useDictionary } from "../contexts/DictionaryContext";
 
@@ -53,7 +54,10 @@ export default function Home() {
 
   async function handleSubmit() {
     if (!searchValue) return;
-    const result = lookUpWord(searchValue);
+    const result = await databaseManager.lookUpWord(
+      searchValue,
+      currentDictionary
+    );
     setResult(result ?? null);
   }
 
@@ -127,7 +131,7 @@ export default function Home() {
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
           onSubmitEditing={() => handleSubmit()}
-          onChangeText={(text) => {
+          onChangeText={text => {
             setResult(null);
             setSearchValue(text.trim());
           }}
@@ -166,6 +170,39 @@ export default function Home() {
             Tap "Search" to check if a word is playable.
           </Text>
         )}
+        <Host>
+          <ContextMenu style={{ width: 150, height: 50 }}>
+            <ContextMenu.Items>
+              <Button
+                systemImage="person.crop.circle.badge.xmark"
+                onPress={() => console.log("Pressed1")}
+              >
+                Hello
+              </Button>
+              <Button
+                variant="bordered"
+                systemImage="heart"
+                onPress={() => console.log("Pressed2")}
+              >
+                Love it
+              </Button>
+              <Picker
+                label="Doggos"
+                options={["very", "veery", "veeery", "much"]}
+                variant="menu"
+                selectedIndex={1}
+                // onOptionSelected={({ nativeEvent: { index } }) =>
+                //   setSelectedIndex(index)
+                // }
+              />
+            </ContextMenu.Items>
+            <ContextMenu.Trigger>
+              <Button variant="bordered" style={{ width: 150, height: 50 }}>
+                Show Menu
+              </Button>
+            </ContextMenu.Trigger>
+          </ContextMenu>
+        </Host>
         {result && (
           <Animated.View
             entering={FadeInDown.duration(600).springify()}

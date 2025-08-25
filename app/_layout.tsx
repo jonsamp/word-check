@@ -5,7 +5,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 // import { vexo, customEvent } from "vexo-analytics";
 
-import { Dictionary, loadDictionaryAsync } from "../constants/database";
+import { databaseManager } from "../constants/database";
 
 import { View } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
@@ -26,9 +26,7 @@ export default function Layout() {
   useEffect(() => {
     async function prepare() {
       try {
-        await loadDictionaryAsync(Dictionary.NWL2023);
-        await loadDictionaryAsync(Dictionary.CSW24);
-        await loadDictionaryAsync(Dictionary.NSWL2023);
+        await databaseManager.loadAllDatabases();
       } catch (e) {
         // customEvent("dictionary_load_error", {
         //   error: JSON.stringify(e),

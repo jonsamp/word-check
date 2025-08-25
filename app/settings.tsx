@@ -62,6 +62,15 @@ function AnimatedDictionaryButton({
       style={{ marginBottom: 16 }}
       activeOpacity={1}
     >
+      {/* <Button
+        style={{ flex: 1 }}
+        variant="default"
+        onPress={() => {
+          console.log(true);
+        }}
+      >
+        Edit profile
+      </Button> */}
       <Animated.View
         style={[
           {
