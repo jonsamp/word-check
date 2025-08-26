@@ -46,7 +46,12 @@ const config: ExpoConfig = {
     },
   },
   plugins: [
-    "expo-font",
+    [
+      "expo-font",
+      {
+        fonts: ["./assets/fonts/NewYork.ttf"],
+      },
+    ],
     "expo-asset",
     "expo-router",
     "expo-sqlite",

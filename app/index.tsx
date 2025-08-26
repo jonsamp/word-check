@@ -16,8 +16,8 @@ import {
   ContextMenu,
   HStack,
   Text as SwiftUIText,
+  Image as SwiftUIImage,
 } from "@expo/ui/swift-ui";
-import { glassEffect, padding } from "@expo/ui/swift-ui/modifiers";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -67,6 +67,12 @@ export default function Home() {
     setResult(result ?? null);
   }
 
+  function getDictionaryName() {
+    if (currentDictionary === Dictionary.CSW24) return "Worldwide Dictionary";
+    if (currentDictionary === Dictionary.NSWL2023) return "School Dictionary";
+    return "US & Canada Dictionary";
+  }
+
   return (
     <View
       onLayout={SplashScreen.hide}
@@ -100,7 +106,7 @@ export default function Home() {
             />
           </RNView>
           <RNView>
-            <Text style={[{ ...styles.header, color: textColor }, { top: 12 }]}>
+            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
               Word Check
             </Text>
           </RNView>
@@ -126,7 +132,7 @@ export default function Home() {
             overflow: "hidden",
             ...type.body,
             fontSize: 24,
-            lineHeight: 24,
+            lineHeight: 28,
             flex: 1,
           }}
           placeholderTextColor={textSecondaryColor}
@@ -162,8 +168,9 @@ export default function Home() {
               type.body,
               {
                 textAlign: "center",
-                marginHorizontal: 60,
+                marginHorizontal: 100,
                 marginTop: 32,
+                lineHeight: 26,
                 color: textSecondaryColor,
               },
             ]}
@@ -239,22 +246,41 @@ export default function Home() {
           </Animated.View>
         )}
       </ScrollView>
-      <Text
+      <RNView
         style={{
-          textAlign: "center",
-          ...type.footnote,
           bottom: insets.bottom + 8,
-          color: textSecondaryColor,
         }}
       >
-        {!currentDictionary && "NASPA Word List (NWL) 2023 Edition"}
-        {currentDictionary === Dictionary.NWL2023 &&
-          "NASPA Word List (NWL) 2023 Edition"}
-        {currentDictionary === Dictionary.CSW24 &&
-          "Collins Scrabble Words (CSW) 2024 Edition"}
-        {currentDictionary === Dictionary.NSWL2023 &&
-          "NASPA School Word List (NSWL) 2023 Edition"}
-      </Text>
+        <Host>
+          <ContextMenu style={{ width: 150, height: 50 }}>
+            <ContextMenu.Items>
+              <Button onPress={() => setDictionary(Dictionary.NSWL2023)}>
+                School Dictionary
+              </Button>
+              <Button onPress={() => setDictionary(Dictionary.CSW24)}>
+                Worldwide Dictionary
+              </Button>
+              <Button onPress={() => setDictionary(Dictionary.NWL2023)}>
+                US & Canada Dictionary
+              </Button>
+            </ContextMenu.Items>
+            <ContextMenu.Trigger>
+              <Button variant="bordered">
+                <HStack spacing={8}>
+                  <SwiftUIImage
+                    systemName="chevron.down"
+                    size={16}
+                    color={textColor}
+                  />
+                  <SwiftUIText design="serif" style={{ color: textColor }}>
+                    {getDictionaryName() ?? ""}
+                  </SwiftUIText>
+                </HStack>
+              </Button>
+            </ContextMenu.Trigger>
+          </ContextMenu>
+        </Host>
+      </RNView>
     </View>
   );
 }
@@ -262,9 +288,10 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: {
     ...type.largeTitle,
-    fontFamily: "sentinel-semibold",
+    fontFamily: "New York",
     marginBottom: 16,
     fontSize: 24,
+    fontWeight: "bold",
   },
   displayHorizontal: {
     flexDirection: "row",

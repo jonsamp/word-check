@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
-import { useFonts } from "expo-font";
+import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 // import { vexo, customEvent } from "vexo-analytics";
 
@@ -16,12 +15,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [fontsLoaded, fontError] = useFonts({
-    Regular: require("../assets/fonts/sentinel-book.otf"),
-    Italic: require("../assets/fonts/sentinel-bookItalic.otf"),
-    SemiBold: require("../assets/fonts/sentinel-semibold.otf"),
-    Bold: require("../assets/fonts/sentinel-bold.otf"),
-  });
 
   useEffect(() => {
     async function prepare() {
@@ -40,18 +33,12 @@ export default function Layout() {
     prepare();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  if (!appIsReady || !fontsLoaded) {
+  if (!appIsReady) {
     return null;
   }
 
   return (
-    <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <DictionaryProvider>
         <ThemeProvider value={DarkTheme}>
           <Stack>
