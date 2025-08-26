@@ -10,7 +10,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { Host, Button, ContextMenu, Picker } from "@expo/ui/swift-ui";
+import {
+  Host,
+  Button,
+  ContextMenu,
+  HStack,
+  Text as SwiftUIText,
+} from "@expo/ui/swift-ui";
+import { glassEffect, padding } from "@expo/ui/swift-ui/modifiers";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -18,9 +25,8 @@ import { useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
-import { CancelIcon, XIcon, BookIcon, CheckIcon } from "../components/Icons";
+import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
 import { Dictionary, databaseManager } from "../constants/database";
-import { Link } from "expo-router";
 import { useDictionary } from "../contexts/DictionaryContext";
 
 SplashScreen.preventAutoHideAsync();
@@ -50,19 +56,6 @@ export default function Home() {
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
-  }
-
-  function getDictionaryDisplayName(dictionary: Dictionary) {
-    switch (dictionary) {
-      case Dictionary.NWL2023:
-        return "NWL '23";
-      case Dictionary.CSW24:
-        return "CSW '24";
-      case Dictionary.NSWL2023:
-        return "NSWL '23";
-      default:
-        return "NWL '23";
-    }
   }
 
   async function handleSubmit() {
@@ -112,33 +105,6 @@ export default function Home() {
             </Text>
           </RNView>
         </RNView>
-        <Host>
-          <ContextMenu>
-            <ContextMenu.Trigger>
-              <Button variant="bordered" style={{ width: 100, height: 40 }}>
-                <RNView
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>{getDictionaryDisplayName(currentDictionary)}</Text>
-                </RNView>
-              </Button>
-            </ContextMenu.Trigger>
-            <ContextMenu.Items>
-              <Button onPress={() => setDictionary(Dictionary.NWL2023)}>
-                NASPA Word List (NWL) 2023
-              </Button>
-              <Button onPress={() => setDictionary(Dictionary.CSW24)}>
-                Collins Scrabble Words (CSW) 2024
-              </Button>
-              <Button onPress={() => setDictionary(Dictionary.NSWL2023)}>
-                NASPA School Word List (NSWL) 2023
-              </Button>
-            </ContextMenu.Items>
-          </ContextMenu>
-        </Host>
       </RNView>
       <RNView
         style={{

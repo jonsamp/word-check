@@ -61,13 +61,6 @@ export default function Layout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen
-              name="settings"
-              options={{
-                presentation: "modal",
-                headerShown: false,
-              }}
-            />
           </Stack>
         </ThemeProvider>
       </DictionaryProvider>
