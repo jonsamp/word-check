@@ -1092,7 +1092,7 @@
     "@babel/code-frame" "~7.10.4"
     json5 "^2.2.3"
 
-"@expo/metro-config@0.21.5", "@expo/metro-config@~0.21.0", "@expo/metro-config@~0.21.5":
+"@expo/metro-config@0.21.5", "@expo/metro-config@~0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.21.5.tgz#029673e0989d205da354461f6dc688d44dbd89c9"
   integrity sha512-4GMXfryy5wsU5oBR9KU6RlYgVarAzx1KAOFYr2+/gRVFqTpgZFqcoT4HAGVUN4iCeytQRn2oZSKSnucDd3Nq5g==
@@ -1235,7 +1235,7 @@
   resolved "https://registry.yarnpkg.com/@expo/sudo-prompt/-/sudo-prompt-9.3.2.tgz#0fd2813402a42988e49145cab220e25bea74b308"
   integrity sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==
 
-"@expo/ui@~0.2.0-alpha.4":
+"@expo/ui@~0.2.0-alpha.5":
   version "0.2.0-canary-20250826-f475166"
   resolved "https://registry.yarnpkg.com/@expo/ui/-/ui-0.2.0-canary-20250826-f475166.tgz#881c5d0c4654c35ac32e07cb4f4f7902e3e30dbd"
   integrity sha512-XtYI9haOa02fODaBJoB5ykUBayj2qRAeqMLF1j4xtgbhkE8oPzsjNlX6gb1oZLf1IdzSU5F9Hw+EiDoitEPsEw==
@@ -4205,7 +4205,7 @@ expo-updates@~29.0.4:
     ignore "^5.3.1"
     resolve-from "^5.0.0"
 
-expo@^54.0.0-preview.6:
+expo@^54.0.0-preview.8:
   version "54.0.0-preview.8"
   resolved "https://registry.yarnpkg.com/expo/-/expo-54.0.0-preview.8.tgz#607217edafb593be2723ec123fff8d023d7c73f5"
   integrity sha512-ohscTS496Jj+j1294yFEUurR6JhtMCKGGcQsQOydC2mVGwTzOFvLiMtJULBwxA9UyGEaib4VZB+t/7kITGYcnA==
@@ -6556,10 +6556,10 @@ react-native-safe-area-context@~5.6.0:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.6.1.tgz#cb4d249ef1a6f7e8fd0cfdfa9764838dffda26b6"
   integrity sha512-/wJE58HLEAkATzhhX1xSr+fostLsK8Q97EfpfMDKo8jlOc1QKESSX/FQrhk7HhQH/2uSaox4Y86sNaI02kteiA==
 
-react-native-screens@~4.14.0:
-  version "4.14.1"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.14.1.tgz#7d440cb19752dc8dd46c07cca46222df10e4e38d"
-  integrity sha512-/7zxVdk2H4BH/dvqpQQh45VCA05UeC+LCE8TPtGfjn5A+9/UJfKPB8LHhAcWxciLYfMCyW8J2u5dGLGQJH/Ecg==
+react-native-screens@~4.15.0:
+  version "4.15.3"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.15.3.tgz#3efb9c47459b7940446955c2219e85a2e0aea187"
+  integrity sha512-xVQu76cddcIncR2UIX+A7FmWsxmNwGYr5gG8T6B1kMvxqNlXm0zS9U6juBRC9jyVexMvHZ2+cOLjGjkTE2VAjg==
   dependencies:
     react-freeze "^1.0.0"
     react-native-is-edge-to-edge "^1.2.1"

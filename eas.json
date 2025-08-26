@@ -7,6 +7,7 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "node": "22.12.0",
       "ios": {
         "image": "macos-sequoia-15.5-xcode-26.0"
       }
