@@ -18,6 +18,7 @@ import {
   Text as SwiftUIText,
   Image as SwiftUIImage,
 } from "@expo/ui/swift-ui";
+import { useRouter } from "expo-router";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -28,6 +29,7 @@ import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
 import { Dictionary, databaseManager } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
+import { glassEffect, padding } from "@expo/ui/build/swift-ui/modifiers";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +41,7 @@ SplashScreen.setOptions({
 export default function Home() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
+  const router = useRouter();
   const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -111,6 +114,27 @@ export default function Home() {
             </Text>
           </RNView>
         </RNView>
+        <Host matchContents>
+          <Button
+            modifiers={[
+              padding({ all: 12 }),
+              glassEffect({
+                glass: {
+                  variant: "clear",
+                  interactive: true,
+                },
+                shape: "circle",
+              }),
+            ]}
+            onPress={() => router.push("/about")}
+          >
+            <SwiftUIImage
+              systemName="info.circle"
+              size={20}
+              color={textColor}
+            />
+          </Button>
+        </Host>
       </RNView>
       <RNView
         style={{

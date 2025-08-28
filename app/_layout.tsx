@@ -48,6 +48,14 @@ export default function Layout() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="about"
+              options={{
+                title: "About",
+                headerShown: false,
+                presentation: "modal",
+              }}
+            />
           </Stack>
         </ThemeProvider>
       </DictionaryProvider>
