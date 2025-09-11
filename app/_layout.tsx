@@ -3,6 +3,7 @@ import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 // import { vexo, customEvent } from "vexo-analytics";
+import { init, SessionStrategy } from "@bitdrift/react-native";
 
 import { databaseManager } from "../constants/database";
 
@@ -19,6 +20,16 @@ export default function Layout() {
   useEffect(() => {
     async function prepare() {
       try {
+        init(
+          "GiB8r0is1HCaIgLWxhkFegcVE7Ka/nfm5YJ2GpCdQgVsTCILRURUckFrb0FCWVUoEw==",
+          SessionStrategy.Activity,
+          {
+            crashReporting: {
+              enableNativeFatalIssues: true, // Enable native crash reporting (crashes, ANRs, etc.)
+            },
+            enableNetworkInstrumentation: true,
+          }
+        );
         await databaseManager.loadAllDatabases();
       } catch (e) {
         // customEvent("dictionary_load_error", {

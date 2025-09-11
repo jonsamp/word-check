@@ -10,6 +10,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@bitdrift/react-native": "^0.7.3",
     "@expo/ui": "~0.2.0-alpha.5",
     "expo": "^54.0.0-preview.16",
     "expo-asset": "~12.0.7",

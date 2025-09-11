@@ -75,6 +75,12 @@ const config: ExpoConfig = {
         },
       },
     ],
+    [
+      "@bitdrift/react-native",
+      {
+        networkInstrumentation: true,
+      },
+    ],
   ],
   owner: "jonsamp",
 };
