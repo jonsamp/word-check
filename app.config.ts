@@ -3,7 +3,7 @@ import { ExpoConfig } from "expo/config";
 const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 const config: ExpoConfig = {
-  version: "2024.54.0",
+  version: "2024.54.1",
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
@@ -65,14 +65,6 @@ const config: ExpoConfig = {
           image: "./assets/images/icon-splash-dark.png",
         },
         imageWidth: 150,
-      },
-    ],
-    [
-      "expo-build-properties",
-      {
-        ios: {
-          buildReactNativeFromSource: false,
-        },
       },
     ],
     [
