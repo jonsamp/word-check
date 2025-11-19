@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
-// import { vexo, customEvent } from "vexo-analytics";
+import { vexo, customEvent } from "vexo-analytics";
 import { init, SessionStrategy } from "@bitdrift/react-native";
 
 import { databaseManager } from "../constants/database";
@@ -12,7 +12,7 @@ import { DictionaryProvider } from "../contexts/DictionaryContext";
 
 SplashScreen.preventAutoHideAsync();
 
-// vexo("73eed99e-9cb2-49fa-bacb-6dee903403c7");
+vexo("73eed99e-9cb2-49fa-bacb-6dee903403c7");
 
 export default function Layout() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -30,11 +30,14 @@ export default function Layout() {
             enableNetworkInstrumentation: true,
           }
         );
+        customEvent("init_complete", {
+          message: "Vexo initialized successfully",
+        });
         await databaseManager.loadAllDatabases();
       } catch (e) {
-        // customEvent("dictionary_load_error", {
-        //   error: JSON.stringify(e),
-        // });
+        customEvent("dictionary_load_error", {
+          error: JSON.stringify(e),
+        });
         console.warn(e);
       } finally {
         setAppIsReady(true);
