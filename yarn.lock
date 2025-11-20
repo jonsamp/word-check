@@ -4083,6 +4083,11 @@ expo-eas-client@~1.0.7:
   resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-1.0.7.tgz#9c9c7909d7bb9b6ceb4bef6875f1b9119ef22a8c"
   integrity sha512-Q/b1X0fM+3beqqvffok14pjxMF600NxopdSr9WJY61fF4xllcVnALS0kEudffp9ihMOfcb5xWYqzKj6jMqYDIw==
 
+expo-eas-observe@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.3.tgz#83ca169317b79f415f957580d123cb4125e1ba40"
+  integrity sha512-XImykr9AP9C/glZ2Wigjy2QUHknFzIEY51i4A+JgJXqdXfe43IEBf58DhruKIy64zVr1JKFpSWP3TFCNGP1I0Q==
+
 expo-file-system@~19.0.19:
   version "19.0.19"
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-19.0.19.tgz#9f25228ec53e2ff45b75e6bde1bba1d86fad15a4"

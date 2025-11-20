@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -19,6 +19,7 @@ import {
   Image as SwiftUIImage,
 } from "@expo/ui/swift-ui";
 import { useRouter } from "expo-router";
+import AppMetrics from "expo-eas-observe";
 
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
@@ -76,9 +77,22 @@ export default function Home() {
     return "US & Canada Dictionary";
   }
 
+  function hideSplashScreen() {
+    // Mark the TTFR metric – in the future we'll handle this in our root view wrapper
+    // or on the native side somehow
+    AppMetrics.markFirstRender();
+
+    SplashScreen.hide();
+  }
+
+  useEffect(() => {
+    // This needs to be called by the developer once the screen is ready to interact with
+    AppMetrics.markInteractive();
+  }, []);
+
   return (
     <View
-      onLayout={SplashScreen.hide}
+      onLayout={hideSplashScreen}
       style={{
         paddingTop: insets.top + 8,
         flex: 1,
