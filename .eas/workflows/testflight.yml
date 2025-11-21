@@ -12,6 +12,6 @@ jobs:
     type: testflight
     params:
       build_id: ${{ needs.build_ios.outputs.build_id }}
-      internal_groups: ["Staff"]
+      internal_groups: ["App Store Connect Users"]
       external_groups: ["Beta"]
       changelog: "Bug fixes and performance improvements"
