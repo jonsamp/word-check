@@ -1272,10 +1272,12 @@
   resolved "https://registry.yarnpkg.com/@expo/sudo-prompt/-/sudo-prompt-9.3.2.tgz#0fd2813402a42988e49145cab220e25bea74b308"
   integrity sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==
 
-"@expo/ui@~0.2.0-alpha.5":
-  version "0.2.0-canary-20250826-f475166"
-  resolved "https://registry.yarnpkg.com/@expo/ui/-/ui-0.2.0-canary-20250826-f475166.tgz#881c5d0c4654c35ac32e07cb4f4f7902e3e30dbd"
-  integrity sha512-XtYI9haOa02fODaBJoB5ykUBayj2qRAeqMLF1j4xtgbhkE8oPzsjNlX6gb1oZLf1IdzSU5F9Hw+EiDoitEPsEw==
+"@expo/ui@~0.2.0-beta.7":
+  version "0.2.0-beta.7"
+  resolved "https://registry.npmjs.org/@expo/ui/-/ui-0.2.0-beta.7.tgz#3c424cdd7e2602da849492373bff12e32507b1b9"
+  integrity sha512-oz2HEpwll+yMFUKbryZ84IgxjLx7RPxxMDVKpCEsK0OhETrLF5NxHlpCkKjdLuQL3QiVSvj5kn6hBFknco3aCw==
+  dependencies:
+    sf-symbols-typescript "^2.1.0"
 
 "@expo/vector-icons@^15.0.3":
   version "15.0.3"

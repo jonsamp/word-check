@@ -1,10 +1,10 @@
 import { useRouter } from "expo-router";
-import { Host, Button, Text as SwiftUIText, Image } from "@expo/ui/swift-ui";
-import { glassEffect, padding } from "@expo/ui/build/swift-ui/modifiers";
-import { Linking, Pressable } from "react-native";
+import { Host, Text as SwiftUIText } from "@expo/ui/swift-ui";
+import { Linking, Platform, Pressable } from "react-native";
 
 import { View, Text, useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
+import { XButton } from "../components/x-button";
 
 export default function AboutScreen() {
   const router = useRouter();
@@ -22,28 +22,16 @@ export default function AboutScreen() {
           paddingVertical: 24,
         }}
       >
-        <Host matchContents style={{ width: "100%" }}>
-          <SwiftUIText design="serif" weight="semibold" size={32}>
-            About
-          </SwiftUIText>
-        </Host>
-        <Host matchContents>
-          <Button
-            modifiers={[
-              padding({ all: 16 }),
-              glassEffect({
-                glass: {
-                  variant: "clear",
-                  interactive: true,
-                },
-                shape: "circle",
-              }),
-            ]}
-            onPress={() => router.back()}
-          >
-            <Image systemName="xmark" size={20} color={textColor} />
-          </Button>
-        </Host>
+        {Platform.OS === "ios" ? (
+          <Host matchContents style={{ width: "100%" }}>
+            <SwiftUIText design="serif" weight="semibold" size={32}>
+              About
+            </SwiftUIText>
+          </Host>
+        ) : (
+          <Text style={{ fontSize: 32 }}>About</Text>
+        )}
+        <XButton onPress={() => router.back()} color={textColor} />
       </View>
       <View style={{ paddingHorizontal: 24 }}>
         <Text style={{ ...type.body, lineHeight: 24 }}>

@@ -7,7 +7,7 @@ import { init, SessionStrategy } from "@bitdrift/react-native";
 
 import { databaseManager } from "../constants/database";
 
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 
 SplashScreen.preventAutoHideAsync();
@@ -67,7 +67,14 @@ export default function Layout() {
               options={{
                 title: "About",
                 headerShown: false,
-                presentation: "modal",
+                presentation: Platform.select({
+                  android: "formSheet",
+                  default: "modal",
+                }),
+                sheetAllowedDetents: Platform.select({
+                  android: [0.8],
+                  default: undefined,
+                }),
               }}
             />
           </Stack>
