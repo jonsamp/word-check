@@ -10,14 +10,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import {
-  Host,
-  Button,
-  ContextMenu,
-  HStack,
-  Text as SwiftUIText,
-  Image as SwiftUIImage,
-} from "@expo/ui/swift-ui";
 import { useRouter } from "expo-router";
 import AppMetrics from "expo-eas-observe";
 
@@ -30,7 +22,8 @@ import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
 import { Dictionary, databaseManager } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
-import { glassEffect, padding } from "@expo/ui/build/swift-ui/modifiers";
+import { InfoButton } from "../components/info-button";
+import { DictionaryContextMenu } from "../components/dictionary-context-menu";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -128,27 +121,7 @@ export default function Home() {
             </Text>
           </RNView>
         </RNView>
-        <Host matchContents>
-          <Button
-            modifiers={[
-              padding({ all: 12 }),
-              glassEffect({
-                glass: {
-                  variant: "clear",
-                  interactive: true,
-                },
-                shape: "circle",
-              }),
-            ]}
-            onPress={() => router.push("/about")}
-          >
-            <SwiftUIImage
-              systemName="info.circle"
-              size={20}
-              color={textColor}
-            />
-          </Button>
-        </Host>
+        <InfoButton onPress={() => router.push("/about")} color={textColor} />
       </RNView>
       <RNView
         style={{
@@ -289,35 +262,12 @@ export default function Home() {
           bottom: insets.bottom + 8,
         }}
       >
-        <Host>
-          <ContextMenu style={{ width: 150, height: 50 }}>
-            <ContextMenu.Items>
-              <Button onPress={() => setDictionary(Dictionary.NSWL2023)}>
-                School Dictionary
-              </Button>
-              <Button onPress={() => setDictionary(Dictionary.CSW24)}>
-                Worldwide Dictionary
-              </Button>
-              <Button onPress={() => setDictionary(Dictionary.NWL2023)}>
-                US & Canada Dictionary
-              </Button>
-            </ContextMenu.Items>
-            <ContextMenu.Trigger>
-              <Button variant="bordered">
-                <HStack spacing={8}>
-                  <SwiftUIImage
-                    systemName="chevron.down"
-                    size={16}
-                    color={textColor}
-                  />
-                  <SwiftUIText design="serif" style={{ color: textColor }}>
-                    {getDictionaryName() ?? ""}
-                  </SwiftUIText>
-                </HStack>
-              </Button>
-            </ContextMenu.Trigger>
-          </ContextMenu>
-        </Host>
+        <DictionaryContextMenu
+          onSelectDictionary={setDictionary}
+          value={getDictionaryName()}
+          color={textColor}
+          backgroundColor={backgroundColor}
+        />
       </RNView>
     </View>
   );

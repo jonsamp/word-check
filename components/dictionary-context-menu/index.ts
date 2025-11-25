@@ -1,0 +1,1 @@
+export { DictionaryContextMenu } from "./DictionaryContextMenu";
