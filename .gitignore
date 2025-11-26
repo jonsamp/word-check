@@ -39,3 +39,7 @@ yarn-error.*
 app-example
 
 .cursor/
+
+# Expo prebuild files
+android/
+ios/
