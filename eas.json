@@ -9,7 +9,10 @@
       "distribution": "internal",
       "node": "22.12.0",
       "ios": {
-        "image": "macos-sequoia-15.5-xcode-26.0"
+        "resourceClass": "large"
+      },
+      "android": {
+        "resourceClass": "large"
       }
     },
     "development-simulator": {
@@ -18,19 +21,32 @@
       "node": "22.12.0",
       "ios": {
         "simulator": true,
-        "image": "macos-sequoia-15.5-xcode-26.0"
+        "resourceClass": "large"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "resourceClass": "large"
       }
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "ios": {
+        "resourceClass": "large"
+      },
+      "android": {
+        "resourceClass": "large"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "channel": "production"
+      "channel": "production",
+      "ios": {
+        "resourceClass": "large"
+      },
+      "android": {
+        "resourceClass": "large"
+      }
     }
   },
   "submit": {
