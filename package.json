@@ -15,7 +15,7 @@
     "expo-asset": "~12.0.10",
     "expo-constants": "~18.0.10",
     "expo-dev-client": "~6.0.18",
-    "expo-eas-observe": "^0.0.3",
+    "expo-eas-observe": "^0.0.7",
     "expo-file-system": "~19.0.19",
     "expo-font": "~14.0.9",
     "expo-image": "~3.0.10",
