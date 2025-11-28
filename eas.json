@@ -38,6 +38,12 @@
         "resourceClass": "large"
       }
     },
+    "preview-simulator": {
+      "ios": {
+        "simulator": true,
+        "resourceClass": "large"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "channel": "production",
