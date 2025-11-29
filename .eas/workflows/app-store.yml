@@ -1,8 +1,4 @@
-name: Testflight
-
-on:
-  push:
-    branches: ["main"]
+name: App Store
 
 jobs:
   build_ios:
@@ -11,7 +7,7 @@ jobs:
     params:
       platform: ios
   send_to_testflight:
-    name: Send to Testflight
+    name: Send to App Store
     needs: [build_ios]
     type: testflight
     params:

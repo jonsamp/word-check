@@ -1,0 +1,14 @@
+name: Play Store
+
+jobs:
+  build_android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+  send_to_testflight:
+    name: Send to Play Store
+    needs: [build_android]
+    type: submit
+    params:
+      build_id: ${{ needs.build_android.outputs.build_id }}
