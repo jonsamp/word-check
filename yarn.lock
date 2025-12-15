@@ -957,6 +957,11 @@
     "@eslint/core" "^0.15.2"
     levn "^0.4.1"
 
+"@expo-google-fonts/material-symbols@^0.4.16":
+  version "0.4.16"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/material-symbols/-/material-symbols-0.4.16.tgz#51648b3b7da91ff590636e58ae6a44d6f8a2e048"
+  integrity sha512-pEvhgwxBNp8z43sGJCwn29+ahOPZi4C9DjdIEze2EWVu8teqgyVeUbt4LXnqZm5uclMz9Qqnw9CZffi6QNf24g==
+
 "@expo/cli@55.0.0-canary-20251210-1f163e3":
   version "55.0.0-canary-20251210-1f163e3"
   resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-55.0.0-canary-20251210-1f163e3.tgz#bb6a3ae9753acf31851af1f0281e342dc5d10987"
