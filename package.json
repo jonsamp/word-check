@@ -25,6 +25,7 @@
     "expo-splash-screen": "31.0.13-canary-20251210-1f163e3",
     "expo-sqlite": "16.1.0-canary-20251210-1f163e3",
     "expo-status-bar": "3.0.10-canary-20251210-1f163e3",
+    "expo-symbols": "1.1.0-canary-20251210-1f163e3",
     "expo-updates": "29.1.0-canary-20251210-1f163e3",
     "react": "19.2.1",
     "react-dom": "19.2.1",
