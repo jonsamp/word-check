@@ -41,7 +41,7 @@ export default function Home() {
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
-  const { currentDictionary, setDictionary } = useDictionary();
+  const { currentDictionary, setDictionary, isLoading } = useDictionary();
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState<{
     isValid: boolean;
@@ -57,11 +57,35 @@ export default function Home() {
 
   async function handleSubmit() {
     if (!searchValue) return;
-    const result = await databaseManager.lookUpWord(
-      searchValue,
-      currentDictionary
-    );
-    setResult(result ?? null);
+
+    // Wait for dictionary to finish loading if it's currently loading
+    if (isLoading) {
+      // Wait a bit and retry (max 10 seconds)
+      const maxWaitTime = 10000;
+      const startTime = Date.now();
+
+      while (isLoading && Date.now() - startTime < maxWaitTime) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      // If still loading after timeout, show error
+      if (isLoading) {
+        console.warn("Dictionary still loading after timeout");
+        return;
+      }
+    }
+
+    // Ensure the database is loaded
+    try {
+      await databaseManager.loadDatabase(currentDictionary);
+      const result = await databaseManager.lookUpWord(
+        searchValue,
+        currentDictionary
+      );
+      setResult(result ?? null);
+    } catch (error) {
+      console.error("Error looking up word:", error);
+    }
   }
 
   function getDictionaryName() {
@@ -145,6 +169,7 @@ export default function Home() {
             fontSize: 24,
             lineHeight: 28,
             flex: 1,
+            opacity: isLoading ? 0.5 : 1,
           }}
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
@@ -156,6 +181,7 @@ export default function Home() {
           value={searchValue}
           placeholder="Search"
           returnKeyType="search"
+          editable={!isLoading}
         />
         {Boolean(searchValue) && (
           <TouchableOpacity
@@ -259,7 +285,12 @@ export default function Home() {
       </ScrollView>
       <RNView
         style={{
+          position: "absolute",
           bottom: insets.bottom + 8,
+          left: 0,
+          right: 0,
+          alignItems: "center",
+          zIndex: 1000,
         }}
       >
         <DictionaryContextMenu
@@ -267,6 +298,7 @@ export default function Home() {
           value={getDictionaryName()}
           color={textColor}
           backgroundColor={backgroundColor}
+          isLoading={isLoading}
         />
       </RNView>
     </View>

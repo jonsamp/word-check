@@ -7,42 +7,73 @@ import {
 } from "react";
 import * as SQLite from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
-import { DB_DICTIONARY_KEY, Dictionary } from "../constants/database";
+import {
+  DB_DICTIONARY_KEY,
+  Dictionary,
+  databaseManager,
+} from "../constants/database";
 
 interface DictionaryContextType {
   currentDictionary: Dictionary;
   setDictionary: (dictionary: Dictionary) => void;
+  isLoading: boolean;
 }
 
 const DictionaryContext = createContext<DictionaryContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function DictionaryProvider({ children }: { children: ReactNode }) {
   const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(
-    Dictionary.NWL2023,
+    Dictionary.NWL2023
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
-    const dictionaryToUse = storedDictionary
-      ? (storedDictionary as Dictionary)
-      : Dictionary.NWL2023;
+    async function initializeDictionary() {
+      const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
+      const dictionaryToUse = storedDictionary
+        ? (storedDictionary as Dictionary)
+        : Dictionary.NWL2023;
 
-    setCurrentDictionary(dictionaryToUse);
+      setCurrentDictionary(dictionaryToUse);
+
+      // Load only the current dictionary
+      try {
+        await databaseManager.loadDatabase(dictionaryToUse);
+      } catch (error) {
+        console.error("Failed to load dictionary:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    initializeDictionary();
   }, []);
 
-  function setDictionary(dictionary: Dictionary) {
+  async function setDictionary(dictionary: Dictionary) {
+    if (dictionary === currentDictionary) {
+      return;
+    }
+
+    // Update UI immediately for responsive feel
+    setCurrentDictionary(dictionary);
     Storage.setItemSync(DB_DICTIONARY_KEY, dictionary);
 
-    // Close existing database connection
-    const oldDb = SQLite.openDatabaseSync(`${currentDictionary}.db`);
-    oldDb.closeSync();
-
-    // Open new database connection
-    SQLite.openDatabaseSync(`${dictionary}.db`);
-
-    setCurrentDictionary(dictionary);
+    // Load dictionary in background
+    setIsLoading(true);
+    try {
+      await databaseManager.loadDatabase(dictionary);
+    } catch (error) {
+      console.error("Failed to switch dictionary:", error);
+      // Revert on error
+      const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
+      if (storedDictionary && storedDictionary !== dictionary) {
+        setCurrentDictionary(storedDictionary as Dictionary);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -50,6 +81,7 @@ export function DictionaryProvider({ children }: { children: ReactNode }) {
       value={{
         currentDictionary,
         setDictionary,
+        isLoading,
       }}
     >
       {children}

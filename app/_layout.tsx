@@ -3,36 +3,37 @@ import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
-import { databaseManager } from "../constants/database";
-
-import { Platform, View } from "react-native";
+import { Platform, View, useColorScheme } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
+import Colors from "../constants/Colors";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const backgroundColor = isDark
+    ? Colors.dark.backgroundSecondary
+    : Colors.light.backgroundSecondary;
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await databaseManager.loadAllDatabases();
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-
-    prepare();
+    // Just hide the splash screen immediately - database loading happens lazily
+    setAppIsReady(true);
   }, []);
 
+  useEffect(() => {
+    if (appIsReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
   if (!appIsReady) {
-    return null;
+    return <View style={{ flex: 1, backgroundColor }} />;
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor }}>
       <DictionaryProvider>
         <ThemeProvider value={DarkTheme}>
           <Stack>

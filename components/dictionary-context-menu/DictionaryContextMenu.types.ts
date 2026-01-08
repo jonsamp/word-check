@@ -5,4 +5,5 @@ export interface DictionaryContextMenuProps {
   value: string;
   color?: string;
   backgroundColor?: string;
+  isLoading?: boolean;
 }

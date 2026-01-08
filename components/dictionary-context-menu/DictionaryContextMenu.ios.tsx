@@ -7,6 +7,8 @@ import {
   Image as SwiftUIImage,
 } from "@expo/ui/swift-ui";
 
+import { Dimensions } from "react-native";
+
 import { Dictionary } from "../../constants/database";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
@@ -16,8 +18,8 @@ export function DictionaryContextMenu({
   color,
 }: DictionaryContextMenuProps) {
   return (
-    <Host>
-      <ContextMenu style={{ width: 150, height: 40 }}>
+    <Host style={{ width: Dimensions.get("window").width, height: 40 }}>
+      <ContextMenu>
         <ContextMenu.Items>
           <Button onPress={() => onSelectDictionary(Dictionary.NSWL2023)}>
             School Dictionary
