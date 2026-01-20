@@ -78,7 +78,7 @@ export default function Home() {
     try {
       const result = await databaseManager.lookUpWord(
         searchValue,
-        currentDictionary
+        currentDictionary,
       );
       setResult(result ?? null);
     } catch (error) {

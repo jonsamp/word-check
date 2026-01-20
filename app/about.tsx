@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
-import { Host, Text as SwiftUIText } from "@expo/ui/swift-ui";
-import { Linking, Platform, Pressable } from "react-native";
+import { Linking, Platform, Pressable, StyleSheet } from "react-native";
 import AppMetrics from "expo-eas-observe";
 
 import { View, Text, useThemeColor } from "../components/Themed";
@@ -30,11 +29,11 @@ export default function AboutScreen() {
         }}
       >
         {Platform.OS === "ios" ? (
-          <Host matchContents style={{ width: "100%" }}>
-            <SwiftUIText design="serif" weight="semibold" size={32}>
+          <View>
+            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
               About
-            </SwiftUIText>
-          </Host>
+            </Text>
+          </View>
         ) : (
           <Text style={{ fontSize: 32 }}>About</Text>
         )}
@@ -106,3 +105,13 @@ export default function AboutScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    ...type.largeTitle,
+    fontFamily: "New York",
+    marginBottom: 16,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});
