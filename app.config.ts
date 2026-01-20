@@ -46,6 +46,7 @@ const config: ExpoConfig = {
     },
   },
   plugins: [
+    "expo-image",
     "@rnrepo/expo-config-plugin",
     [
       "expo-font",

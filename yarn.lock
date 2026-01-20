@@ -957,12 +957,7 @@
     "@eslint/core" "^0.15.2"
     levn "^0.4.1"
 
-"@expo-google-fonts/material-symbols@^0.4.1":
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/@expo-google-fonts/material-symbols/-/material-symbols-0.4.18.tgz#aa37767bcdfcf066c821313f2e3e1e795291ff67"
-  integrity sha512-wl5L2zHn2WRxcf2yStoelxXfQCq8+0LuZrc08dpxbOTQHtT1tpuEvWhDOHHlXBzs7AEeSbqF2F+HJcnhYiIEfQ==
-
-"@expo-google-fonts/material-symbols@^0.4.16":
+"@expo-google-fonts/material-symbols@^0.4.1", "@expo-google-fonts/material-symbols@^0.4.16":
   version "0.4.16"
   resolved "https://registry.yarnpkg.com/@expo-google-fonts/material-symbols/-/material-symbols-0.4.16.tgz#51648b3b7da91ff590636e58ae6a44d6f8a2e048"
   integrity sha512-pEvhgwxBNp8z43sGJCwn29+ahOPZi4C9DjdIEze2EWVu8teqgyVeUbt4LXnqZm5uclMz9Qqnw9CZffi6QNf24g==
@@ -6634,9 +6629,9 @@ react-native-is-edge-to-edge@1.2.1, react-native-is-edge-to-edge@^1.1.6, react-n
   integrity sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==
 
 react-native-reanimated@~4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-4.2.0.tgz#5b08e53abd12f38a097c9853c8da2b1e8923fc4a"
-  integrity sha512-frhu5b8/m/VvaMWz48V8RxcsXnE3hrlErQ5chr21MzAeDCpY4X14sQjvm+jvu3aOI+7Cz2atdRpyhhIuqxVaXg==
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-4.2.1.tgz#fbdee721bff0946a6e5ae67c8c38c37ca4a0a057"
+  integrity sha512-/NcHnZMyOvsD/wYXug/YqSKw90P9edN0kEPL5lP4PFf1aQ4F1V7MKe/E0tvfkXKIajy3Qocp5EiEnlcrK/+BZg==
   dependencies:
     react-native-is-edge-to-edge "1.2.1"
     semver "7.7.3"
@@ -6646,18 +6641,18 @@ react-native-safe-area-context@~5.6.2:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.6.2.tgz#283e006f5b434fb247fcb4be0971ad7473d5c560"
   integrity sha512-4XGqMNj5qjUTYywJqpdWZ9IG8jgkS3h06sfVjfw5yZQZfWnRFXczi0GnYyFyCc2EBps/qFmoCH8fez//WumdVg==
 
-react-native-screens@~4.19.0-nightly-20251203-1746a584e:
-  version "4.19.0-nightly-20251214-c9b84ff7a"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.19.0-nightly-20251214-c9b84ff7a.tgz#68f5493bb97baf8e0ac6e24bdb779ad8b8fbba32"
-  integrity sha512-cdJbVyP8QjgOA8rWjWvh+w263zb0AIsbSVJN31e7FC2F5HwrrIbjG2AlZ6HzjJGlU/J0rirJ4hNpvvr9KdGB0A==
+react-native-screens@~4.19.0:
+  version "4.19.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.19.0.tgz#d00f2ec070d7426204eaf34ef6c64396a6871e1d"
+  integrity sha512-qSDAO3AL5bti0Ri7KZRSVmWlhDr8MV86N5GruiKVQfEL7Zx2nUi3Dl62lqHUAD/LnDvOPuDDsMHCfIpYSv3hPQ==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-svg@15.12.1:
-  version "15.12.1"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.12.1.tgz#7ba756dd6a235f86a2c312a1e7911f9b0d18ad3a"
-  integrity sha512-vCuZJDf8a5aNC2dlMovEv4Z0jjEUET53lm/iILFnFewa15b4atjVxU6Wirm6O9y6dEsdjDZVD7Q3QM4T1wlI8g==
+react-native-svg@15.15.1:
+  version "15.15.1"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.15.1.tgz#0b08716f5c389ef8550a73492c985c7b23849d65"
+  integrity sha512-ZUD1xwc3Hwo4cOmOLumjJVoc7lEf9oQFlHnLmgccLC19fNm6LVEdtB+Cnip6gEi0PG3wfvVzskViEtrySQP8Fw==
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"
