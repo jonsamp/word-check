@@ -1,15 +1,22 @@
 import { useRouter } from "expo-router";
 import { Host, Text as SwiftUIText } from "@expo/ui/swift-ui";
 import { Linking, Platform, Pressable } from "react-native";
+import AppMetrics from "expo-eas-observe";
 
 import { View, Text, useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
 import { XButton } from "../components/x-button";
+import { useEffect } from "react";
 
 export default function AboutScreen() {
   const router = useRouter();
   const borderColor = useThemeColor("border");
   const textColor = useThemeColor("text");
+
+  useEffect(() => {
+    // This needs to be called by the developer once the screen is ready to interact with
+    AppMetrics.markInteractive();
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>

@@ -20,7 +20,7 @@ import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
-import { Dictionary, databaseManager } from "../constants/database";
+import { databaseManager } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
 import { InfoButton } from "../components/info-button";
 import { DictionaryContextMenu } from "../components/dictionary-context-menu";
