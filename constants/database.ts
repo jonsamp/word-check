@@ -8,6 +8,12 @@ export enum Dictionary {
   NSWL2023 = "NSWL2023",
 }
 
+export const DictionaryNames: Record<Dictionary, string> = {
+  [Dictionary.CSW24]: "Worldwide Dictionary",
+  [Dictionary.NSWL2023]: "School Dictionary",
+  [Dictionary.NWL2023]: "US & Canada Dictionary",
+};
+
 export const DB_DICTIONARY_KEY = "dictionary";
 
 const databaseAssets = {

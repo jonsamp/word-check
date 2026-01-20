@@ -1,15 +1,20 @@
 import {
   Host,
   Button,
-  ContextMenu,
+  Menu,
   HStack,
   Text as SwiftUIText,
   Image as SwiftUIImage,
 } from "@expo/ui/swift-ui";
+import {
+  buttonStyle,
+  font,
+  foregroundStyle,
+} from "@expo/ui/swift-ui/modifiers";
 
 import { Dimensions } from "react-native";
 
-import { Dictionary } from "../../constants/database";
+import { Dictionary, DictionaryNames } from "../../constants/database";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
 export function DictionaryContextMenu({
@@ -17,31 +22,40 @@ export function DictionaryContextMenu({
   value,
   color,
 }: DictionaryContextMenuProps) {
+  const menuLabel = (
+    <Button modifiers={[buttonStyle("bordered")]}>
+      <HStack spacing={8}>
+        <SwiftUIImage systemName="chevron.down" size={16} color={color} />
+        <SwiftUIText
+          modifiers={[font({ design: "serif" }), foregroundStyle(color)]}
+        >
+          {DictionaryNames[value]}
+        </SwiftUIText>
+      </HStack>
+    </Button>
+  );
+
+  const buttons = (Object.keys(DictionaryNames) as Dictionary[]).map(
+    (dictionaryId) => {
+      // Currently there is a bug in expo/ui that shows menu's label as an option in the menu,
+      // so we're hiding one that would be a duplicate.
+      if (dictionaryId === value) {
+        return null;
+      }
+      return (
+        <Button
+          key={dictionaryId}
+          onPress={() => onSelectDictionary(dictionaryId)}
+        >
+          <SwiftUIText>{DictionaryNames[dictionaryId]}</SwiftUIText>
+        </Button>
+      );
+    }
+  );
+
   return (
     <Host style={{ width: Dimensions.get("window").width, height: 40 }}>
-      <ContextMenu>
-        <ContextMenu.Items>
-          <Button onPress={() => onSelectDictionary(Dictionary.NSWL2023)}>
-            School Dictionary
-          </Button>
-          <Button onPress={() => onSelectDictionary(Dictionary.CSW24)}>
-            Worldwide Dictionary
-          </Button>
-          <Button onPress={() => onSelectDictionary(Dictionary.NWL2023)}>
-            US & Canada Dictionary
-          </Button>
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Button variant="bordered">
-            <HStack spacing={8}>
-              <SwiftUIImage systemName="chevron.down" size={16} color={color} />
-              <SwiftUIText design="serif" color={color}>
-                {value ?? ""}
-              </SwiftUIText>
-            </HStack>
-          </Button>
-        </ContextMenu.Trigger>
-      </ContextMenu>
+      <Menu label={menuLabel}>{buttons}</Menu>
     </Host>
   );
 }

@@ -88,12 +88,6 @@ export default function Home() {
     }
   }
 
-  function getDictionaryName() {
-    if (currentDictionary === Dictionary.CSW24) return "Worldwide Dictionary";
-    if (currentDictionary === Dictionary.NSWL2023) return "School Dictionary";
-    return "US & Canada Dictionary";
-  }
-
   function hideSplashScreen() {
     // Mark the TTFR metric – in the future we'll handle this in our root view wrapper
     // or on the native side somehow
@@ -295,7 +289,7 @@ export default function Home() {
       >
         <DictionaryContextMenu
           onSelectDictionary={setDictionary}
-          value={getDictionaryName()}
+          value={currentDictionary}
           color={textColor}
           backgroundColor={backgroundColor}
           isLoading={isLoading}
