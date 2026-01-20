@@ -4161,7 +4161,7 @@ expo-eas-client@1.0.9-canary-20260119-70f7c28:
   resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-1.0.9-canary-20260119-70f7c28.tgz#4607a2e19029157beb6ded0b2bdc87d7e5cb7859"
   integrity sha512-BddRaxUC2FBNCn8Au5v3oqdGEEUVXgrWejz5X+tRr2FodXkxp7QhZAPX/QIbHVVpauT0j315lGrhsDWdmsn6uw==
 
-expo-eas-observe@0.0.11:
+expo-eas-observe@^0.0.11:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.11.tgz#2f4ef6d5ebef55eee7d3f9fccbfab7cbef02b1d0"
   integrity sha512-YRs42a3WZo+hcz/V8Wxzp52UiByhIrUsxmZdruQAOqoZIsTRSLw/jO0i72DuXB4Xld9NuqI/NnTaRY0y9VQNlw==

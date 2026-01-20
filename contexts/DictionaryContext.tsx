@@ -5,7 +5,6 @@ import {
   useState,
   ReactNode,
 } from "react";
-import * as SQLite from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
 import {
   DB_DICTIONARY_KEY,
@@ -25,55 +24,40 @@ const DictionaryContext = createContext<DictionaryContextType | undefined>(
 
 export function DictionaryProvider({ children }: { children: ReactNode }) {
   const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(
-    Dictionary.NWL2023
+    Dictionary.NWL23
   );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function initializeDictionary() {
+    async function initializeDatabase() {
       const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
       const dictionaryToUse = storedDictionary
         ? (storedDictionary as Dictionary)
-        : Dictionary.NWL2023;
+        : Dictionary.NWL23;
 
       setCurrentDictionary(dictionaryToUse);
 
-      // Load only the current dictionary
+      // Load the unified database once at startup
       try {
-        await databaseManager.loadDatabase(dictionaryToUse);
+        await databaseManager.loadDatabase();
       } catch (error) {
-        console.error("Failed to load dictionary:", error);
+        console.error("Failed to load database:", error);
       } finally {
         setIsLoading(false);
       }
     }
 
-    initializeDictionary();
+    initializeDatabase();
   }, []);
 
-  async function setDictionary(dictionary: Dictionary) {
+  function setDictionary(dictionary: Dictionary) {
     if (dictionary === currentDictionary) {
       return;
     }
 
-    // Update UI immediately for responsive feel
+    // Switching dictionaries is now instant - no database reload needed
     setCurrentDictionary(dictionary);
     Storage.setItemSync(DB_DICTIONARY_KEY, dictionary);
-
-    // Load dictionary in background
-    setIsLoading(true);
-    try {
-      await databaseManager.loadDatabase(dictionary);
-    } catch (error) {
-      console.error("Failed to switch dictionary:", error);
-      // Revert on error
-      const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
-      if (storedDictionary && storedDictionary !== dictionary) {
-        setCurrentDictionary(storedDictionary as Dictionary);
-      }
-    } finally {
-      setIsLoading(false);
-    }
   }
 
   return (

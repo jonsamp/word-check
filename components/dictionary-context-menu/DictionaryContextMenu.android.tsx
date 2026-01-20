@@ -22,9 +22,9 @@ export function DictionaryContextMenu({
   const [isVisible, setIsVisible] = useState(false);
 
   const options = [
-    { label: "US & Canada Dictionary", value: Dictionary.NWL2023 },
+    { label: "US & Canada Dictionary", value: Dictionary.NWL23 },
     { label: "Worldwide Dictionary", value: Dictionary.CSW24 },
-    { label: "School Dictionary", value: Dictionary.NSWL2023 },
+    { label: "School Dictionary", value: Dictionary.NSWL23 },
   ];
 
   const handleSelect = (dict: Dictionary) => {

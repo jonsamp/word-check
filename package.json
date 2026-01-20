@@ -17,7 +17,7 @@
     "expo-asset": "12.0.12-20260119-70f7c28",
     "expo-constants": "18.1.0-canary-20260119-70f7c28",
     "expo-dev-client": "6.1.0-canary-20260119-70f7c28",
-    "expo-eas-observe": "0.0.11",
+    "expo-eas-observe": "^0.0.11",
     "expo-file-system": "19.0.21-canary-20260119-70f7c28",
     "expo-font": "14.1.0-canary-20260119-70f7c28",
     "expo-image": "3.1.0-canary-20260119-70f7c28",

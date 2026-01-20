@@ -75,9 +75,7 @@ export default function Home() {
       }
     }
 
-    // Ensure the database is loaded
     try {
-      await databaseManager.loadDatabase(currentDictionary);
       const result = await databaseManager.lookUpWord(
         searchValue,
         currentDictionary
