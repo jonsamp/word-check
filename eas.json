@@ -8,9 +8,6 @@
       "developmentClient": true,
       "distribution": "internal",
       "node": "22.12.0",
-      "ios": {
-        "resourceClass": "large"
-      },
       "android": {
         "resourceClass": "large"
       }
@@ -20,8 +17,7 @@
       "distribution": "internal",
       "node": "22.12.0",
       "ios": {
-        "simulator": true,
-        "resourceClass": "large"
+        "simulator": true
       },
       "android": {
         "buildType": "apk",
