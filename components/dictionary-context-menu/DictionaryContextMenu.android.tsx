@@ -9,7 +9,7 @@ import {
 import { Text } from "../Themed";
 import { ChevronDownIcon } from "../Icons";
 
-import { Dictionary } from "../../constants/database";
+import { Dictionary, DictionaryNames } from "../../constants/database";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
 export function DictionaryContextMenu({
@@ -47,7 +47,7 @@ export function DictionaryContextMenu({
         disabled={isLoading}
       >
         <Text style={{ color: color + "99", fontSize: 16, fontWeight: "500" }}>
-          {value}
+          {DictionaryNames[value]}
         </Text>
         {isLoading ? (
           <ActivityIndicator size="small" color={color + "99"} />
