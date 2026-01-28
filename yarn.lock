@@ -4059,15 +4059,18 @@ expo-dev-menu@55.0.2:
   dependencies:
     expo-dev-menu-interface "55.0.0"
 
-expo-eas-client@~55.0.2:
+expo-eas-client@^55.0.0, expo-eas-client@~55.0.2:
   version "55.0.2"
   resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-55.0.2.tgz#d06f721e9dd09e38b2823e308cd0b7cde33b4cb6"
   integrity sha512-fjOgSXaZFBK2Xmzn/uw0DTF3BsYv97JEa4PYXXqVCEvNJPwJB1cV1eX6Xyq6iKGIhMPH9k62sOc+oUdt094WCw==
 
-expo-eas-observe@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.11.tgz#2f4ef6d5ebef55eee7d3f9fccbfab7cbef02b1d0"
-  integrity sha512-YRs42a3WZo+hcz/V8Wxzp52UiByhIrUsxmZdruQAOqoZIsTRSLw/jO0i72DuXB4Xld9NuqI/NnTaRY0y9VQNlw==
+expo-eas-observe@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.13.tgz#f3ea7ad0653af47c25f993ceef04b21dafcf2a12"
+  integrity sha512-j5csOy4PvfRzmUpK+IB6jBXr0dt8V/wfrZhQWsg6MjNFKO0tuHG8zpHvDZ+vl/sJbfQaBD8NrQOQWT7ZHuxvQQ==
+  dependencies:
+    expo-eas-client "^55.0.0"
+    expo-updates-interface "^55.0.0"
 
 expo-file-system@~55.0.2:
   version "55.0.2"
@@ -4209,7 +4212,7 @@ expo-symbols@^55.0.2, expo-symbols@~55.0.2:
     "@expo-google-fonts/material-symbols" "^0.4.1"
     sf-symbols-typescript "^2.0.0"
 
-expo-updates-interface@~55.1.1:
+expo-updates-interface@^55.0.0, expo-updates-interface@~55.1.1:
   version "55.1.1"
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-55.1.1.tgz#4b67c677dc2db62c8e6a1b72172ef900e3d2054f"
   integrity sha512-++rlh9dNRUgm+uqN+x4vB/8ELidt0gc3kbwec55YzRizdD845kn5ufjTcGpkGs9SbAYHsP0eh8axlKHpY/v7Kg==
