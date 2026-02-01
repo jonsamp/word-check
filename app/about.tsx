@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Linking, Platform, Pressable, StyleSheet } from "react-native";
+import { Linking, Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import AppMetrics from "expo-eas-observe";
 
 import { View, Text, useThemeColor } from "../components/Themed";
@@ -39,7 +39,7 @@ export default function AboutScreen() {
         )}
         <XButton onPress={() => router.back()} color={textColor} />
       </View>
-      <View style={{ paddingHorizontal: 24 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}>
         <Text style={{ ...type.body, lineHeight: 28 }}>
           Word Check determines the validity of words in the game of SCRABBLE™.
           It uses the official SCRABBLE™ dictionary to determine if a word is
@@ -98,11 +98,61 @@ export default function AboutScreen() {
                 color: "black",
               }}
             >
-              ☕ Buy me a coffee
+              ☕ Buy Me a Coffee
             </Text>
           </Pressable>
         </View>
-      </View>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: 40,
+            borderTopWidth: 1,
+            borderTopColor: borderColor,
+            paddingTop: 24,
+          }}
+        >
+          <Text style={{ ...type.body, lineHeight: 28 }}>
+            Word Check does not collect any personal data. For more information,
+            please refer to the{" "}
+          </Text>
+          <Pressable
+            onPress={() =>
+              Linking.openURL(
+                "https://gist.github.com/jonsamp/9c0342948416bd810c3a0a508e242a45",
+              )
+            }
+          >
+            <Text
+              style={{
+                ...type.body,
+                lineHeight: 28,
+                textDecorationLine: "underline",
+              }}
+            >
+              Privacy Policy
+            </Text>
+          </Pressable>
+          <Text style={{ ...type.body, lineHeight: 28 }}>.</Text>
+        </View>
+        <Text
+          style={{
+            ...type.body,
+            marginTop: 40,
+            borderTopWidth: 1,
+            borderTopColor: borderColor,
+            paddingTop: 24,
+            fontSize: 13,
+            lineHeight: 22,
+            opacity: 0.6,
+          }}
+        >
+          NASPA Word List © North American Scrabble Players Association.{"\n"}
+          Collins Scrabble Words © HarperCollins Publishers Ltd.{"\n"}
+          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc.
+          (elsewhere).
+        </Text>
+      </ScrollView>
     </View>
   );
 }
