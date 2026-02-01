@@ -40,9 +40,9 @@ export default function AboutScreen() {
         <XButton onPress={() => router.back()} color={textColor} />
       </View>
       <View style={{ paddingHorizontal: 24 }}>
-        <Text style={{ ...type.body, lineHeight: 24 }}>
-          Word Check determines the validity of words in the game of SCRABBLE™️.
-          It uses the official SCRABBLE™️ dictionary to determine if a word is
+        <Text style={{ ...type.body, lineHeight: 28 }}>
+          Word Check determines the validity of words in the game of SCRABBLE™.
+          It uses the official SCRABBLE™ dictionary to determine if a word is
           valid. The dictionaries are as follows:
         </Text>
         <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>
@@ -55,7 +55,7 @@ export default function AboutScreen() {
           Worldwide Dictionary
         </Text>
         <Text style={{ ...type.body, marginTop: 8 }}>
-          Collins SCRABBLE™️ Words (CSW) 2024 Edition
+          Collins SCRABBLE™ Words (CSW) 2024 Edition
         </Text>
         <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>
           School Dictionary
@@ -70,10 +70,11 @@ export default function AboutScreen() {
             borderTopWidth: 1,
             borderTopColor: borderColor,
             paddingTop: 24,
+            lineHeight: 28,
           }}
         >
           If you got value from this app, you can support me by buying me a
-          coffee:
+          coffee. This is an optional tip and does not unlock any features:
         </Text>
         <View
           style={{
