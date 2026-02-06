@@ -1,0 +1,25 @@
+name: Release to app stores
+
+jobs:
+  build_ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+  app_store:
+    name: Send to App Store
+    needs: [build_ios]
+    type: testflight
+    params:
+      build_id: ${{ needs.build_ios.outputs.build_id }}
+  build_android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+  play_store:
+    name: Send to Play Store
+    needs: [build_android]
+    type: submit
+    params:
+      build_id: ${{ needs.build_android.outputs.build_id }}
