@@ -4064,10 +4064,10 @@ expo-eas-client@^55.0.0, expo-eas-client@~55.0.2:
   resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-55.0.2.tgz#d06f721e9dd09e38b2823e308cd0b7cde33b4cb6"
   integrity sha512-fjOgSXaZFBK2Xmzn/uw0DTF3BsYv97JEa4PYXXqVCEvNJPwJB1cV1eX6Xyq6iKGIhMPH9k62sOc+oUdt094WCw==
 
-expo-eas-observe@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.13.tgz#f3ea7ad0653af47c25f993ceef04b21dafcf2a12"
-  integrity sha512-j5csOy4PvfRzmUpK+IB6jBXr0dt8V/wfrZhQWsg6MjNFKO0tuHG8zpHvDZ+vl/sJbfQaBD8NrQOQWT7ZHuxvQQ==
+expo-eas-observe@0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/expo-eas-observe/-/expo-eas-observe-0.0.17.tgz#7428096cac8f815d4cb2a2ff0c163a0921c44c48"
+  integrity sha512-oAkUFdekIKERAtOCFw/jsVSKWAxmCsfdOZxeEROUv6TxbbhHqZy1m8Xh2mVs8GlAUniJ9/mT/qmXPD9ZMNHr6A==
   dependencies:
     expo-eas-client "^55.0.0"
     expo-updates-interface "^55.0.0"
