@@ -1,5 +1,11 @@
 import { useRouter } from "expo-router";
-import { Linking, Platform, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import AppMetrics from "expo-eas-observe";
 
 import { View, Text, useThemeColor } from "../components/Themed";
@@ -39,7 +45,9 @@ export default function AboutScreen() {
         )}
         <XButton onPress={() => router.back()} color={textColor} />
       </View>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+      >
         <Text style={{ ...type.body, lineHeight: 28 }}>
           Word Check determines the validity of words in the game of SCRABBLE™.
           It uses the official SCRABBLE™ dictionary to determine if a word is
