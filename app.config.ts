@@ -68,7 +68,6 @@ const config: ExpoConfig = {
         imageWidth: 150,
       },
     ],
-    "expo-eas-observe",
   ],
   owner: "jonsamp",
 };
