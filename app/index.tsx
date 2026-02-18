@@ -192,7 +192,10 @@ export default function Home() {
           </TouchableOpacity>
         )}
       </RNView>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         {!result && (
           <RNView style={{ alignItems: "center", marginTop: 32 }}>
             {!searchValue && (
@@ -233,9 +236,7 @@ export default function Home() {
                   ]}
                   onPress={handleSubmit}
                 >
-                  <Text
-                    style={[styles.searchButtonText, { color: textColor }]}
-                  >
+                  <Text style={[styles.searchButtonText, { color: textColor }]}>
                     Search
                   </Text>
                 </TouchableOpacity>
