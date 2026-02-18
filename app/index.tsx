@@ -55,13 +55,8 @@ export default function Home() {
     return input.charAt(0).toUpperCase() + input.slice(1);
   }
 
-  async function search(text: string) {
-    setSearchValue(text);
-
-    if (!text) {
-      setResult(null);
-      return;
-    }
+  async function handleSubmit() {
+    if (!searchValue) return;
 
     // Wait for dictionary to finish loading if it's currently loading
     if (isLoading) {
@@ -81,7 +76,10 @@ export default function Home() {
     }
 
     try {
-      const result = await databaseManager.lookUpWord(text, currentDictionary);
+      const result = await databaseManager.lookUpWord(
+        searchValue,
+        currentDictionary,
+      );
       setResult(result ?? null);
     } catch (error) {
       console.error("Error looking up word:", error);
@@ -167,8 +165,11 @@ export default function Home() {
           }}
           placeholderTextColor={textSecondaryColor}
           autoCorrect={false}
-          onSubmitEditing={() => search(searchValue)}
-          onChangeText={(text) => search(text.trim())}
+          onSubmitEditing={() => handleSubmit()}
+          onChangeText={(text) => {
+            setResult(null);
+            setSearchValue(text.trim());
+          }}
           value={searchValue}
           placeholder="Search"
           returnKeyType="search"
