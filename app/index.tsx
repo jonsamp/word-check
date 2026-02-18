@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Keyboard,
   StyleSheet,
   TextInput,
   ScrollView,
@@ -9,7 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import AppMetrics from "expo-eas-observe";
 
@@ -56,6 +57,7 @@ export default function Home() {
   }
 
   async function handleSubmit() {
+    Keyboard.dismiss();
     if (!searchValue) return;
 
     // Wait for dictionary to finish loading if it's currently loading
@@ -190,22 +192,56 @@ export default function Home() {
           </TouchableOpacity>
         )}
       </RNView>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {!result && !searchValue && (
-          <Text
-            style={[
-              type.body,
-              {
-                textAlign: "center",
-                marginHorizontal: 100,
-                marginTop: 32,
-                lineHeight: 26,
-                color: textSecondaryColor,
-              },
-            ]}
-          >
-            Tap "Search" to check if a word is playable.
-          </Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        {!result && (
+          <RNView style={{ alignItems: "center", marginTop: 32 }}>
+            {!searchValue && (
+              <Animated.View
+                key="helper-text"
+                entering={FadeIn.duration(200)}
+                exiting={FadeOut.duration(200)}
+              >
+                <Text
+                  style={[
+                    type.body,
+                    {
+                      textAlign: "center",
+                      marginHorizontal: 100,
+                      lineHeight: 26,
+                      color: textSecondaryColor,
+                    },
+                  ]}
+                >
+                  Validate if a word is playable.
+                </Text>
+              </Animated.View>
+            )}
+            {Boolean(searchValue) && (
+              <Animated.View
+                key="search-button"
+                entering={FadeIn.duration(200)}
+                exiting={FadeOut.duration(200)}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.searchButton,
+                    {
+                      backgroundColor: isDark
+                        ? "rgba(255,255,255,0.1)"
+                        : "rgba(0,0,0,0.06)",
+                    },
+                  ]}
+                  onPress={handleSubmit}
+                >
+                  <Text
+                    style={[styles.searchButtonText, { color: textColor }]}
+                  >
+                    Search
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+          </RNView>
         )}
         {result && (
           <Animated.View
@@ -310,16 +346,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchButton: {
-    backgroundColor: "#000",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 2,
-    marginLeft: 8,
-    height: 40,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 100,
   },
   searchButtonText: {
     ...type.headline,
-    color: "#FFF",
   },
   scrollContainer: {
     flex: 1,
