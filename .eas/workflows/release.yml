@@ -1,10 +1,5 @@
 name: Release to app stores
 
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build_ios:
     name: Build iOS
