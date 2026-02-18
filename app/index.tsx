@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Keyboard,
+  Platform,
   StyleSheet,
   TextInput,
   ScrollView,
@@ -197,8 +198,8 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
       >
         {!result && (
-          <RNView style={{ alignItems: "center", marginTop: 32 }}>
-            {!searchValue && (
+          <RNView style={{ alignItems: "center", marginTop: 8 }}>
+            {(!searchValue || Platform.OS === "ios") && !result && (
               <Animated.View
                 key="helper-text"
                 entering={FadeIn.duration(200)}
@@ -212,6 +213,7 @@ export default function Home() {
                       marginHorizontal: 100,
                       lineHeight: 26,
                       color: textSecondaryColor,
+                      marginTop: 16,
                     },
                   ]}
                 >
@@ -219,24 +221,30 @@ export default function Home() {
                 </Text>
               </Animated.View>
             )}
-            {Boolean(searchValue) && (
+            {Boolean(searchValue) && Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
                 entering={FadeIn.duration(200)}
                 exiting={FadeOut.duration(200)}
+                style={{ width: "100%", paddingHorizontal: 16 }}
               >
                 <TouchableOpacity
                   style={[
                     styles.searchButton,
                     {
-                      backgroundColor: isDark
-                        ? "rgba(255,255,255,0.1)"
-                        : "rgba(0,0,0,0.06)",
+                      width: "100%",
+                      alignItems: "center",
+                      backgroundColor: textColor,
                     },
                   ]}
                   onPress={handleSubmit}
                 >
-                  <Text style={[styles.searchButtonText, { color: textColor }]}>
+                  <Text
+                    style={[
+                      styles.searchButtonText,
+                      { color: backgroundColor },
+                    ]}
+                  >
                     Search
                   </Text>
                 </TouchableOpacity>
@@ -356,7 +364,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 24,
+    marginTop: 16,
   },
   validationContainer: {
     padding: 16,
