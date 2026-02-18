@@ -141,58 +141,59 @@ export default function Home() {
         </RNView>
         <InfoButton onPress={() => router.push("/about")} color={textColor} />
       </RNView>
-      <RNView
-        style={{
-          paddingHorizontal: 16,
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <TextInput
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="always">
+        <RNView
           style={{
-            color: textColor,
-            borderWidth: StyleSheet.hairlineWidth,
-            backgroundColor,
-            borderColor,
-            paddingLeft: 20,
-            paddingRight: 50,
-            paddingVertical: 20,
-            borderRadius: 10,
-            overflow: "hidden",
-            ...type.body,
-            fontSize: 24,
-            lineHeight: 28,
-            flex: 1,
-            opacity: isLoading ? 0.5 : 1,
+            paddingHorizontal: 16,
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 24,
           }}
-          placeholderTextColor={textSecondaryColor}
-          autoCorrect={false}
-          onSubmitEditing={() => handleSubmit()}
-          onChangeText={(text) => {
-            setResult(null);
-            setSearchValue(text.trim());
-          }}
-          value={searchValue}
-          placeholder="Search"
-          returnKeyType="search"
-          editable={!isLoading}
-        />
-        {Boolean(searchValue) && (
-          <TouchableOpacity
+        >
+          <TextInput
             style={{
-              position: "absolute",
-              right: 24,
+              color: textColor,
+              borderWidth: StyleSheet.hairlineWidth,
+              backgroundColor,
+              borderColor,
+              paddingLeft: 20,
+              paddingRight: 50,
+              paddingVertical: 20,
+              borderRadius: 10,
+              overflow: "hidden",
+              ...type.body,
+              fontSize: 24,
+              lineHeight: 28,
+              flex: 1,
+              opacity: isLoading ? 0.5 : 1,
             }}
-            onPress={() => {
+            placeholderTextColor={textSecondaryColor}
+            autoCorrect={false}
+            onSubmitEditing={() => handleSubmit()}
+            onChangeText={(text) => {
               setResult(null);
-              setSearchValue("");
+              setSearchValue(text.trim());
             }}
-          >
-            <CancelIcon />
-          </TouchableOpacity>
-        )}
-      </RNView>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+            value={searchValue}
+            placeholder="Search"
+            returnKeyType="search"
+            editable={!isLoading}
+          />
+          {Boolean(searchValue) && (
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 24,
+              }}
+              onPress={() => {
+                setResult(null);
+                setSearchValue("");
+              }}
+            >
+              <CancelIcon />
+            </TouchableOpacity>
+          )}
+        </RNView>
         {!result && (
           <RNView style={{ alignItems: "center", marginTop: 32 }}>
             {!searchValue && (
@@ -355,7 +356,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 24,
   },
   validationContainer: {
     padding: 16,
