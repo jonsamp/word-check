@@ -13,8 +13,6 @@ import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import AppMetrics from "expo-eas-observe";
-
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
 import { useThemeColor } from "../components/Themed";
@@ -90,16 +88,19 @@ export default function Home() {
   }
 
   function hideSplashScreen() {
-    // Mark the TTFR metric – in the future we'll handle this in our root view wrapper
-    // or on the native side somehow
-    AppMetrics.markFirstRender();
+    if (Platform.OS !== "web") {
+      const AppMetrics = require("expo-eas-observe").default;
+      AppMetrics.markFirstRender();
+    }
 
     SplashScreen.hide();
   }
 
   useEffect(() => {
-    // This needs to be called by the developer once the screen is ready to interact with
-    AppMetrics.markInteractive();
+    if (Platform.OS !== "web") {
+      const AppMetrics = require("expo-eas-observe").default;
+      AppMetrics.markInteractive();
+    }
   }, []);
 
   return (
@@ -178,7 +179,7 @@ export default function Home() {
           returnKeyType="search"
           editable={!isLoading}
         />
-        {Boolean(searchValue) && (
+        {!!searchValue &&(
           <TouchableOpacity
             style={{
               position: "absolute",
@@ -197,7 +198,7 @@ export default function Home() {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {!result && (
+        {result == null && (
           <RNView style={{ alignItems: "center", marginTop: 8 }}>
             {(!searchValue || Platform.OS === "ios") && !result && (
               <Animated.View
@@ -221,7 +222,7 @@ export default function Home() {
                 </Text>
               </Animated.View>
             )}
-            {Boolean(searchValue) && Platform.OS === "android" && (
+            {!!searchValue &&Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
                 entering={FadeIn.duration(200)}
@@ -252,7 +253,7 @@ export default function Home() {
             )}
           </RNView>
         )}
-        {result && (
+        {result != null && (
           <Animated.View
             entering={FadeInDown.duration(600).springify()}
             style={{
@@ -295,7 +296,7 @@ export default function Home() {
                 is {result.isValid ? "a playable word" : "not a playable word"}
               </Text>
             </RNView>
-            {definition && (
+            {!!definition && (
               <RNView
                 style={{
                   borderTopWidth: StyleSheet.hairlineWidth,

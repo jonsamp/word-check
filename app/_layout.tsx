@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import React, { useEffect } from "react";
-import AppMetrics from "expo-eas-observe";
 
 import { Platform, View, useColorScheme } from "react-native";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
@@ -15,11 +14,15 @@ export default function Layout() {
     : Colors.light.backgroundSecondary;
 
   useEffect(() => {
-    AppMetrics.markFirstRender();
+    if (Platform.OS !== "web") {
+      const AppMetrics = require("expo-eas-observe").default;
+      AppMetrics.markFirstRender();
+    }
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor }}>
+    <View style={{ flex: 1, backgroundColor, alignItems: Platform.OS === "web" ? "center" : undefined }}>
+      <View style={{ flex: 1, width: "100%", maxWidth: Platform.OS === "web" ? 600 : undefined, paddingVertical: Platform.OS === "web" ? 20 : undefined }}>
       <DictionaryProvider>
         <ThemeProvider value={DarkTheme}>
           <Stack>
@@ -47,6 +50,7 @@ export default function Layout() {
           </Stack>
         </ThemeProvider>
       </DictionaryProvider>
+      </View>
     </View>
   );
 }

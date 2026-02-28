@@ -7,7 +7,7 @@ const config: ExpoConfig = {
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
-  platforms: ["ios", "android"],
+  platforms: ["ios", "android", "web"],
   orientation: "default",
   userInterfaceStyle: "automatic",
   icon: isProduction

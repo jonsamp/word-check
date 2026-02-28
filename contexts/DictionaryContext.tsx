@@ -5,7 +5,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import Storage from "expo-sqlite/kv-store";
+import { Platform } from "react-native";
 import {
   DB_DICTIONARY_KEY,
   Dictionary,
@@ -19,18 +19,24 @@ interface DictionaryContextType {
 }
 
 const DictionaryContext = createContext<DictionaryContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function DictionaryProvider({ children }: { children: ReactNode }) {
   const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(
-    Dictionary.NWL23
+    Dictionary.NWL23,
   );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function initializeDatabase() {
-      const storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
+      let storedDictionary: string | null = null;
+      if (Platform.OS === "web") {
+        storedDictionary = localStorage.getItem(DB_DICTIONARY_KEY);
+      } else {
+        const Storage = require("expo-sqlite/kv-store").default;
+        storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
+      }
       const dictionaryToUse = storedDictionary
         ? (storedDictionary as Dictionary)
         : Dictionary.NWL23;
@@ -57,7 +63,12 @@ export function DictionaryProvider({ children }: { children: ReactNode }) {
 
     // Switching dictionaries is now instant - no database reload needed
     setCurrentDictionary(dictionary);
-    Storage.setItemSync(DB_DICTIONARY_KEY, dictionary);
+    if (Platform.OS === "web") {
+      localStorage.setItem(DB_DICTIONARY_KEY, dictionary);
+    } else {
+      const Storage = require("expo-sqlite/kv-store").default;
+      Storage.setItemSync(DB_DICTIONARY_KEY, dictionary);
+    }
   }
 
   return (

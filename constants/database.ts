@@ -1,5 +1,4 @@
-import { Asset } from "expo-asset";
-import { File, Directory, Paths } from "expo-file-system";
+import { Platform } from "react-native";
 import * as SQLite from "expo-sqlite";
 
 export enum Dictionary {
@@ -43,6 +42,29 @@ class DatabaseManagerImpl implements DatabaseManager {
     }
 
     try {
+      const dbName = "unified.db";
+
+      if (Platform.OS === "web") {
+        const { Asset } = require("expo-asset");
+        const ExpoSQLite = require("expo-sqlite/build/ExpoSQLite").default;
+        const asset =
+          await Asset.fromModule(unifiedDatabaseAsset).downloadAsync();
+        if (!asset.localUri) {
+          throw new Error("Failed to download unified database asset");
+        }
+        const dbPath = `./${dbName}`;
+        await ExpoSQLite.importAssetDatabaseAsync(
+          dbPath,
+          asset.localUri,
+          false,
+        );
+        this.database = await SQLite.openDatabaseAsync(dbName);
+        return this.database;
+      }
+
+      const { Asset } = require("expo-asset");
+      const { File, Directory, Paths } = require("expo-file-system");
+
       const asset = Asset.fromModule(unifiedDatabaseAsset);
       await asset.downloadAsync();
 
@@ -50,7 +72,6 @@ class DatabaseManagerImpl implements DatabaseManager {
         throw new Error("Failed to download unified database asset");
       }
 
-      const dbName = "unified.db";
       const sqliteDir = new Directory(Paths.document, "SQLite");
 
       if (!sqliteDir.exists) {
