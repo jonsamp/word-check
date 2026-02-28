@@ -1,6 +1,11 @@
 name: Release to app stores
 
 jobs:
+  deploy_web:
+    name: Deploy web
+    type: deploy
+    params:
+      prod: true
   build_ios:
     name: Build iOS
     type: build
