@@ -14,16 +14,45 @@ interface WordRow {
 }
 
 let database: SQLite.SQLiteDatabase | null = null;
+let loadPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export async function loadDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (database) {
     return database;
   }
 
+  // Deduplicate concurrent calls (e.g., HMR, React strict mode)
+  if (loadPromise) {
+    return loadPromise;
+  }
+
+  loadPromise = loadDatabaseImpl();
+  try {
+    return await loadPromise;
+  } catch (error) {
+    loadPromise = null;
+    throw error;
+  }
+}
+
+async function loadDatabaseImpl(): Promise<SQLite.SQLiteDatabase> {
   try {
     const dbName = "unified.db";
 
     if (Platform.OS === "web") {
+      // Try opening the database first — it may already exist in OPFS
+      // from a previous session. This avoids re-importing and reduces
+      // OPFS access handle conflicts during HMR/hot-reload.
+      try {
+        const db = await SQLite.openDatabaseAsync(dbName);
+        // Verify the database is usable (not empty/corrupt)
+        await db.getFirstAsync("SELECT 1 FROM words LIMIT 1");
+        database = db;
+        return database;
+      } catch {
+        // Database doesn't exist yet or is empty — import it
+      }
+
       await SQLite.importDatabaseFromAssetAsync(dbName, {
         assetId: unifiedDatabaseAsset,
       });
