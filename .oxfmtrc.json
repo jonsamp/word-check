@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "node_modules",
+    ".expo",
+    "dist",
+    "android",
+    "ios",
+    "**/*.d.ts"
+  ],
+  "printWidth": 100,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "bracketSameLine": false,
+  "trailingComma": "es5"
+}
