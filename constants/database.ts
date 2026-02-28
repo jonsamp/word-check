@@ -40,23 +40,27 @@ async function loadDatabaseImpl(): Promise<SQLite.SQLiteDatabase> {
     const dbName = "unified.db";
 
     if (Platform.OS === "web") {
-      // Try opening the database first — it may already exist in OPFS
-      // from a previous session. This avoids re-importing and reduces
-      // OPFS access handle conflicts during HMR/hot-reload.
-      try {
-        const db = await SQLite.openDatabaseAsync(dbName);
-        // Verify the database is usable (not empty/corrupt)
-        await db.getFirstAsync("SELECT 1 FROM words LIMIT 1");
-        database = db;
-        return database;
-      } catch {
-        // Database doesn't exist yet or is empty — import it
-      }
-
       await SQLite.importDatabaseFromAssetAsync(dbName, {
         assetId: unifiedDatabaseAsset,
       });
       database = await SQLite.openDatabaseAsync(dbName);
+
+      // Verify the database has the expected table. If a previous
+      // failed import left an empty DB in OPFS, the import above
+      // would have been skipped. Delete and force a re-import.
+      try {
+        await database.getFirstAsync("SELECT 1 FROM words LIMIT 1");
+      } catch {
+        await database.closeAsync();
+        database = null;
+        await SQLite.deleteDatabaseAsync(dbName);
+        await SQLite.importDatabaseFromAssetAsync(dbName, {
+          assetId: unifiedDatabaseAsset,
+          forceOverwrite: true,
+        });
+        database = await SQLite.openDatabaseAsync(dbName);
+      }
+
       return database;
     }
 
