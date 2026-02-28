@@ -6,11 +6,9 @@ import {
   ReactNode,
 } from "react";
 import { Platform } from "react-native";
-import {
-  DB_DICTIONARY_KEY,
-  Dictionary,
-  databaseManager,
-} from "../constants/database";
+import Storage from "expo-sqlite/kv-store";
+import { DB_DICTIONARY_KEY, Dictionary } from "../constants/dictionary";
+import { loadDatabase } from "../constants/database";
 
 interface DictionaryContextType {
   currentDictionary: Dictionary;
@@ -26,15 +24,15 @@ export function DictionaryProvider({ children }: { children: ReactNode }) {
   const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(
     Dictionary.NWL23,
   );
+  const isWeb = Platform.OS === "web";
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function initializeDatabase() {
       let storedDictionary: string | null = null;
-      if (Platform.OS === "web") {
+      if (isWeb) {
         storedDictionary = localStorage.getItem(DB_DICTIONARY_KEY);
       } else {
-        const Storage = require("expo-sqlite/kv-store").default;
         storedDictionary = Storage.getItemSync(DB_DICTIONARY_KEY);
       }
       const dictionaryToUse = storedDictionary
@@ -43,9 +41,8 @@ export function DictionaryProvider({ children }: { children: ReactNode }) {
 
       setCurrentDictionary(dictionaryToUse);
 
-      // Load the unified database once at startup
       try {
-        await databaseManager.loadDatabase();
+        await loadDatabase();
       } catch (error) {
         console.error("Failed to load database:", error);
       } finally {
@@ -54,19 +51,17 @@ export function DictionaryProvider({ children }: { children: ReactNode }) {
     }
 
     initializeDatabase();
-  }, []);
+  }, [isWeb]);
 
   function setDictionary(dictionary: Dictionary) {
     if (dictionary === currentDictionary) {
       return;
     }
 
-    // Switching dictionaries is now instant - no database reload needed
     setCurrentDictionary(dictionary);
-    if (Platform.OS === "web") {
+    if (isWeb) {
       localStorage.setItem(DB_DICTIONARY_KEY, dictionary);
     } else {
-      const Storage = require("expo-sqlite/kv-store").default;
       Storage.setItemSync(DB_DICTIONARY_KEY, dictionary);
     }
   }

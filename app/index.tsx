@@ -20,7 +20,7 @@ import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
-import { databaseManager } from "../constants/database";
+import { lookUpWord } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
 import { InfoButton } from "../components/info-button";
 import { DictionaryContextMenu } from "../components/dictionary-context-menu";
@@ -36,6 +36,7 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const isWeb = Platform.OS === "web";
   const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -77,31 +78,37 @@ export default function Home() {
     }
 
     try {
-      const result = await databaseManager.lookUpWord(
+      const result = await lookUpWord(
         searchValue,
         currentDictionary,
       );
-      setResult(result ?? null);
+      setResult(result);
     } catch (error) {
       console.error("Error looking up word:", error);
     }
   }
 
   function hideSplashScreen() {
-    if (Platform.OS !== "web") {
-      const AppMetrics = require("expo-eas-observe").default;
-      AppMetrics.markFirstRender();
+    if (isWeb) {
+      (async () => {
+        const module = await import("expo-eas-observe");
+        const AppMetrics = module.default;
+        AppMetrics.markFirstRender();
+      })();
     }
 
     SplashScreen.hide();
   }
 
   useEffect(() => {
-    if (Platform.OS !== "web") {
-      const AppMetrics = require("expo-eas-observe").default;
-      AppMetrics.markInteractive();
+    if (isWeb) {
+      (async () => {
+        const module = await import("expo-eas-observe");
+        const AppMetrics = module.default;
+        AppMetrics.markInteractive();
+      })();
     }
-  }, []);
+  }, [isWeb]);
 
   return (
     <View
@@ -179,7 +186,7 @@ export default function Home() {
           returnKeyType="search"
           editable={!isLoading}
         />
-        {!!searchValue &&(
+        {Boolean(searchValue) && (
           <TouchableOpacity
             style={{
               position: "absolute",
@@ -222,7 +229,7 @@ export default function Home() {
                 </Text>
               </Animated.View>
             )}
-            {!!searchValue &&Platform.OS === "android" && (
+            {Boolean(searchValue) && Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
                 entering={FadeIn.duration(200)}
@@ -283,7 +290,9 @@ export default function Home() {
               <RNView style={{ marginBottom: 8 }}>
                 {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
-              <Text style={{ ...type.largeTitle, padding: 0 }}>
+              <Text
+                style={{ ...type.largeTitle, fontWeight: "bold", padding: 0 }}
+              >
                 {capitalizeFirstLetter(result.word.toLowerCase())}
               </Text>
               <Text
@@ -296,7 +305,7 @@ export default function Home() {
                 is {result.isValid ? "a playable word" : "not a playable word"}
               </Text>
             </RNView>
-            {!!definition && (
+            {Boolean(definition) && (
               <RNView
                 style={{
                   borderTopWidth: StyleSheet.hairlineWidth,

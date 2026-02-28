@@ -14,7 +14,7 @@ import {
 
 import { Dimensions } from "react-native";
 
-import { Dictionary, DictionaryNames } from "../../constants/database";
+import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
 export function DictionaryContextMenu({

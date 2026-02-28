@@ -17,6 +17,7 @@ export default function AboutScreen() {
   const router = useRouter();
   const borderColor = useThemeColor("border");
   const textColor = useThemeColor("text");
+  const isWeb = Platform.OS === "web";
 
   useEffect(() => {
     // This needs to be called by the developer once the screen is ready to interact with
@@ -24,7 +25,13 @@ export default function AboutScreen() {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{
+        flex: 1,
+        borderRadius: isWeb ? 16 : 0,
+        overflow: "hidden",
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
@@ -34,14 +41,14 @@ export default function AboutScreen() {
           paddingVertical: 24,
         }}
       >
-        {Platform.OS === "ios" ? (
+        {Platform.OS === "android" ? (
+          <Text style={{ fontSize: 32 }}>About</Text>
+        ) : (
           <View>
             <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
               About
             </Text>
           </View>
-        ) : (
-          <Text style={{ fontSize: 32 }}>About</Text>
         )}
         <XButton onPress={() => router.back()} color={textColor} />
       </View>

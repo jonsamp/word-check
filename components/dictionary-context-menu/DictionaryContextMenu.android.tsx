@@ -9,7 +9,7 @@ import {
 import { Text } from "../Themed";
 import { ChevronDownIcon } from "../Icons";
 
-import { Dictionary, DictionaryNames } from "../../constants/database";
+import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
 export function DictionaryContextMenu({
