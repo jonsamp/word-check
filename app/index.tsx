@@ -49,8 +49,7 @@ export default function Home() {
     definition?: string | null;
     word: string;
   } | null>(null);
-  const definition =
-    result?.definition?.split("[")[0].split(", also")[0]?.trim() ?? "";
+  const definition = result?.definition?.split("[")[0].split(", also")[0]?.trim() ?? "";
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
@@ -58,7 +57,7 @@ export default function Home() {
 
   async function handleSubmit() {
     Keyboard.dismiss();
-    if (!searchValue) return;
+    if (!searchValue) {return;}
 
     // Wait for dictionary to finish loading if it's currently loading
     if (isLoading) {
@@ -126,9 +125,7 @@ export default function Home() {
         }}
       >
         <RNView style={styles.displayHorizontal}>
-          <RNView
-            style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}
-          >
+          <RNView style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}>
             <Image
               source={isDark ? DarkAppIconImage : AppIconImage}
               style={{
@@ -140,9 +137,7 @@ export default function Home() {
             />
           </RNView>
           <RNView>
-            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
-              Word Check
-            </Text>
+            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
           </RNView>
         </RNView>
         <InfoButton onPress={() => router.push("/about")} color={textColor} />
@@ -244,14 +239,7 @@ export default function Home() {
                   ]}
                   onPress={handleSubmit}
                 >
-                  <Text
-                    style={[
-                      styles.searchButtonText,
-                      { color: backgroundColor },
-                    ]}
-                  >
-                    Search
-                  </Text>
+                  <Text style={[styles.searchButtonText, { color: backgroundColor }]}>Search</Text>
                 </TouchableOpacity>
               </Animated.View>
             )}
@@ -287,9 +275,7 @@ export default function Home() {
               <RNView style={{ marginBottom: 8 }}>
                 {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
-              <Text
-                style={{ ...type.largeTitle, fontWeight: "bold", padding: 0 }}
-              >
+              <Text style={{ ...type.largeTitle, fontWeight: "bold", padding: 0 }}>
                 {capitalizeFirstLetter(result.word.toLowerCase())}
               </Text>
               <Text

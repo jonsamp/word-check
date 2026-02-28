@@ -1,11 +1,5 @@
 import { useRouter } from "expo-router";
-import {
-  Linking,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { Linking, Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import AppMetrics from "expo-eas-observe";
 
 import { View, Text, useThemeColor } from "../components/Themed";
@@ -45,36 +39,27 @@ export default function AboutScreen() {
           <Text style={{ fontSize: 32 }}>About</Text>
         ) : (
           <View>
-            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
-              About
-            </Text>
+            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>About</Text>
           </View>
         )}
         <XButton onPress={() => router.back()} color={textColor} />
       </View>
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
-      >
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}>
         <Text style={{ ...type.body, lineHeight: 28 }}>
-          Word Check determines the validity of words in the game of SCRABBLE™.
-          It uses the official SCRABBLE™ dictionary to determine if a word is
-          valid. The dictionaries are as follows:
+          Word Check determines the validity of words in the game of SCRABBLE™. It uses the official
+          SCRABBLE™ dictionary to determine if a word is valid. The dictionaries are as follows:
         </Text>
         <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>
           US & Canada Dictionary
         </Text>
-        <Text style={{ ...type.body, marginTop: 8 }}>
-          NASPA Word List (NWL) 2023 Edition
-        </Text>
+        <Text style={{ ...type.body, marginTop: 8 }}>NASPA Word List (NWL) 2023 Edition</Text>
         <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>
           Worldwide Dictionary
         </Text>
         <Text style={{ ...type.body, marginTop: 8 }}>
           Collins SCRABBLE™ Words (CSW) 2024 Edition
         </Text>
-        <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>
-          School Dictionary
-        </Text>
+        <Text style={{ ...type.body, fontWeight: "bold", marginTop: 24 }}>School Dictionary</Text>
         <Text style={{ ...type.body, marginTop: 8 }}>
           NASPA School Word List (NSWL) 2023 Edition
         </Text>
@@ -88,8 +73,8 @@ export default function AboutScreen() {
             lineHeight: 28,
           }}
         >
-          If you got value from this app, you can support me by buying me a
-          coffee. This is an optional tip and does not unlock any features:
+          If you got value from this app, you can support me by buying me a coffee. This is an
+          optional tip and does not unlock any features:
         </Text>
         <View
           style={{
@@ -128,14 +113,12 @@ export default function AboutScreen() {
           }}
         >
           <Text style={{ ...type.body, lineHeight: 28 }}>
-            Word Check does not collect any personal data. For more information,
-            please refer to the{" "}
+            Word Check does not collect any personal data. For more information, please refer to
+            the{" "}
           </Text>
           <Pressable
             onPress={() =>
-              Linking.openURL(
-                "https://gist.github.com/jonsamp/9c0342948416bd810c3a0a508e242a45",
-              )
+              Linking.openURL("https://gist.github.com/jonsamp/9c0342948416bd810c3a0a508e242a45")
             }
           >
             <Text
@@ -164,8 +147,7 @@ export default function AboutScreen() {
         >
           NASPA Word List © North American Scrabble Players Association.{"\n"}
           Collins Scrabble Words © HarperCollins Publishers Ltd.{"\n"}
-          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc.
-          (elsewhere).
+          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).
         </Text>
       </ScrollView>
     </View>

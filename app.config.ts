@@ -10,9 +10,7 @@ const config: ExpoConfig = {
   platforms: ["ios", "android", "web"],
   orientation: "default",
   userInterfaceStyle: "automatic",
-  icon: isProduction
-    ? "./assets/images/icon.png"
-    : "./assets/images/icon-dev.png",
+  icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
   updates: {
     url: "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0",
   },
@@ -26,9 +24,7 @@ const config: ExpoConfig = {
   android: {
     package: `com.jonsamp.wordcheck${isProduction ? "" : "_dev"}`,
     permissions: [],
-    icon: isProduction
-      ? "./assets/images/icon.png"
-      : "./assets/images/icon-dev.png",
+    icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
     adaptiveIcon: {
       foregroundImage: isProduction
         ? "./assets/images/adaptive-foreground.png"

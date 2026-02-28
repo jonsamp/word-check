@@ -1,9 +1,5 @@
 import { Stack } from "expo-router";
-import {
-  ThemeProvider,
-  DarkTheme,
-  DefaultTheme,
-} from "@react-navigation/native";
+import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
 import React, { useEffect, useMemo } from "react";
 
 import { Platform, View } from "react-native";
@@ -21,7 +17,7 @@ export default function Layout() {
 
   const navTheme = useMemo(() => {
     const base = isDark ? DarkTheme : DefaultTheme;
-    if (!isWeb) return base;
+    if (!isWeb) {return base;}
     return {
       ...base,
       colors: {

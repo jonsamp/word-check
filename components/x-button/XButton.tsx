@@ -6,10 +6,7 @@ export function XButton({ onPress, color }: XButtonProps) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        { opacity: pressed ? 0.6 : 1 },
-      ]}
+      style={({ pressed }) => [styles.button, { opacity: pressed ? 0.6 : 1 }]}
     >
       <svg
         width={16}

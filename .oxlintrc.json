@@ -132,13 +132,5 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": [
-    "node_modules",
-    ".expo",
-    "dist",
-    "android",
-    "ios",
-    "**/coverage/",
-    "**/*.d.ts"
-  ]
+  "ignorePatterns": ["node_modules", ".expo", "dist", "android", "ios", "**/coverage/", "**/*.d.ts"]
 }

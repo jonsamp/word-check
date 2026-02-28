@@ -61,7 +61,7 @@ export async function loadDatabase(): Promise<SQLite.SQLiteDatabase> {
 
 export async function lookUpWord(
   searchValue: string,
-  dictionary: Dictionary,
+  dictionary: Dictionary
 ): Promise<{
   word: string;
   definition: string | null;
@@ -75,7 +75,7 @@ export async function lookUpWord(
 
   const result = await database.getAllAsync<WordRow>(
     "SELECT word, definition, lists FROM words WHERE word = ?",
-    [sanitizedSearchValue],
+    [sanitizedSearchValue]
   );
 
   if (result.length > 0 && result[0]) {

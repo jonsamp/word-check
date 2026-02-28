@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Platform } from "react-native";
 import Storage from "expo-sqlite/kv-store";
 import { DB_DICTIONARY_KEY, Dictionary } from "../constants/dictionary";
@@ -16,14 +10,10 @@ interface DictionaryContextType {
   isLoading: boolean;
 }
 
-const DictionaryContext = createContext<DictionaryContextType | undefined>(
-  undefined,
-);
+const DictionaryContext = createContext<DictionaryContextType | undefined>(undefined);
 
 export function DictionaryProvider({ children }: { children: ReactNode }) {
-  const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(
-    Dictionary.NWL23,
-  );
+  const [currentDictionary, setCurrentDictionary] = useState<Dictionary>(Dictionary.NWL23);
   const isWeb = Platform.OS === "web";
   const [isLoading, setIsLoading] = useState(true);
 
