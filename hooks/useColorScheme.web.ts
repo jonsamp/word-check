@@ -1,5 +1,24 @@
-// useColorScheme from react-native does not support web currently. You can replace
-// this with react-native-appearance if you would like theme support on web.
-export default function useColorScheme() {
-  return "light";
+import { useEffect, useState } from "react";
+import type { ColorSchemeName } from "react-native";
+
+function getColorScheme(): NonNullable<ColorSchemeName> {
+  if (typeof window === "undefined" || !window.matchMedia) {
+    return "light";
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+export default function useColorScheme(): NonNullable<ColorSchemeName> {
+  const [colorScheme, setColorScheme] = useState(getColorScheme);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => {
+      setColorScheme(e.matches ? "dark" : "light");
+    };
+    query.addEventListener("change", handler);
+    return () => query.removeEventListener("change", handler);
+  }, []);
+
+  return colorScheme;
 }

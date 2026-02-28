@@ -1,15 +1,9 @@
 import { useState } from "react";
-import {
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { TouchableOpacity, Modal, StyleSheet, View, ActivityIndicator } from "react-native";
 import { Text } from "../Themed";
 import { ChevronDownIcon } from "../Icons";
 
-import { Dictionary, DictionaryNames } from "../../constants/database";
+import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import type { DictionaryContextMenuProps } from "./DictionaryContextMenu.types";
 
 export function DictionaryContextMenu({
@@ -78,16 +72,11 @@ export function DictionaryContextMenu({
             {options.map((option, index) => (
               <TouchableOpacity
                 key={option.value}
-                style={[
-                  styles.menuItem,
-                  index === options.length - 1 && { borderBottomWidth: 0 },
-                ]}
+                style={[styles.menuItem, index === options.length - 1 && { borderBottomWidth: 0 }]}
                 onPress={() => handleSelect(option.value)}
                 activeOpacity={0.7}
               >
-                <Text style={{ color: color + "CC", fontSize: 16 }}>
-                  {option.label}
-                </Text>
+                <Text style={{ color: color + "CC", fontSize: 16 }}>{option.label}</Text>
               </TouchableOpacity>
             ))}
           </View>

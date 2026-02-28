@@ -74,13 +74,7 @@ export function CancelIcon() {
   );
 }
 
-export function ChevronDownIcon({
-  color,
-  size = 16,
-}: {
-  color: string;
-  size?: number;
-}) {
+export function ChevronDownIcon({ color, size = 16 }: { color: string; size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path

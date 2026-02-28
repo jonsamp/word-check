@@ -1,4 +1,4 @@
-import type { Dictionary } from "../../constants/database";
+import type { Dictionary } from "../../constants/dictionary";
 
 export interface DictionaryContextMenuProps {
   onSelectDictionary: (dictionary: Dictionary) => void;

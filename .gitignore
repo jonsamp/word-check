@@ -43,3 +43,5 @@ app-example
 # Expo prebuild files
 android/
 ios/
+
+.vscode/

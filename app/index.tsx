@@ -13,8 +13,6 @@ import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import AppMetrics from "expo-eas-observe";
-
 import useColorScheme from "../hooks/useColorScheme";
 import { View, Text } from "../components/Themed";
 import { useThemeColor } from "../components/Themed";
@@ -22,7 +20,7 @@ import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
 import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
-import { databaseManager } from "../constants/database";
+import { lookUpWord } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
 import { InfoButton } from "../components/info-button";
 import { DictionaryContextMenu } from "../components/dictionary-context-menu";
@@ -38,6 +36,7 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const isWeb = Platform.OS === "web";
   const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -50,8 +49,7 @@ export default function Home() {
     definition?: string | null;
     word: string;
   } | null>(null);
-  const definition =
-    result?.definition?.split("[")[0].split(", also")[0]?.trim() ?? "";
+  const definition = result?.definition?.split("[")[0].split(", also")[0]?.trim() ?? "";
 
   function capitalizeFirstLetter(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
@@ -59,7 +57,7 @@ export default function Home() {
 
   async function handleSubmit() {
     Keyboard.dismiss();
-    if (!searchValue) return;
+    if (!searchValue) {return;}
 
     // Wait for dictionary to finish loading if it's currently loading
     if (isLoading) {
@@ -79,28 +77,34 @@ export default function Home() {
     }
 
     try {
-      const result = await databaseManager.lookUpWord(
-        searchValue,
-        currentDictionary,
-      );
-      setResult(result ?? null);
+      const result = await lookUpWord(searchValue, currentDictionary);
+      setResult(result);
     } catch (error) {
       console.error("Error looking up word:", error);
     }
   }
 
   function hideSplashScreen() {
-    // Mark the TTFR metric – in the future we'll handle this in our root view wrapper
-    // or on the native side somehow
-    AppMetrics.markFirstRender();
+    if (isWeb) {
+      (async () => {
+        const module = await import("expo-eas-observe");
+        const AppMetrics = module.default;
+        AppMetrics.markFirstRender();
+      })();
+    }
 
     SplashScreen.hide();
   }
 
   useEffect(() => {
-    // This needs to be called by the developer once the screen is ready to interact with
-    AppMetrics.markInteractive();
-  }, []);
+    if (isWeb) {
+      (async () => {
+        const module = await import("expo-eas-observe");
+        const AppMetrics = module.default;
+        AppMetrics.markInteractive();
+      })();
+    }
+  }, [isWeb]);
 
   return (
     <View
@@ -121,9 +125,7 @@ export default function Home() {
         }}
       >
         <RNView style={styles.displayHorizontal}>
-          <RNView
-            style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}
-          >
+          <RNView style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}>
             <Image
               source={isDark ? DarkAppIconImage : AppIconImage}
               style={{
@@ -135,9 +137,7 @@ export default function Home() {
             />
           </RNView>
           <RNView>
-            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>
-              Word Check
-            </Text>
+            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
           </RNView>
         </RNView>
         <InfoButton onPress={() => router.push("/about")} color={textColor} />
@@ -197,7 +197,7 @@ export default function Home() {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {!result && (
+        {result == null && (
           <RNView style={{ alignItems: "center", marginTop: 8 }}>
             {(!searchValue || Platform.OS === "ios") && !result && (
               <Animated.View
@@ -239,20 +239,13 @@ export default function Home() {
                   ]}
                   onPress={handleSubmit}
                 >
-                  <Text
-                    style={[
-                      styles.searchButtonText,
-                      { color: backgroundColor },
-                    ]}
-                  >
-                    Search
-                  </Text>
+                  <Text style={[styles.searchButtonText, { color: backgroundColor }]}>Search</Text>
                 </TouchableOpacity>
               </Animated.View>
             )}
           </RNView>
         )}
-        {result && (
+        {result != null && (
           <Animated.View
             entering={FadeInDown.duration(600).springify()}
             style={{
@@ -282,7 +275,7 @@ export default function Home() {
               <RNView style={{ marginBottom: 8 }}>
                 {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
-              <Text style={{ ...type.largeTitle, padding: 0 }}>
+              <Text style={{ ...type.largeTitle, fontWeight: "bold", padding: 0 }}>
                 {capitalizeFirstLetter(result.word.toLowerCase())}
               </Text>
               <Text
@@ -295,7 +288,7 @@ export default function Home() {
                 is {result.isValid ? "a playable word" : "not a playable word"}
               </Text>
             </RNView>
-            {definition && (
+            {Boolean(definition) && (
               <RNView
                 style={{
                   borderTopWidth: StyleSheet.hairlineWidth,

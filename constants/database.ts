@@ -1,147 +1,97 @@
+import { Platform } from "react-native";
+import * as SQLite from "expo-sqlite";
 import { Asset } from "expo-asset";
 import { File, Directory, Paths } from "expo-file-system";
-import * as SQLite from "expo-sqlite";
 
-export enum Dictionary {
-  NWL23 = "NWL23",
-  CSW24 = "CSW24",
-  NSWL23 = "NSWL23",
+import unifiedDatabaseAsset from "../assets/databases/unified.db";
+
+import { Dictionary } from "./dictionary";
+
+interface WordRow {
+  word: string;
+  definition: string | null;
+  lists: string;
 }
 
-export const DictionaryNames: Record<Dictionary, string> = {
-  [Dictionary.CSW24]: "Worldwide Dictionary",
-  [Dictionary.NSWL23]: "School Dictionary",
-  [Dictionary.NWL23]: "US & Canada Dictionary",
-};
+let database: SQLite.SQLiteDatabase | null = null;
 
-export const DB_DICTIONARY_KEY = "dictionary";
-
-const unifiedDatabaseAsset = require("../assets/databases/unified.db");
-
-interface DatabaseManager {
-  database: SQLite.SQLiteDatabase | null;
-  loadDatabase: () => Promise<SQLite.SQLiteDatabase>;
-  getDatabase: () => SQLite.SQLiteDatabase | null;
-  query: (sql: string, params?: any[]) => Promise<any[]>;
-  lookUpWord: (
-    searchValue: string,
-    dictionary: Dictionary,
-  ) => Promise<{
-    word: string;
-    definition: string | null;
-    isValid: boolean;
-  } | null>;
-  closeDatabase: () => Promise<void>;
-}
-
-class DatabaseManagerImpl implements DatabaseManager {
-  public database: SQLite.SQLiteDatabase | null = null;
-
-  async loadDatabase(): Promise<SQLite.SQLiteDatabase> {
-    if (this.database) {
-      return this.database;
-    }
-
-    try {
-      const asset = Asset.fromModule(unifiedDatabaseAsset);
-      await asset.downloadAsync();
-
-      if (!asset.localUri) {
-        throw new Error("Failed to download unified database asset");
-      }
-
-      const dbName = "unified.db";
-      const sqliteDir = new Directory(Paths.document, "SQLite");
-
-      if (!sqliteDir.exists) {
-        await sqliteDir.create();
-      }
-
-      const targetFile = new File(sqliteDir, dbName);
-
-      if (!targetFile.exists) {
-        const sourceFile = new File(asset.localUri);
-        await sourceFile.copy(targetFile);
-      }
-
-      this.database = await SQLite.openDatabaseAsync(dbName);
-      return this.database;
-    } catch (error) {
-      console.error("Error loading unified database:", error);
-      throw error;
-    }
+export async function loadDatabase(): Promise<SQLite.SQLiteDatabase> {
+  if (database) {
+    return database;
   }
 
-  getDatabase(): SQLite.SQLiteDatabase | null {
-    return this.database;
-  }
+  try {
+    const dbName = "unified.db";
 
-  async query(sql: string, params: any[] = []): Promise<any[]> {
-    if (!this.database) {
-      throw new Error("Database is not loaded. Call loadDatabase first.");
+    if (Platform.OS === "web") {
+      await SQLite.importDatabaseFromAssetAsync(dbName, {
+        assetId: unifiedDatabaseAsset,
+      });
+      database = await SQLite.openDatabaseAsync(dbName);
+      return database;
     }
 
-    try {
-      const result = await this.database.getAllAsync(sql, params);
-      return result;
-    } catch (error) {
-      console.error("Error executing query:", error);
-      throw error;
-    }
-  }
+    const asset = Asset.fromModule(unifiedDatabaseAsset);
+    await asset.downloadAsync();
 
-  async lookUpWord(
-    searchValue: string,
-    dictionary: Dictionary,
-  ): Promise<{
-    word: string;
-    definition: string | null;
-    isValid: boolean;
-  } | null> {
-    if (!this.database) {
-      throw new Error("Database is not loaded. Call loadDatabase first.");
+    if (!asset.localUri) {
+      throw new Error("Failed to download database asset");
     }
 
-    try {
-      const sanitizedSearchValue = searchValue.toUpperCase().trim();
+    const sqliteDir = new Directory(Paths.document, "SQLite");
 
-      const result = await this.database.getAllAsync(
-        "SELECT word, definition, lists FROM words WHERE word = ?",
-        [sanitizedSearchValue],
-      );
-
-      if (result.length > 0 && result[0]) {
-        const row = result[0] as {
-          word: string;
-          definition: string | null;
-          lists: string;
-        };
-        const isInList = row.lists.split(",").includes(dictionary);
-
-        return {
-          isValid: isInList,
-          word: row.word,
-          definition: isInList ? (row.definition ?? null) : null,
-        };
-      } else {
-        return {
-          isValid: false,
-          word: sanitizedSearchValue,
-          definition: null,
-        };
-      }
-    } catch (error) {
-      console.error("Database error:", error);
-      return null;
+    if (!sqliteDir.exists) {
+      await sqliteDir.create();
     }
-  }
 
-  async closeDatabase(): Promise<void> {
-    if (this.database) {
-      await this.database.closeAsync();
-      this.database = null;
+    const targetFile = new File(sqliteDir, dbName);
+
+    if (!targetFile.exists) {
+      const sourceFile = new File(asset.localUri);
+      await sourceFile.copy(targetFile);
     }
+
+    database = await SQLite.openDatabaseAsync(dbName);
+    return database;
+  } catch (error) {
+    console.error("Error loading database:", error);
+    throw error;
   }
 }
 
-export const databaseManager: DatabaseManager = new DatabaseManagerImpl();
+export async function lookUpWord(
+  searchValue: string,
+  dictionary: Dictionary
+): Promise<{
+  word: string;
+  definition: string | null;
+  isValid: boolean;
+}> {
+  if (!database) {
+    throw new Error("Database is not loaded. Call loadDatabase first.");
+  }
+
+  const sanitizedSearchValue = searchValue.toUpperCase().trim();
+
+  const result = await database.getAllAsync<WordRow>(
+    "SELECT word, definition, lists FROM words WHERE word = ?",
+    [sanitizedSearchValue]
+  );
+
+  if (result.length > 0 && result[0]) {
+    const row = result[0];
+    const isInList = row.lists.split(",").includes(dictionary);
+
+    return {
+      isValid: isInList,
+      word: row.word,
+      definition: isInList ? (row.definition ?? null) : null,
+    };
+  }
+
+  return {
+    isValid: false,
+    word: sanitizedSearchValue,
+    definition: null,
+  };
+}
