@@ -78,10 +78,7 @@ export default function Home() {
     }
 
     try {
-      const result = await lookUpWord(
-        searchValue,
-        currentDictionary,
-      );
+      const result = await lookUpWord(searchValue, currentDictionary);
       setResult(result);
     } catch (error) {
       console.error("Error looking up word:", error);
