@@ -19,7 +19,7 @@ import { useThemeColor } from "../components/Themed";
 import { type } from "../constants/Type";
 import AppIconImage from "../assets/images/icon.png";
 import DarkAppIconImage from "../assets/images/icon-dark.png";
-import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
+import { CancelIcon, XIcon, CheckIcon, BookIcon, ChevronRightIcon } from "../components/Icons";
 import { databaseManager } from "../constants/database";
 import { useDictionary } from "../contexts/DictionaryContext";
 import { InfoButton } from "../components/info-button";
@@ -222,6 +222,35 @@ export default function Home() {
                 </Text>
               </Animated.View>
             )}
+            {!searchValue && (
+              <Animated.View
+                key="practice-entry"
+                entering={FadeIn.duration(200)}
+                exiting={FadeOut.duration(200)}
+                style={{ width: "100%", paddingHorizontal: 16, marginTop: 24 }}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.practiceEntry,
+                    {
+                      borderColor,
+                      backgroundColor,
+                      borderWidth: StyleSheet.hairlineWidth,
+                    },
+                  ]}
+                  onPress={() => router.push("/practice")}
+                  activeOpacity={0.7}
+                >
+                  <RNView style={styles.practiceEntryLeft}>
+                    <BookIcon />
+                    <Text style={[type.headline, { marginLeft: 12 }]}>
+                      Practice
+                    </Text>
+                  </RNView>
+                  <ChevronRightIcon color={textSecondaryColor} />
+                </TouchableOpacity>
+              </Animated.View>
+            )}
             {!!searchValue &&Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
@@ -386,5 +415,17 @@ const styles = StyleSheet.create({
   },
   def: {
     marginBottom: 4,
+  },
+  practiceEntry: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderRadius: 12,
+  },
+  practiceEntryLeft: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
