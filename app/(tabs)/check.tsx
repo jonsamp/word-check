@@ -13,17 +13,17 @@ import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import useColorScheme from "../hooks/useColorScheme";
-import { View, Text } from "../components/Themed";
-import { useThemeColor } from "../components/Themed";
-import { type } from "../constants/Type";
-import AppIconImage from "../assets/images/icon.png";
-import DarkAppIconImage from "../assets/images/icon-dark.png";
-import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
-import { lookUpWord } from "../constants/database";
-import { useDictionary } from "../contexts/DictionaryContext";
-import { InfoButton } from "../components/info-button";
-import { DictionaryContextMenu } from "../components/dictionary-context-menu";
+import useColorScheme from "../../hooks/useColorScheme";
+import { View, Text } from "../../components/Themed";
+import { useThemeColor } from "../../components/Themed";
+import { type } from "../../constants/Type";
+import AppIconImage from "../../assets/images/icon.png";
+import DarkAppIconImage from "../../assets/images/icon-dark.png";
+import { CancelIcon, XIcon, CheckIcon } from "../../components/Icons";
+import { lookUpWord } from "../../constants/database";
+import { useDictionary } from "../../contexts/DictionaryContext";
+import { InfoButton } from "../../components/info-button";
+import { DictionaryContextMenu } from "../../components/dictionary-context-menu";
 
 SplashScreen.preventAutoHideAsync();
 
