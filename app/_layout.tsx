@@ -63,6 +63,12 @@ export default function Layout() {
                 }}
               />
               <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
                 name="about"
                 options={{
                   title: "About",
