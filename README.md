@@ -17,3 +17,4 @@ Switch between them at any time from the bottom menu.
 ## Built with
 
 React Native, Expo, and SQLite. All three word lists are bundled in a single local database for fast, offline lookups.
+Dummy change for PR example
