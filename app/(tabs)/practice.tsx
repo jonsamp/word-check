@@ -93,6 +93,7 @@ export default function Practice() {
                 </Text>
               </Pressable>
               <Pressable
+                onPress={() => router.push(`/practice/${card.id}/quiz`)}
                 style={[
                   styles.button,
                   {
