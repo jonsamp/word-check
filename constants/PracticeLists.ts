@@ -7,12 +7,14 @@ export type PracticeList = {
   id: string;
   title: string;
   words: PracticeWord[];
+  requiredLetters?: string[];
 };
 
 export const PRACTICE_LISTS: Record<string, PracticeList> = {
   "q-words": {
     id: "q-words",
     title: "Short Q Words",
+    requiredLetters: ["Q"],
     words: [
       { word: "AQUA", definition: "Water or a light greenish-blue color" },
       { word: "CINQ", definition: "The number five" },
