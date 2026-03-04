@@ -65,7 +65,7 @@ export function generateQuizWord(
   return { word, tiles, blanks };
 }
 
-function shuffleArray<T>(array: T[]): T[] {
+export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let current = shuffled.length - 1; current > 0; current--) {
     const swapWith = Math.floor(Math.random() * (current + 1));
