@@ -7,7 +7,7 @@ export default {
     border: "#CBC0AA",
     success: "#30A46C",
     danger: "#ed004d",
-    primary: "#3b82f6",
+    tint: "#C2785C",
   },
   dark: {
     text: "#d6d3d1",
@@ -17,6 +17,6 @@ export default {
     border: "#57534e",
     success: "#22c55e",
     danger: "#fc0f5a",
-    primary: "#1f9df7",
+    tint: "#C2785C",
   },
 };

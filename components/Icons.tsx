@@ -47,7 +47,7 @@ export function CheckIcon() {
 }
 
 export function BlueCheckIcon() {
-  const fill = useThemeColor("primary");
+  const fill = useThemeColor("tint");
   return (
     <Svg width={25} height={25} viewBox="0 0 25 25" fill="none">
       <Path

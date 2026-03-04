@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 
 import { Platform, View } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
@@ -15,17 +15,16 @@ export default function Layout() {
     ? Colors.dark.backgroundSecondary
     : Colors.light.backgroundSecondary;
 
-  const navTheme = useMemo(() => {
-    const base = isDark ? DarkTheme : DefaultTheme;
-    if (!isWeb) {return base;}
-    return {
-      ...base,
-      colors: {
-        ...base.colors,
-        background: "transparent",
-      },
-    };
-  }, [isDark, isWeb]);
+  const base = isDark ? DarkTheme : DefaultTheme;
+  const navTheme = !isWeb
+    ? base
+    : {
+        ...base,
+        colors: {
+          ...base.colors,
+          background: "transparent",
+        },
+      };
 
   useEffect(() => {
     if (!isWeb) {
@@ -57,7 +56,7 @@ export default function Layout() {
           <ThemeProvider value={navTheme}>
             <Stack>
               <Stack.Screen
-                name="index"
+                name="(tabs)"
                 options={{
                   headerShown: false,
                 }}

@@ -6,43 +6,30 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Pressable,
   View as RNView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import * as SplashScreen from "expo-splash-screen";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import useColorScheme from "../hooks/useColorScheme";
-import { View, Text } from "../components/Themed";
-import { useThemeColor } from "../components/Themed";
-import { type } from "../constants/Type";
-import AppIconImage from "../assets/images/icon.png";
-import DarkAppIconImage from "../assets/images/icon-dark.png";
-import { CancelIcon, XIcon, CheckIcon } from "../components/Icons";
-import { lookUpWord } from "../constants/database";
-import { useDictionary } from "../contexts/DictionaryContext";
-import { InfoButton } from "../components/info-button";
-import { DictionaryContextMenu } from "../components/dictionary-context-menu";
-
-SplashScreen.preventAutoHideAsync();
-
-SplashScreen.setOptions({
-  duration: 500,
-  fade: true,
-});
+import { View, Text } from "../../components/Themed";
+import { useThemeColor } from "../../components/Themed";
+import { type } from "../../constants/Type";
+import { CancelIcon, XIcon, CheckIcon } from "../../components/Icons";
+import { lookUpWord } from "../../constants/database";
+import { useDictionary } from "../../contexts/DictionaryContext";
+import { DictionaryNames } from "../../constants/dictionary";
+import { SymbolView } from "expo-symbols";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme();
   const router = useRouter();
   const isWeb = Platform.OS === "web";
-  const isDark = colorScheme === "dark";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
-  const { currentDictionary, setDictionary, isLoading } = useDictionary();
+  const { currentDictionary, isLoading } = useDictionary();
   const [searchValue, setSearchValue] = useState("");
   const [result, setResult] = useState<{
     isValid: boolean;
@@ -57,7 +44,9 @@ export default function Home() {
 
   async function handleSubmit() {
     Keyboard.dismiss();
-    if (!searchValue) {return;}
+    if (!searchValue) {
+      return;
+    }
 
     // Wait for dictionary to finish loading if it's currently loading
     if (isLoading) {
@@ -84,20 +73,18 @@ export default function Home() {
     }
   }
 
-  function hideSplashScreen() {
-    if (isWeb) {
+  function markFirstRender() {
+    if (!isWeb) {
       (async () => {
         const module = await import("expo-eas-observe");
         const AppMetrics = module.default;
         AppMetrics.markFirstRender();
       })();
     }
-
-    SplashScreen.hide();
   }
 
   useEffect(() => {
-    if (isWeb) {
+    if (!isWeb) {
       (async () => {
         const module = await import("expo-eas-observe");
         const AppMetrics = module.default;
@@ -108,7 +95,7 @@ export default function Home() {
 
   return (
     <View
-      onLayout={hideSplashScreen}
+      onLayout={markFirstRender}
       style={{
         paddingTop: insets.top + 8,
         flex: 1,
@@ -120,27 +107,24 @@ export default function Home() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: 24,
+          marginBottom: 12,
           paddingHorizontal: 20,
         }}
       >
-        <RNView style={styles.displayHorizontal}>
-          <RNView style={{ borderRadius: 8, overflow: "hidden", marginRight: 12 }}>
-            <Image
-              source={isDark ? DarkAppIconImage : AppIconImage}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-                overflow: "hidden",
-              }}
-            />
-          </RNView>
-          <RNView>
-            <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
-          </RNView>
-        </RNView>
-        <InfoButton onPress={() => router.push("/about")} color={textColor} />
+        <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Check</Text>
+        <Pressable
+          onPress={() => router.navigate("/settings")}
+          style={{ flexDirection: "row", alignItems: "center", gap: 6, top: 4 }}
+        >
+          <SymbolView
+            name={{ ios: "book", android: "menu_book", web: "menu_book" }}
+            tintColor={textSecondaryColor}
+            size={22}
+          />
+          <Text style={{ ...type.callout, color: textSecondaryColor }}>
+            {DictionaryNames[currentDictionary].replace(" Dictionary", "")}
+          </Text>
+        </Pressable>
       </RNView>
       <RNView
         style={{
@@ -199,28 +183,6 @@ export default function Home() {
       >
         {result == null && (
           <RNView style={{ alignItems: "center", marginTop: 8 }}>
-            {(!searchValue || Platform.OS === "ios") && !result && (
-              <Animated.View
-                key="helper-text"
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
-              >
-                <Text
-                  style={[
-                    type.body,
-                    {
-                      textAlign: "center",
-                      marginHorizontal: 100,
-                      lineHeight: 26,
-                      color: textSecondaryColor,
-                      marginTop: 16,
-                    },
-                  ]}
-                >
-                  Validate if a word is playable.
-                </Text>
-              </Animated.View>
-            )}
             {Boolean(searchValue) && Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
@@ -313,24 +275,6 @@ export default function Home() {
           </Animated.View>
         )}
       </ScrollView>
-      <RNView
-        style={{
-          position: "absolute",
-          bottom: insets.bottom + 8,
-          left: 0,
-          right: 0,
-          alignItems: "center",
-          zIndex: 1000,
-        }}
-      >
-        <DictionaryContextMenu
-          onSelectDictionary={setDictionary}
-          value={currentDictionary}
-          color={textColor}
-          backgroundColor={backgroundColor}
-          isLoading={isLoading}
-        />
-      </RNView>
     </View>
   );
 }
