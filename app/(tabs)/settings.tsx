@@ -7,6 +7,8 @@ import { useThemeColor } from "../../components/Themed";
 import { type } from "../../constants/Type";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { Dictionary, DictionaryNames } from "../../constants/dictionary";
+import { useDifficulty } from "../../contexts/DifficultyContext";
+import { Difficulty, DifficultyNames, DifficultyDescriptions } from "../../constants/difficulty";
 import { BlueCheckIcon } from "../../components/Icons";
 
 const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
@@ -16,6 +18,7 @@ const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
 };
 
 const DICTIONARY_ORDER = [Dictionary.NWL23, Dictionary.CSW24, Dictionary.NSWL23];
+const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level3];
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
@@ -25,6 +28,7 @@ export default function Settings() {
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
   const { currentDictionary, setDictionary } = useDictionary();
+  const { currentDifficulty, setDifficulty } = useDifficulty();
 
   function markFirstRender() {
     if (!isWeb) {
@@ -91,6 +95,47 @@ export default function Settings() {
                   <Text style={{ ...type.body, fontWeight: "500" }}>{DictionaryNames[dict]}</Text>
                   <Text style={{ ...type.footnote, color: textSecondaryColor, marginTop: 6 }}>
                     {DICTIONARY_DESCRIPTIONS[dict]}
+                  </Text>
+                </RNView>
+                {isSelected && <BlueCheckIcon />}
+              </Pressable>
+            );
+          })}
+        </RNView>
+        <Text style={{ ...type.headline, fontWeight: "bold", marginBottom: 12, marginTop: 32 }}>
+          Quiz Difficulty
+        </Text>
+        <RNView
+          style={{
+            borderRadius: 12,
+            backgroundColor,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor,
+            overflow: "hidden",
+          }}
+        >
+          {DIFFICULTY_ORDER.map((diff, index) => {
+            const isSelected = currentDifficulty === diff;
+            const isLast = index === DIFFICULTY_ORDER.length - 1;
+
+            return (
+              <Pressable
+                key={diff}
+                onPress={() => setDifficulty(diff)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
+                  borderBottomColor: borderColor,
+                }}
+              >
+                <RNView style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={{ ...type.body, fontWeight: "500" }}>{DifficultyNames[diff]}</Text>
+                  <Text style={{ ...type.footnote, color: textSecondaryColor, marginTop: 6 }}>
+                    {DifficultyDescriptions[diff]}
                   </Text>
                 </RNView>
                 {isSelected && <BlueCheckIcon />}
