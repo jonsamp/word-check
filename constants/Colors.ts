@@ -7,7 +7,7 @@ export default {
     border: "#CBC0AA",
     success: "#30A46C",
     danger: "#ed004d",
-    tint: "#C2785C",
+    tint: "#A8614A",
   },
   dark: {
     text: "#d6d3d1",

@@ -62,6 +62,23 @@ export default function Layout() {
                 }}
               />
               <Stack.Screen
+                name="practice"
+                options={{
+                  headerBackTitle: "Back",
+                  headerShadowVisible: false,
+                  headerStyle: {
+                    backgroundColor: isDark
+                      ? Colors.dark.backgroundSecondary
+                      : Colors.light.backgroundSecondary,
+                  },
+                  headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
+                  headerTitleStyle: {
+                    fontFamily: "New York",
+                    fontWeight: "bold" as const,
+                  },
+                }}
+              />
+              <Stack.Screen
                 name="about"
                 options={{
                   title: "About",
