@@ -3873,6 +3873,11 @@ expo-glass-effect@^55.0.6:
   resolved "https://registry.yarnpkg.com/expo-glass-effect/-/expo-glass-effect-55.0.6.tgz#7b7b590851b68b8693ea94dafd3810a6da6f95fc"
   integrity sha512-1WL6SWe+9p4nFnysCiGXvVwuOXx75pp8i0BfoJlg1PZ+b188+lomzlzGYvsQ64cvgZE8c+nimKNHDTTCK0GE0w==
 
+expo-haptics@~55.0.8:
+  version "55.0.8"
+  resolved "https://registry.yarnpkg.com/expo-haptics/-/expo-haptics-55.0.8.tgz#9ccf3527f4622d5e267a7820da43075a257777b1"
+  integrity sha512-yVR6EsQwl1WuhFITc0PpfI/7dsBdjK/F2YA8xB80UUW9iTa+Tqz21FpH4n/vtbargpzFxkhl5WNYMa419+QWFQ==
+
 expo-image@^55.0.3, expo-image@~55.0.2:
   version "55.0.3"
   resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-55.0.3.tgz#1efdee395a42f29bdbeb6ce7521ce71c76322d8f"
