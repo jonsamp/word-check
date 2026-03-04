@@ -57,7 +57,7 @@ export default function Layout() {
           <ThemeProvider value={navTheme}>
             <Stack>
               <Stack.Screen
-                name="index"
+                name="(tabs)"
                 options={{
                   headerShown: false,
                 }}
