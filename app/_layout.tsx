@@ -6,6 +6,7 @@ import { Platform, View } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
+import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
 
 export default function Layout() {
@@ -53,52 +54,54 @@ export default function Layout() {
           paddingVertical: isWeb ? 20 : undefined,
         }}
       >
-        <DictionaryProvider>
-          <DifficultyProvider>
-            <ThemeProvider value={navTheme}>
-              <Stack>
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="practice"
-                  options={{
-                    headerBackTitle: "Back",
-                    headerShadowVisible: false,
-                    headerStyle: {
-                      backgroundColor: isDark
-                        ? Colors.dark.backgroundSecondary
-                        : Colors.light.backgroundSecondary,
-                    },
-                    headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
-                    headerTitleStyle: {
-                      fontFamily: "New York",
-                      fontWeight: "bold" as const,
-                    },
-                  }}
-                />
-                <Stack.Screen
-                  name="about"
-                  options={{
-                    title: "About",
-                    headerShown: false,
-                    presentation: Platform.select({
-                      android: "formSheet",
-                      default: "modal",
-                    }),
-                    sheetAllowedDetents: Platform.select({
-                      android: [0.8],
-                      default: undefined,
-                    }),
-                  }}
-                />
-              </Stack>
-            </ThemeProvider>
-          </DifficultyProvider>
-        </DictionaryProvider>
+        <TopScoreProvider>
+          <DictionaryProvider>
+            <DifficultyProvider>
+              <ThemeProvider value={navTheme}>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="practice"
+                    options={{
+                      headerBackTitle: "Back",
+                      headerShadowVisible: false,
+                      headerStyle: {
+                        backgroundColor: isDark
+                          ? Colors.dark.backgroundSecondary
+                          : Colors.light.backgroundSecondary,
+                      },
+                      headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
+                      headerTitleStyle: {
+                        fontFamily: "New York",
+                        fontWeight: "bold" as const,
+                      },
+                    }}
+                  />
+                  <Stack.Screen
+                    name="about"
+                    options={{
+                      title: "About",
+                      headerShown: false,
+                      presentation: Platform.select({
+                        android: "formSheet",
+                        default: "modal",
+                      }),
+                      sheetAllowedDetents: Platform.select({
+                        android: [0.8],
+                        default: undefined,
+                      }),
+                    }}
+                  />
+                </Stack>
+              </ThemeProvider>
+            </DifficultyProvider>
+          </DictionaryProvider>
+        </TopScoreProvider>
       </View>
     </View>
   );

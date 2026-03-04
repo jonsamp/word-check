@@ -192,7 +192,7 @@ export default function Quiz() {
       setWordIndex(nextIndex);
       initializeWord(nextIndex);
     } else {
-      router.back();
+      router.replace(`/practice/${id}/complete?correct=${correctCount}&total=${words.length}`);
     }
   }
 

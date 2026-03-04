@@ -6,17 +6,18 @@ import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
 import { type } from "../../constants/Type";
 import { PRACTICE_LISTS } from "../../constants/PracticeLists";
+import { useTopScores } from "../../contexts/TopScoreContext";
 
 const PRACTICE_CARDS = Object.values(PRACTICE_LISTS).map((list) => ({
   id: list.id,
   title: list.title,
   wordCount: list.words.length,
-  topScore: "0%",
 }));
 
 export default function Practice() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { getTopScore } = useTopScores();
   const isWeb = Platform.OS === "web";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -75,7 +76,7 @@ export default function Practice() {
                 </Text>
               </RNView>
               <Text style={{ ...type.callout, color: textSecondaryColor }}>
-                Top score: {card.topScore}
+                Top score: {getTopScore(card.id) !== null ? `${getTopScore(card.id)}%` : "--"}
               </Text>
             </RNView>
             <RNView style={styles.cardButtons}>

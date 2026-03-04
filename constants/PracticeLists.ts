@@ -11,6 +11,11 @@ export type PracticeList = {
 };
 
 export const PRACTICE_LISTS: Record<string, PracticeList> = {
+  debug: {
+    id: "debug",
+    title: "Debug (1 word)",
+    words: [{ word: "CAT", definition: "A small domesticated feline" }],
+  },
   "q-words": {
     id: "q-words",
     title: "Short Q Words",
