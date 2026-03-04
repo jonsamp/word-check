@@ -1,4 +1,4 @@
-import { generateQuizWord } from "../quiz";
+import { generateQuizWord, generateChoices } from "../quiz";
 import { Difficulty } from "../difficulty";
 
 describe("generateQuizWord", () => {
@@ -65,5 +65,44 @@ describe("generateQuizWord", () => {
         expect(result.blanks).toHaveLength(1);
       }
     }
+  });
+});
+
+describe("generateChoices", () => {
+  it("result always has length 7 by default", () => {
+    const result = generateChoices(["A", "B", "C"]);
+    expect(result).toHaveLength(7);
+  });
+
+  it("all blank letters are present in the result", () => {
+    const blanks = ["X", "Y", "Z"];
+    for (let run = 0; run < 20; run++) {
+      const result = generateChoices(blanks);
+      for (const letter of blanks) {
+        expect(result).toContain(letter);
+      }
+    }
+  });
+
+  it("custom totalChoices works", () => {
+    const result = generateChoices(["A", "B"], 10);
+    expect(result).toHaveLength(10);
+    expect(result).toContain("A");
+    expect(result).toContain("B");
+  });
+
+  it("empty blanks array returns 7 random letters", () => {
+    const result = generateChoices([]);
+    expect(result).toHaveLength(7);
+    for (const letter of result) {
+      expect(letter).toMatch(/^[A-Z]$/);
+    }
+  });
+
+  it("when blanks exceed totalChoices, returns all blanks shuffled", () => {
+    const blanks = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    const result = generateChoices(blanks, 5);
+    expect(result).toHaveLength(10);
+    expect(result.sort()).toEqual(blanks.sort());
   });
 });

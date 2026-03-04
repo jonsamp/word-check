@@ -64,3 +64,27 @@ export function generateQuizWord(
 
   return { word, tiles, blanks };
 }
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let current = shuffled.length - 1; current > 0; current--) {
+    const swapWith = Math.floor(Math.random() * (current + 1));
+    [shuffled[current], shuffled[swapWith]] = [shuffled[swapWith], shuffled[current]];
+  }
+  return shuffled;
+}
+
+export function generateChoices(requiredLetters: string[], totalChoices: number = 7): string[] {
+  if (requiredLetters.length >= totalChoices) {
+    return shuffleArray(requiredLetters);
+  }
+
+  const choices = [...requiredLetters];
+  const fillerCount = totalChoices - requiredLetters.length;
+  for (let index = 0; index < fillerCount; index++) {
+    const code = Math.floor(Math.random() * 26) + 65;
+    choices.push(String.fromCharCode(code));
+  }
+
+  return shuffleArray(choices);
+}
