@@ -57,7 +57,9 @@ export default function Practice() {
       <RNView style={{ marginBottom: 12, paddingHorizontal: 20 }}>
         <Text style={[styles.header, { color: textColor, top: 8 }]}>Practice</Text>
       </RNView>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 80 }}
+      >
         {PRACTICE_CARDS.map((card) => (
           <RNView
             key={card.title}

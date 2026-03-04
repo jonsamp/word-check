@@ -12,7 +12,9 @@ import { useDifficulty } from "../../../contexts/DifficultyContext";
 import { useDictionary } from "../../../contexts/DictionaryContext";
 import { DifficultyNames } from "../../../constants/difficulty";
 
-const TILE_SIZE = 64;
+const TILE_SIZE_LARGE = 64;
+const TILE_SIZE_MEDIUM = 44;
+const TILE_SIZE_SMALL = 38;
 const TILE_GAP = 10;
 
 export default function Quiz() {
@@ -61,6 +63,9 @@ export default function Quiz() {
   }, []);
 
   const currentBlankTileIndex = blankTileIndices[selectedBlankIndex];
+  const wordLength = quizWord.tiles.length;
+  const tileSize =
+    wordLength > 7 ? TILE_SIZE_SMALL : wordLength > 5 ? TILE_SIZE_MEDIUM : TILE_SIZE_LARGE;
   const allBlanksFilled = filledLetters.size === quizWord.blanks.length;
   const wordsAttempted = submittedAnswer !== null ? wordIndex + 1 : wordIndex;
   const percentage = wordsAttempted > 0 ? Math.round((correctCount / wordsAttempted) * 100) : 0;
@@ -215,10 +220,11 @@ export default function Quiz() {
             const isBlank = tile.isBlank;
             const filled = filledLetters.get(index);
             const isSelected = isBlank && index === currentBlankTileIndex;
+            const tileStyle = { width: tileSize, height: tileSize };
 
             if (!isBlank) {
               return (
-                <View key={index} style={[styles.wordTile, { backgroundColor }]}>
+                <View key={index} style={[styles.wordTile, tileStyle, { backgroundColor }]}>
                   <Text style={[styles.wordTileLetter, { color: textColor }]}>{tile.letter}</Text>
                 </View>
               );
@@ -229,6 +235,7 @@ export default function Quiz() {
                 <View
                   style={[
                     styles.wordTile,
+                    tileStyle,
                     {
                       backgroundColor: filled || isSelected ? tintColor + "25" : backgroundColor,
                       borderColor: isSelected ? tintColor + "60" : "transparent",
@@ -293,6 +300,11 @@ export default function Quiz() {
               <>
                 <CheckIcon />
                 <Text style={[type.title, { marginTop: 8 }]}>Correct!</Text>
+                <Text
+                  style={[type.subhead, { color: textColor, marginTop: 4, textAlign: "center" }]}
+                >
+                  {words[wordIndex].definition}
+                </Text>
               </>
             ) : (
               <>
@@ -317,6 +329,11 @@ export default function Quiz() {
                     </View>
                   ))}
                 </View>
+                <Text
+                  style={[type.subhead, { color: textColor, marginTop: 8, textAlign: "center" }]}
+                >
+                  {words[wordIndex].definition}
+                </Text>
               </>
             )}
           </View>
@@ -377,6 +394,8 @@ function ChoiceTile({
         style={[
           styles.wordTile,
           {
+            width: TILE_SIZE_LARGE,
+            height: TILE_SIZE_LARGE,
             backgroundColor: used ? usedBackgroundColor : backgroundColor,
           },
         ]}
@@ -419,8 +438,6 @@ const styles = StyleSheet.create({
     gap: TILE_GAP,
   },
   wordTile: {
-    width: TILE_SIZE,
-    height: TILE_SIZE,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
