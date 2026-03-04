@@ -111,7 +111,7 @@ export default function Home() {
           paddingHorizontal: 20,
         }}
       >
-        <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Check</Text>
+        <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
         <Pressable
           onPress={() => router.navigate("/settings")}
           style={{ flexDirection: "row", alignItems: "center", gap: 6, top: 4 }}

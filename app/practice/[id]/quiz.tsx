@@ -23,7 +23,10 @@ export default function Quiz() {
   const { currentDictionary } = useDictionary();
 
   const list = PRACTICE_LISTS[id];
-  const [words] = useState<PracticeWord[]>(() => shuffleArray(list.words));
+  const [words] = useState<PracticeWord[]>(() => {
+    const shuffled = shuffleArray(list.words);
+    return list.quizSize ? shuffled.slice(0, list.quizSize) : shuffled;
+  });
   const [wordIndex, setWordIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [submittedAnswer, setSubmittedAnswer] = useState<"correct" | "incorrect" | null>(null);

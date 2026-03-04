@@ -8,6 +8,7 @@ export type PracticeList = {
   title: string;
   words: PracticeWord[];
   requiredLetters?: string[];
+  quizSize?: number;
 };
 
 export const PRACTICE_LISTS: Record<string, PracticeList> = {
@@ -46,9 +47,10 @@ export const PRACTICE_LISTS: Record<string, PracticeList> = {
       { word: "SUQS", definition: "Plural of SUQ" },
     ],
   },
-  "2-letter-i": {
-    id: "2-letter-i",
-    title: "2-Letter Words I",
+  "2-letter": {
+    id: "2-letter",
+    title: "2-Letter Words",
+    quizSize: 15,
     words: [
       { word: "AA", definition: "A type of rough lava" },
       { word: "AB", definition: "An abdominal muscle" },
@@ -86,12 +88,6 @@ export const PRACTICE_LISTS: Record<string, PracticeList> = {
       { word: "EW", definition: "An exclamation of disgust" },
       { word: "EX", definition: "A former partner" },
       { word: "FA", definition: "The fourth tone of a musical scale" },
-    ],
-  },
-  "2-letter-ii": {
-    id: "2-letter-ii",
-    title: "2-Letter Words II",
-    words: [
       { word: "FE", definition: "A Hebrew letter" },
       { word: "GI", definition: "A martial arts uniform" },
       { word: "GO", definition: "To move or proceed" },
@@ -128,12 +124,6 @@ export const PRACTICE_LISTS: Record<string, PracticeList> = {
       { word: "OH", definition: "An exclamation of surprise" },
       { word: "OI", definition: "An interjection to get attention" },
       { word: "OK", definition: "All right" },
-    ],
-  },
-  "2-letter-iii": {
-    id: "2-letter-iii",
-    title: "2-Letter Words III",
-    words: [
       { word: "OM", definition: "A sacred syllable in Hinduism" },
       { word: "ON", definition: "In contact with a surface" },
       { word: "OP", definition: "A style of abstract art" },
