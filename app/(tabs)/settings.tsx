@@ -188,8 +188,6 @@ export default function Settings() {
               justifyContent: "space-between",
               paddingVertical: 18,
               paddingHorizontal: 16,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: borderColor,
             }}
           >
             <RNView style={{ flex: 1, marginRight: 12 }}>
@@ -197,23 +195,6 @@ export default function Settings() {
               <Text style={{ ...type.footnote, color: textSecondaryColor, marginTop: 6 }}>
                 An optional donation that does not unlock any features
               </Text>
-            </RNView>
-            <ExternalLinkIcon color={textSecondaryColor} />
-          </Pressable>
-          <Pressable
-            onPress={() =>
-              Linking.openURL("https://gist.github.com/jonsamp/9c0342948416bd810c3a0a508e242a45")
-            }
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingVertical: 18,
-              paddingHorizontal: 16,
-            }}
-          >
-            <RNView style={{ flex: 1, marginRight: 12 }}>
-              <Text style={{ ...type.body, fontWeight: "500" }}>Privacy Policy</Text>
             </RNView>
             <ExternalLinkIcon color={textSecondaryColor} />
           </Pressable>
