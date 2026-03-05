@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 
 import { Platform, View } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
+import { DifficultyProvider } from "../contexts/DifficultyContext";
+import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
 
 export default function Layout() {
@@ -15,17 +17,16 @@ export default function Layout() {
     ? Colors.dark.backgroundSecondary
     : Colors.light.backgroundSecondary;
 
-  const navTheme = useMemo(() => {
-    const base = isDark ? DarkTheme : DefaultTheme;
-    if (!isWeb) {return base;}
-    return {
-      ...base,
-      colors: {
-        ...base.colors,
-        background: "transparent",
-      },
-    };
-  }, [isDark, isWeb]);
+  const base = isDark ? DarkTheme : DefaultTheme;
+  const navTheme = !isWeb
+    ? base
+    : {
+        ...base,
+        colors: {
+          ...base.colors,
+          background: "transparent",
+        },
+      };
 
   useEffect(() => {
     if (!isWeb) {
@@ -53,33 +54,54 @@ export default function Layout() {
           paddingVertical: isWeb ? 20 : undefined,
         }}
       >
-        <DictionaryProvider>
-          <ThemeProvider value={navTheme}>
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="about"
-                options={{
-                  title: "About",
-                  headerShown: false,
-                  presentation: Platform.select({
-                    android: "formSheet",
-                    default: "modal",
-                  }),
-                  sheetAllowedDetents: Platform.select({
-                    android: [0.8],
-                    default: undefined,
-                  }),
-                }}
-              />
-            </Stack>
-          </ThemeProvider>
-        </DictionaryProvider>
+        <TopScoreProvider>
+          <DictionaryProvider>
+            <DifficultyProvider>
+              <ThemeProvider value={navTheme}>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="practice"
+                    options={{
+                      headerBackTitle: "Back",
+                      headerShadowVisible: false,
+                      headerStyle: {
+                        backgroundColor: isDark
+                          ? Colors.dark.backgroundSecondary
+                          : Colors.light.backgroundSecondary,
+                      },
+                      headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
+                      headerTitleStyle: {
+                        fontFamily: "New York",
+                        fontWeight: "bold" as const,
+                      },
+                    }}
+                  />
+                  <Stack.Screen
+                    name="about"
+                    options={{
+                      title: "About",
+                      headerShown: false,
+                      presentation: Platform.select({
+                        android: "formSheet",
+                        default: "modal",
+                      }),
+                      sheetAllowedDetents: Platform.select({
+                        android: [0.8],
+                        default: undefined,
+                      }),
+                    }}
+                  />
+                </Stack>
+              </ThemeProvider>
+            </DifficultyProvider>
+          </DictionaryProvider>
+        </TopScoreProvider>
       </View>
     </View>
   );
