@@ -4,12 +4,14 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { type } from "../../../constants/Type";
 import { useTopScores } from "../../../contexts/TopScoreContext";
+import { Difficulty } from "../../../constants/difficulty";
 
 export default function Complete() {
-  const { id, correct, total } = useLocalSearchParams<{
+  const { id, correct, total, difficulty } = useLocalSearchParams<{
     id: string;
     correct: string;
     total: string;
+    difficulty: string;
   }>();
   const router = useRouter();
   const { saveScore } = useTopScores();
@@ -23,8 +25,8 @@ export default function Complete() {
   const backgroundColor = useThemeColor("background");
 
   useEffect(() => {
-    saveScore(id, percentage);
-  }, [id, percentage]);
+    saveScore(id, (difficulty as Difficulty) ?? Difficulty.Level1, percentage);
+  }, [id, difficulty, percentage]);
 
   return (
     <View style={styles.container} colorKey="backgroundSecondary">

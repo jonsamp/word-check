@@ -2,8 +2,9 @@ import { useLayoutEffect, useState } from "react";
 import { Platform, Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import Animated, { Easing, LinearTransition } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
-import { CheckIcon, XIcon } from "../../../components/Icons";
+import { BackspaceIcon, CheckIcon, XIcon } from "../../../components/Icons";
 import { type } from "../../../constants/Type";
 import { PRACTICE_LISTS, PracticeWord } from "../../../constants/PracticeLists";
 import { generateQuizWord, generateChoices, shuffleArray, QuizWord } from "../../../constants/quiz";
@@ -32,6 +33,7 @@ export default function Quiz() {
   const [wordIndex, setWordIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [submittedAnswer, setSubmittedAnswer] = useState<"correct" | "incorrect" | null>(null);
+  const [lookupDefinition, setLookupDefinition] = useState<string | null>(null);
 
   const [quizWord, setQuizWord] = useState<QuizWord>(() =>
     generateQuizWord(words[0].word, currentDifficulty, list.requiredLetters)
@@ -83,12 +85,14 @@ export default function Quiz() {
     setFilledLetters(new Map());
     setUsedChoiceIndices(new Set());
     setSubmittedAnswer(null);
+    setLookupDefinition(null);
   }
 
   function handleChoiceTap(choiceIndex: number) {
     if (usedChoiceIndices.has(choiceIndex) || submittedAnswer !== null) {
       return;
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (currentBlankTileIndex === undefined) {
       return;
     }
@@ -156,6 +160,43 @@ export default function Quiz() {
     setSelectedBlankIndex(blankIdx);
   }
 
+  function handleBackspace() {
+    if (submittedAnswer !== null) {
+      return;
+    }
+
+    // Find the right-most filled blank
+    let rightmostBlankIdx = -1;
+    for (let index = blankTileIndices.length - 1; index >= 0; index--) {
+      if (filledLetters.has(blankTileIndices[index])) {
+        rightmostBlankIdx = index;
+        break;
+      }
+    }
+    if (rightmostBlankIdx === -1) {
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const tileIndex = blankTileIndices[rightmostBlankIdx];
+    const letter = filledLetters.get(tileIndex)!;
+    const nextFilled = new Map(filledLetters);
+    nextFilled.delete(tileIndex);
+    setFilledLetters(nextFilled);
+
+    const choiceIdx = choices.findIndex(
+      (choice, idx) =>
+        choice === letter && usedChoiceIndices.has(idx) && !isChoiceUsedElsewhere(idx, tileIndex)
+    );
+    if (choiceIdx !== -1) {
+      const nextUsed = new Set(usedChoiceIndices);
+      nextUsed.delete(choiceIdx);
+      setUsedChoiceIndices(nextUsed);
+    }
+
+    setSelectedBlankIndex(rightmostBlankIdx);
+  }
+
   function isChoiceUsedElsewhere(choiceIdx: number, excludeTileIndex: number): boolean {
     // Check if this choice index is mapped to another blank tile
     const letter = choices[choiceIdx];
@@ -179,17 +220,27 @@ export default function Quiz() {
     if (!allBlanksFilled) {
       return;
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     const filledWord = quizWord.tiles
       .map((tile, index) => (tile.isBlank ? (filledLetters.get(index) ?? "") : tile.letter))
       .join("");
 
     const result = await lookUpWord(filledWord, currentDictionary);
+    const definition = result.definition?.split("[")[0].split(", also")[0]?.trim() ?? null;
+    setLookupDefinition(definition);
 
     if (result.isValid) {
       setCorrectCount(correctCount + 1);
       setSubmittedAnswer("correct");
     } else {
+      // Look up the correct word's definition for display
+      const correctResult = await lookUpWord(words[wordIndex].word, currentDictionary);
+      const correctDefinition =
+        correctResult.definition?.split("[")[0].split(", also")[0]?.trim() ?? null;
+      setLookupDefinition(correctDefinition);
       setSubmittedAnswer("incorrect");
     }
   }
@@ -200,7 +251,9 @@ export default function Quiz() {
       setWordIndex(nextIndex);
       initializeWord(nextIndex);
     } else {
-      router.replace(`/practice/${id}/complete?correct=${correctCount}&total=${words.length}`);
+      router.replace(
+        `/practice/${id}/complete?correct=${correctCount}&total=${words.length}&difficulty=${currentDifficulty}`
+      );
     }
   }
 
@@ -292,6 +345,20 @@ export default function Quiz() {
                   />
                 );
               })}
+              <Pressable onPress={handleBackspace}>
+                <View
+                  style={[
+                    styles.wordTile,
+                    {
+                      width: TILE_SIZE_LARGE,
+                      height: TILE_SIZE_LARGE,
+                      backgroundColor: backgroundSecondaryColor,
+                    },
+                  ]}
+                >
+                  <BackspaceIcon color={textColor} size={26} />
+                </View>
+              </Pressable>
             </View>
           </View>
         ) : (
@@ -300,11 +367,13 @@ export default function Quiz() {
               <>
                 <CheckIcon />
                 <Text style={[type.title, { marginTop: 8 }]}>Correct!</Text>
-                <Text
-                  style={[type.subhead, { color: textColor, marginTop: 4, textAlign: "center" }]}
-                >
-                  {words[wordIndex].definition}
-                </Text>
+                {lookupDefinition ? (
+                  <Text
+                    style={[type.subhead, { color: textColor, marginTop: 4, textAlign: "center" }]}
+                  >
+                    {lookupDefinition}
+                  </Text>
+                ) : null}
               </>
             ) : (
               <>
@@ -329,11 +398,13 @@ export default function Quiz() {
                     </View>
                   ))}
                 </View>
-                <Text
-                  style={[type.subhead, { color: textColor, marginTop: 8, textAlign: "center" }]}
-                >
-                  {words[wordIndex].definition}
-                </Text>
+                {lookupDefinition ? (
+                  <Text
+                    style={[type.subhead, { color: textColor, marginTop: 8, textAlign: "center" }]}
+                  >
+                    {lookupDefinition}
+                  </Text>
+                ) : null}
               </>
             )}
           </View>

@@ -7,6 +7,8 @@ import { useThemeColor } from "../../components/Themed";
 import { type } from "../../constants/Type";
 import { PRACTICE_LISTS } from "../../constants/PracticeLists";
 import { useTopScores } from "../../contexts/TopScoreContext";
+import { useDifficulty } from "../../contexts/DifficultyContext";
+import { DifficultyNames } from "../../constants/difficulty";
 
 const PRACTICE_CARDS = Object.values(PRACTICE_LISTS).map((list) => ({
   id: list.id,
@@ -18,6 +20,7 @@ export default function Practice() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { getTopScore } = useTopScores();
+  const { currentDifficulty } = useDifficulty();
   const isWeb = Platform.OS === "web";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -54,11 +57,18 @@ export default function Practice() {
       }}
       colorKey="backgroundSecondary"
     >
-      <RNView style={{ marginBottom: 12, paddingHorizontal: 20 }}>
-        <Text style={[styles.header, { color: textColor, top: 8 }]}>Practice</Text>
+      <RNView style={styles.headerRow}>
+        <Text style={[styles.header, { color: textColor }]}>Practice</Text>
+        <Text style={{ ...type.callout, color: textSecondaryColor, marginRight: 4 }}>
+          Difficulty: {DifficultyNames[currentDifficulty]}
+        </Text>
       </RNView>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 80 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 20,
+          paddingBottom: insets.bottom + 80,
+        }}
       >
         {PRACTICE_CARDS.map((card) => (
           <RNView
@@ -78,7 +88,10 @@ export default function Practice() {
                 </Text>
               </RNView>
               <Text style={{ ...type.callout, color: textSecondaryColor }}>
-                Top score: {getTopScore(card.id) !== null ? `${getTopScore(card.id)}%` : "--"}
+                High score:{" "}
+                {getTopScore(card.id, currentDifficulty) !== null
+                  ? `${getTopScore(card.id, currentDifficulty)}%`
+                  : "--"}
               </Text>
             </RNView>
             <RNView style={styles.cardButtons}>
@@ -104,7 +117,9 @@ export default function Practice() {
                   },
                 ]}
               >
-                <Text style={{ ...type.callout, fontWeight: "600", color: "#fff" }}>Quiz</Text>
+                <Text style={{ ...type.callout, fontWeight: "600", color: "#fff" }}>
+                  Start Quiz
+                </Text>
               </Pressable>
             </RNView>
           </RNView>
@@ -115,10 +130,16 @@ export default function Practice() {
 }
 
 const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: 12,
+    paddingHorizontal: 20,
+  },
   header: {
     ...type.largeTitle,
     fontFamily: "New York",
-    marginBottom: 16,
     fontSize: 24,
     fontWeight: "bold",
   },
@@ -139,7 +160,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: 10,
     borderRadius: 100,
     alignItems: "center",
   },

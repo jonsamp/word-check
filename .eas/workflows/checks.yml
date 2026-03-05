@@ -1,0 +1,32 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - "*"
+      - "!main"
+
+jobs:
+  lint:
+    name: Lint
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - name: Run lint
+        run: yarn lint
+
+  format:
+    name: Format
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - name: Check formatting
+        run: yarn format
+
+  test:
+    name: Test
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - name: Run tests
+        run: yarn test

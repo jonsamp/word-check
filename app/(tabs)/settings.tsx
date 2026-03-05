@@ -59,17 +59,29 @@ export default function Settings() {
       }}
       colorKey="backgroundSecondary"
     >
-      <RNView style={{ marginBottom: 24, paddingHorizontal: 20 }}>
+      <RNView style={{ marginBottom: 12, paddingHorizontal: 20 }}>
         <Text style={[styles.header, { color: textColor, top: 8 }]}>Settings</Text>
       </RNView>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
-        <Text style={{ ...type.headline, fontWeight: "bold", marginBottom: 12 }}>Dictionary</Text>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 80 }}
+      >
+        <Text
+          style={{
+            ...type.footnote,
+            color: textSecondaryColor,
+            fontWeight: "500",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+            marginBottom: 12,
+            marginLeft: 4,
+          }}
+        >
+          Dictionary
+        </Text>
         <RNView
           style={{
-            borderRadius: 12,
+            borderRadius: 16,
             backgroundColor,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor,
             overflow: "hidden",
           }}
         >
@@ -85,7 +97,7 @@ export default function Settings() {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  paddingVertical: 14,
+                  paddingVertical: 18,
                   paddingHorizontal: 16,
                   borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
                   borderBottomColor: borderColor,
@@ -97,20 +109,33 @@ export default function Settings() {
                     {DICTIONARY_DESCRIPTIONS[dict]}
                   </Text>
                 </RNView>
-                {isSelected && <BlueCheckIcon />}
+                {isSelected && (
+                  <RNView style={{ marginRight: 4 }}>
+                    <BlueCheckIcon />
+                  </RNView>
+                )}
               </Pressable>
             );
           })}
         </RNView>
-        <Text style={{ ...type.headline, fontWeight: "bold", marginBottom: 12, marginTop: 32 }}>
+        <Text
+          style={{
+            ...type.footnote,
+            color: textSecondaryColor,
+            fontWeight: "500",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+            marginBottom: 12,
+            marginTop: 32,
+            marginLeft: 4,
+          }}
+        >
           Quiz Difficulty
         </Text>
         <RNView
           style={{
-            borderRadius: 12,
+            borderRadius: 16,
             backgroundColor,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor,
             overflow: "hidden",
           }}
         >
@@ -126,7 +151,7 @@ export default function Settings() {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  paddingVertical: 14,
+                  paddingVertical: 18,
                   paddingHorizontal: 16,
                   borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
                   borderBottomColor: borderColor,
@@ -138,17 +163,19 @@ export default function Settings() {
                     {DifficultyDescriptions[diff]}
                   </Text>
                 </RNView>
-                {isSelected && <BlueCheckIcon />}
+                {isSelected && (
+                  <RNView style={{ marginRight: 4 }}>
+                    <BlueCheckIcon />
+                  </RNView>
+                )}
               </Pressable>
             );
           })}
         </RNView>
         <RNView
           style={{
-            borderRadius: 12,
+            borderRadius: 16,
             backgroundColor,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor,
             overflow: "hidden",
             marginTop: 32,
           }}
@@ -159,7 +186,7 @@ export default function Settings() {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              paddingVertical: 14,
+              paddingVertical: 18,
               paddingHorizontal: 16,
               borderBottomWidth: StyleSheet.hairlineWidth,
               borderBottomColor: borderColor,
@@ -181,7 +208,7 @@ export default function Settings() {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              paddingVertical: 14,
+              paddingVertical: 18,
               paddingHorizontal: 16,
             }}
           >
@@ -209,6 +236,16 @@ export default function Settings() {
   );
 }
 
+const styles = StyleSheet.create({
+  header: {
+    ...type.largeTitle,
+    fontFamily: "New York",
+    marginBottom: 16,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});
+
 function ExternalLinkIcon({ color }: { color: string }) {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
@@ -222,13 +259,3 @@ function ExternalLinkIcon({ color }: { color: string }) {
     </Svg>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...type.largeTitle,
-    fontFamily: "New York",
-    marginBottom: 16,
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-});

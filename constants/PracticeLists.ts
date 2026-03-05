@@ -20,6 +20,7 @@ export const PRACTICE_LISTS: Record<string, PracticeList> = {
   "q-words": {
     id: "q-words",
     title: "Short Q Words",
+    quizSize: 10,
     requiredLetters: ["Q"],
     words: [
       { word: "AQUA", definition: "Water or a light greenish-blue color" },

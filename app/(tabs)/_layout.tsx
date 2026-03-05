@@ -44,7 +44,14 @@ function PillTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const colors = isDark ? Colors.dark : Colors.light;
 
   return (
-    <View style={styles.tabBarWrapper}>
+    <View
+      style={[
+        styles.tabBarWrapper,
+        {
+          backgroundImage: `linear-gradient(to bottom, transparent, ${colors.backgroundSecondary})`,
+        } as any,
+      ]}
+    >
       <View
         style={[
           styles.tabBarPill,
@@ -95,8 +102,13 @@ function WebTabs() {
 
 const styles = StyleSheet.create({
   tabBarWrapper: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     alignItems: "center",
     paddingBottom: 16,
+    paddingTop: 40,
   },
   tabBarPill: {
     flexDirection: "row",

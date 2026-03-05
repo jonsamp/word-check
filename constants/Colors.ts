@@ -5,8 +5,8 @@ export default {
     background: "#F2F0E7",
     backgroundSecondary: "#EAE6DB",
     border: "#CBC0AA",
-    success: "#30A46C",
-    danger: "#ed004d",
+    success: "#4a9e6e",
+    danger: "#c9405a",
     tint: "#A8614A",
   },
   dark: {
@@ -15,8 +15,8 @@ export default {
     background: "#292524",
     backgroundSecondary: "#1c1917",
     border: "#57534e",
-    success: "#22c55e",
-    danger: "#fc0f5a",
+    success: "#5cba7a",
+    danger: "#d4506a",
     tint: "#C2785C",
   },
 };

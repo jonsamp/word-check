@@ -114,7 +114,7 @@ export default function Home() {
         <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
         <Pressable
           onPress={() => router.navigate("/settings")}
-          style={{ flexDirection: "row", alignItems: "center", gap: 6, top: 4 }}
+          style={{ flexDirection: "row", alignItems: "center", gap: 6, top: 4, right: 4 }}
         >
           <SymbolView
             name={{ ios: "book", android: "menu_book", web: "menu_book" }}
@@ -136,13 +136,11 @@ export default function Home() {
         <TextInput
           style={{
             color: textColor,
-            borderWidth: StyleSheet.hairlineWidth,
             backgroundColor,
-            borderColor,
             paddingLeft: 20,
             paddingRight: 50,
             paddingVertical: 20,
-            borderRadius: 10,
+            borderRadius: 16,
             overflow: "hidden",
             ...type.body,
             fontSize: 24,
@@ -183,6 +181,26 @@ export default function Home() {
       >
         {result == null && (
           <RNView style={{ alignItems: "center", marginTop: 8 }}>
+            {(!searchValue || Platform.OS === "ios") && !result && (
+              <Animated.View
+                key="helper-text"
+                entering={FadeIn.duration(200)}
+                exiting={FadeOut.duration(200)}
+              >
+                <Text
+                  style={{
+                    ...type.body,
+                    textAlign: "center",
+                    marginHorizontal: 40,
+                    lineHeight: 26,
+                    color: textSecondaryColor,
+                    marginTop: 16,
+                  }}
+                >
+                  Check if a word is playable.
+                </Text>
+              </Animated.View>
+            )}
             {Boolean(searchValue) && Platform.OS === "android" && (
               <Animated.View
                 key="search-button"
@@ -212,8 +230,6 @@ export default function Home() {
             entering={FadeInDown.duration(600).springify()}
             style={{
               borderRadius: 16,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor,
               backgroundColor,
               shadowColor: "#000",
               marginHorizontal: 16,
