@@ -34,6 +34,7 @@ jobs:
           # 2. Generate JWT for ASC API (using Node crypto)
           JWT=$(node -e "
             const crypto = require('crypto');
+            const key = process.env.ASC_API_KEY_P8.replace(/\\\\n/g, '\n');
             const header = { alg: 'ES256', kid: process.env.ASC_API_KEY_ID, typ: 'JWT' };
             const now = Math.floor(Date.now() / 1000);
             const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: 'appstoreconnect-v1' };
@@ -43,20 +44,31 @@ jobs:
             const input = headerEnc + '.' + payloadEnc;
             const sign = crypto.createSign('SHA256');
             sign.update(input);
-            const sig = sign.sign(process.env.ASC_API_KEY_P8, 'base64url');
+            const sig = sign.sign(key, 'base64url');
             console.log(input + '.' + sig);
           ")
+
+          if [ -z "$JWT" ]; then
+            echo "Error: Failed to generate JWT. Check ASC_API_KEY_ID, ASC_API_ISSUER_ID, and ASC_API_KEY_P8 env vars."
+            exit 1
+          fi
 
           # 3. Function to check if a version has been submitted for review on ASC
           # Ignores versions still in "Prepare for Submission" state so you can
           # keep building the same version until you actually submit for review.
           check_version() {
             local VERSION=$1
-            RESPONSE=$(curl -s \
+            HTTP_CODE=$(curl -s -o /tmp/asc_response.json -w "%{http_code}" \
               -H "Authorization: Bearer $JWT" \
               -H "Content-Type: application/json" \
               "https://api.appstoreconnect.apple.com/v1/apps/$APPLE_APP_ID/appStoreVersions?filter[versionString]=$VERSION&filter[platform]=IOS")
-            echo "$RESPONSE" | node -e "
+            if [ "$HTTP_CODE" != "200" ]; then
+              echo "ASC API returned HTTP $HTTP_CODE:" >&2
+              cat /tmp/asc_response.json >&2
+              echo "0"
+              return 1
+            fi
+            cat /tmp/asc_response.json | node -e "
               let data = '';
               process.stdin.on('data', chunk => data += chunk);
               process.stdin.on('end', () => {
