@@ -15,26 +15,28 @@ jobs:
       - name: Check ASC and resolve version
         id: check
         run: |
-          APPLE_APP_ID="1489890340"
-
-          # 1. Read current version from app.config.ts
-          CURRENT_VERSION=$(node -e "
-            const fs = require('fs');
-            const content = fs.readFileSync('app.config.ts', 'utf8');
-            const match = content.match(/process\.env\.APP_VERSION\s*\|\|\s*[\"']([^\"']+)[\"']/);
-            if (match) console.log(match[1]);
-          ")
-          echo "Current version from app.config.ts: $CURRENT_VERSION"
-
-          # Parse major.minor
-          MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
-          MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
-          echo "Major: $MAJOR, Minor: $MINOR"
-
-          # 2. Generate JWT for ASC API (using Node crypto)
-          JWT=$(node -e "
+          VERSION=$(node -e "
             const crypto = require('crypto');
-            const key = process.env.ASC_API_KEY_P8.replace(/\\\\n/g, '\n');
+            const fs = require('fs');
+
+            const APPLE_APP_ID = '1489890340';
+
+            // 1. Read current version from app.config.ts
+            const content = fs.readFileSync('app.config.ts', 'utf8');
+            const versionMatch = content.match(/process\.env\.APP_VERSION\s*\|\|\s*[\"']([^\"']+)[\"']/);
+            if (!versionMatch) {
+              console.error('Could not find APP_VERSION fallback in app.config.ts');
+              process.exit(1);
+            }
+            const currentVersion = versionMatch[1];
+            console.error('Current version from app.config.ts: ' + currentVersion);
+
+            const [major, minor] = currentVersion.split('.');
+            let currentMinor = parseInt(minor, 10);
+            console.error('Major: ' + major + ', Minor: ' + currentMinor);
+
+            // 2. Generate JWT for ASC API
+            const key = (process.env.ASC_API_KEY_P8 || '').replace(/\\\\n/g, '\n');
             const header = { alg: 'ES256', kid: process.env.ASC_API_KEY_ID, typ: 'JWT' };
             const now = Math.floor(Date.now() / 1000);
             const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: 'appstoreconnect-v1' };
@@ -45,56 +47,52 @@ jobs:
             const sign = crypto.createSign('SHA256');
             sign.update(input);
             const sig = sign.sign(key, 'base64url');
-            console.log(input + '.' + sig);
+            const jwt = input + '.' + sig;
+
+            // 3. Check versions against ASC API
+            async function checkVersion(version) {
+              const url = 'https://api.appstoreconnect.apple.com/v1/apps/' + APPLE_APP_ID +
+                '/appStoreVersions?filter[versionString]=' + version + '&filter[platform]=IOS';
+              const response = await fetch(url, {
+                headers: {
+                  'Authorization': 'Bearer ' + jwt,
+                  'Content-Type': 'application/json',
+                },
+              });
+              if (!response.ok) {
+                const text = await response.text();
+                console.error('ASC API returned HTTP ' + response.status + ': ' + text);
+                process.exit(1);
+              }
+              const body = await response.json();
+              const submitted = (body.data || []).filter(
+                (entry) => entry.attributes.appStoreState !== 'PREPARE_FOR_SUBMISSION'
+              );
+              return submitted.length;
+            }
+
+            // 4. Bump minor until we find an available version
+            async function resolve() {
+              let version = currentVersion;
+              while (true) {
+                console.error('Checking if ' + version + ' exists on ASC...');
+                const count = await checkVersion(version);
+                if (count === 0) {
+                  console.error('Version ' + version + ' is available');
+                  console.log(version);
+                  return;
+                }
+                console.error('Version ' + version + ' already submitted on ASC');
+                currentMinor++;
+                version = major + '.' + currentMinor;
+              }
+            }
+
+            resolve();
           ")
 
-          if [ -z "$JWT" ]; then
-            echo "Error: Failed to generate JWT. Check ASC_API_KEY_ID, ASC_API_ISSUER_ID, and ASC_API_KEY_P8 env vars."
-            exit 1
-          fi
-
-          # 3. Function to check if a version has been submitted for review on ASC
-          # Ignores versions still in "Prepare for Submission" state so you can
-          # keep building the same version until you actually submit for review.
-          check_version() {
-            local VERSION=$1
-            HTTP_CODE=$(curl -s -o /tmp/asc_response.json -w "%{http_code}" \
-              -H "Authorization: Bearer $JWT" \
-              -H "Content-Type: application/json" \
-              "https://api.appstoreconnect.apple.com/v1/apps/$APPLE_APP_ID/appStoreVersions?filter[versionString]=$VERSION&filter[platform]=IOS")
-            if [ "$HTTP_CODE" != "200" ]; then
-              echo "ASC API returned HTTP $HTTP_CODE:" >&2
-              cat /tmp/asc_response.json >&2
-              echo "0"
-              return 1
-            fi
-            cat /tmp/asc_response.json | node -e "
-              let data = '';
-              process.stdin.on('data', chunk => data += chunk);
-              process.stdin.on('end', () => {
-                const body = JSON.parse(data);
-                const submitted = (body.data || []).filter(
-                  (version) => version.attributes.appStoreState !== 'PREPARE_FOR_SUBMISSION'
-                );
-                console.log(submitted.length);
-              });
-            "
-          }
-
-          # 4. Check current version, bump minor if already on ASC
-          VERSION="$CURRENT_VERSION"
-          while true; do
-            echo "Checking if $VERSION exists on ASC..."
-            COUNT=$(check_version "$VERSION")
-            if [ "$COUNT" = "0" ]; then
-              echo "Version $VERSION is available — using it"
-              set-output version "$VERSION"
-              exit 0
-            fi
-            echo "Version $VERSION already exists on ASC"
-            MINOR=$((MINOR + 1))
-            VERSION="${MAJOR}.${MINOR}"
-          done
+          echo "Resolved version: $VERSION"
+          set-output version "$VERSION"
 
   deploy_web:
     name: Deploy web
