@@ -45,8 +45,9 @@ export default function Privacy() {
 
         <SubTitle>Automatically Collected Information</SubTitle>
         <Paragraph>
-          The App does not automatically collect any personal information. No analytics, device
-          identifiers, or usage data are collected or transmitted.
+          The App collects anonymous performance and usage metrics to help us improve the experience.
+          This includes app startup times, screen render performance, and general usage patterns. No
+          personal information, device identifiers, or advertising IDs are included in these metrics.
         </Paragraph>
 
         <SectionTitle>Third-Party Services</SectionTitle>
@@ -59,6 +60,14 @@ export default function Privacy() {
             (such as app version and platform) to deliver updates. No personal information is
             collected.
           </BulletItem>
+          <BulletItem>
+            EAS Observe — Collects anonymous app performance metrics such as startup times, screen
+            render durations, and frame rate data. No personal information is collected.
+          </BulletItem>
+          <BulletItem>
+            Expo Insights — Collects anonymous usage analytics such as session counts and screen
+            views. No personal information is collected.
+          </BulletItem>
         </View>
 
         <SectionTitle>What We Do Not Collect</SectionTitle>
@@ -69,12 +78,11 @@ export default function Privacy() {
           <BulletItem>Device identifiers or advertising IDs</BulletItem>
           <BulletItem>Photos, contacts, or calendar data</BulletItem>
           <BulletItem>Health or fitness data</BulletItem>
-          <BulletItem>Browsing history or usage analytics</BulletItem>
+          <BulletItem>Browsing history</BulletItem>
           <BulletItem>Word lookup history or quiz results</BulletItem>
         </View>
         <Paragraph>
-          The App does not require an account or login. There is no user tracking across sessions or
-          devices.
+          The App does not require an account or login. There is no user tracking across devices.
         </Paragraph>
 
         <SectionTitle>Data Storage and Security</SectionTitle>
