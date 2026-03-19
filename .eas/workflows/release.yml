@@ -54,6 +54,8 @@ jobs:
           sign.update(input);
           const sig = sign.sign(key, "base64url");
           const jwt = input + "." + sig;
+          console.error("JWT header: " + JSON.stringify(JSON.parse(Buffer.from(headerEnc, "base64url").toString())));
+          console.error("JWT payload: " + JSON.stringify(JSON.parse(Buffer.from(payloadEnc, "base64url").toString())));
 
           // 3. Check versions against ASC API
           async function checkVersion(version) {
