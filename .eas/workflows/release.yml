@@ -1,5 +1,9 @@
 name: Release to app stores
 
+on:
+  push:
+    branches: [main]
+
 jobs:
   resolve_version:
     name: Resolve app version
