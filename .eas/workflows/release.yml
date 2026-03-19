@@ -36,13 +36,7 @@ jobs:
           console.error("Major: " + major + ", Minor: " + currentMinor);
 
           // 2. Generate JWT for ASC API
-          console.error("ASC_API_KEY_P8 env var: " + process.env.ASC_API_KEY_P8);
           const key = fs.readFileSync(process.env.ASC_API_KEY_P8, "utf8");
-          console.error("Key ID: " + process.env.ASC_API_KEY_ID);
-          console.error("Issuer ID: " + process.env.ASC_API_ISSUER_ID);
-          console.error("Key length: " + key.length);
-          console.error("Key starts with: " + key.substring(0, 30));
-          console.error("Key ends with: " + key.substring(key.length - 30));
           const header = { alg: "ES256", kid: process.env.ASC_API_KEY_ID, typ: "JWT" };
           const now = Math.floor(Date.now() / 1000);
           const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: "appstoreconnect-v1" };
@@ -52,10 +46,8 @@ jobs:
           const input = headerEnc + "." + payloadEnc;
           const sign = crypto.createSign("SHA256");
           sign.update(input);
-          const sig = sign.sign(key, "base64url");
+          const sig = sign.sign({ key, dsaEncoding: "ieee-p1363" }, "base64url");
           const jwt = input + "." + sig;
-          console.error("JWT header: " + JSON.stringify(JSON.parse(Buffer.from(headerEnc, "base64url").toString())));
-          console.error("JWT payload: " + JSON.stringify(JSON.parse(Buffer.from(payloadEnc, "base64url").toString())));
 
           // 3. Check versions against ASC API
           async function checkVersion(version) {
