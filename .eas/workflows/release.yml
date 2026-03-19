@@ -1,27 +1,116 @@
 name: Release to app stores
 
 jobs:
+  resolve_version:
+    name: Resolve app version
+    environment: production
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: eas/checkout
+      - name: Check ASC and resolve version
+        id: check
+        run: |
+          APPLE_APP_ID="1489890340"
+
+          # 1. Read current version from app.config.ts
+          CURRENT_VERSION=$(node -e "
+            const fs = require('fs');
+            const content = fs.readFileSync('app.config.ts', 'utf8');
+            const match = content.match(/process\.env\.APP_VERSION\s*\|\|\s*[\"']([^\"']+)[\"']/);
+            if (match) console.log(match[1]);
+          ")
+          echo "Current version from app.config.ts: $CURRENT_VERSION"
+
+          # Parse major.minor
+          MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+          MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+          echo "Major: $MAJOR, Minor: $MINOR"
+
+          # 2. Generate JWT for ASC API (using Node crypto)
+          JWT=$(node -e "
+            const crypto = require('crypto');
+            const header = { alg: 'ES256', kid: process.env.ASC_API_KEY_ID, typ: 'JWT' };
+            const now = Math.floor(Date.now() / 1000);
+            const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: 'appstoreconnect-v1' };
+            const toBase64Url = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+            const headerEnc = toBase64Url(header);
+            const payloadEnc = toBase64Url(payload);
+            const input = headerEnc + '.' + payloadEnc;
+            const sign = crypto.createSign('SHA256');
+            sign.update(input);
+            const sig = sign.sign(process.env.ASC_API_KEY_P8, 'base64url');
+            console.log(input + '.' + sig);
+          ")
+
+          # 3. Function to check if a version has been submitted for review on ASC
+          # Ignores versions still in "Prepare for Submission" state so you can
+          # keep building the same version until you actually submit for review.
+          check_version() {
+            local VERSION=$1
+            RESPONSE=$(curl -s \
+              -H "Authorization: Bearer $JWT" \
+              -H "Content-Type: application/json" \
+              "https://api.appstoreconnect.apple.com/v1/apps/$APPLE_APP_ID/appStoreVersions?filter[versionString]=$VERSION&filter[platform]=IOS")
+            echo "$RESPONSE" | node -e "
+              let data = '';
+              process.stdin.on('data', chunk => data += chunk);
+              process.stdin.on('end', () => {
+                const body = JSON.parse(data);
+                const submitted = (body.data || []).filter(
+                  (version) => version.attributes.appStoreState !== 'PREPARE_FOR_SUBMISSION'
+                );
+                console.log(submitted.length);
+              });
+            "
+          }
+
+          # 4. Check current version, bump minor if already on ASC
+          VERSION="$CURRENT_VERSION"
+          while true; do
+            echo "Checking if $VERSION exists on ASC..."
+            COUNT=$(check_version "$VERSION")
+            if [ "$COUNT" = "0" ]; then
+              echo "Version $VERSION is available — using it"
+              set-output version "$VERSION"
+              exit 0
+            fi
+            echo "Version $VERSION already exists on ASC"
+            MINOR=$((MINOR + 1))
+            VERSION="${MAJOR}.${MINOR}"
+          done
+
   deploy_web:
     name: Deploy web
     type: deploy
     params:
       prod: true
+
   build_ios:
     name: Build iOS
+    needs: [resolve_version]
     type: build
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: ios
+
   app_store:
     name: Send to App Store
     needs: [build_ios]
     type: testflight
     params:
       build_id: ${{ needs.build_ios.outputs.build_id }}
+
   build_android:
     name: Build Android
+    needs: [resolve_version]
     type: build
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: android
+
   play_store:
     name: Send to Play Store
     needs: [build_android]
