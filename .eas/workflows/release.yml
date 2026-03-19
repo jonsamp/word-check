@@ -36,12 +36,7 @@ jobs:
             console.error('Major: ' + major + ', Minor: ' + currentMinor);
 
             // 2. Generate JWT for ASC API
-            const rawKey = process.env.ASC_API_KEY_P8 || '';
-            const key = rawKey.replace(/\\\\n/g, '\n');
-            console.error('ASC_API_KEY_ID length: ' + (process.env.ASC_API_KEY_ID || '').length);
-            console.error('ASC_API_ISSUER_ID length: ' + (process.env.ASC_API_ISSUER_ID || '').length);
-            console.error('ASC_API_KEY_P8 length: ' + rawKey.length);
-            console.error('Key starts with BEGIN: ' + key.startsWith('-----BEGIN'));
+            const key = (process.env.ASC_API_KEY_P8 || '').replace(/\\\\n/g, '\n');
             const header = { alg: 'ES256', kid: process.env.ASC_API_KEY_ID, typ: 'JWT' };
             const now = Math.floor(Date.now() / 1000);
             const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: 'appstoreconnect-v1' };
