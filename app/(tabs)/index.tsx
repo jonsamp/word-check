@@ -9,6 +9,7 @@ import {
   Pressable,
   View as RNView,
 } from "react-native";
+import AppMetrics from "expo-app-metrics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
@@ -24,7 +25,6 @@ import { SymbolView } from "expo-symbols";
 export default function Home() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const isWeb = Platform.OS === "web";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
@@ -73,29 +73,12 @@ export default function Home() {
     }
   }
 
-  function markFirstRender() {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markFirstRender();
-      })();
-    }
-  }
-
   useEffect(() => {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markInteractive();
-      })();
-    }
-  }, [isWeb]);
+    AppMetrics.markInteractive();
+  }, []);
 
   return (
     <View
-      onLayout={markFirstRender}
       style={{
         paddingTop: insets.top + 8,
         flex: 1,
@@ -114,7 +97,13 @@ export default function Home() {
         <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
         <Pressable
           onPress={() => router.navigate("/settings")}
-          style={{ flexDirection: "row", alignItems: "center", gap: 6, top: 4, right: 4 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            top: 4,
+            right: 4,
+          }}
         >
           <SymbolView
             name={{ ios: "book", android: "menu_book", web: "menu_book" }}

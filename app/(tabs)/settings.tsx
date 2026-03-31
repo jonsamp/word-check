@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Linking, Platform, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { Linking, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import AppMetrics from "expo-app-metrics";
 import { Path, Svg } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
@@ -22,7 +23,6 @@ const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
-  const isWeb = Platform.OS === "web";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
@@ -30,29 +30,12 @@ export default function Settings() {
   const { currentDictionary, setDictionary } = useDictionary();
   const { currentDifficulty, setDifficulty } = useDifficulty();
 
-  function markFirstRender() {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markFirstRender();
-      })();
-    }
-  }
-
   useEffect(() => {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markInteractive();
-      })();
-    }
-  }, [isWeb]);
+    AppMetrics.markInteractive();
+  }, []);
 
   return (
     <View
-      onLayout={markFirstRender}
       style={{
         flex: 1,
         paddingTop: insets.top + 8,

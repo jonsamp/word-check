@@ -1,15 +1,26 @@
 import { Stack, useSegments } from "expo-router";
-import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
-import React, { useEffect, type ReactNode } from "react";
-
+import {
+  ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
+import React, { type ReactNode } from "react";
+import { AppMetricsRoot } from "expo-app-metrics";
 import { Platform, View } from "react-native";
+
 import useColorScheme from "../hooks/useColorScheme";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
 
-function AppProviders({ skip, children }: { skip: boolean; children: ReactNode }) {
+function AppProviders({
+  skip,
+  children,
+}: {
+  skip: boolean;
+  children: ReactNode;
+}) {
   if (skip) {
     return children;
   }
@@ -23,12 +34,13 @@ function AppProviders({ skip, children }: { skip: boolean; children: ReactNode }
   );
 }
 
-export default function Layout() {
+function Layout() {
   const colorScheme = useColorScheme();
   const isWeb = Platform.OS === "web";
   const isDark = colorScheme === "dark";
   const segments = useSegments();
-  const isStandalonePage = isWeb && (segments[0] === "home" || segments[0] === "privacy");
+  const isStandalonePage =
+    isWeb && (segments[0] === "home" || segments[0] === "privacy");
   const backgroundColor = isStandalonePage
     ? "#EAE6DB"
     : isDark
@@ -45,16 +57,6 @@ export default function Layout() {
           background: "transparent",
         },
       };
-
-  useEffect(() => {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markFirstRender();
-      })();
-    }
-  }, [isWeb]);
 
   return (
     <View
@@ -91,7 +93,9 @@ export default function Layout() {
                       ? Colors.dark.backgroundSecondary
                       : Colors.light.backgroundSecondary,
                   },
-                  headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
+                  headerTintColor: isDark
+                    ? Colors.dark.text
+                    : Colors.light.text,
                   headerTitleStyle: {
                     fontFamily: "New York",
                     fontWeight: "bold" as const,
@@ -132,3 +136,5 @@ export default function Layout() {
     </View>
   );
 }
+
+export default AppMetricsRoot.wrap(Layout);

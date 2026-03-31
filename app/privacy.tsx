@@ -45,9 +45,10 @@ export default function Privacy() {
 
         <SubTitle>Automatically Collected Information</SubTitle>
         <Paragraph>
-          The App collects anonymous performance and usage metrics to help us improve the experience.
-          This includes app startup times, screen render performance, and general usage patterns. No
-          personal information, device identifiers, or advertising IDs are included in these metrics.
+          The App collects anonymous performance and usage metrics to help us improve the
+          experience. This includes app startup times, screen render performance, and general usage
+          patterns. No personal information, device identifiers, or advertising IDs are included in
+          these metrics.
         </Paragraph>
 
         <SectionTitle>Third-Party Services</SectionTitle>

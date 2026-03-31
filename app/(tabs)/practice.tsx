@@ -1,7 +1,9 @@
 import { useEffect } from "react";
-import { Platform, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AppMetrics from "expo-app-metrics";
+
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
 import { type } from "../../constants/Type";
@@ -21,36 +23,18 @@ export default function Practice() {
   const insets = useSafeAreaInsets();
   const { getTopScore } = useTopScores();
   const { currentDifficulty } = useDifficulty();
-  const isWeb = Platform.OS === "web";
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundColor = useThemeColor("background");
   const secondaryBackgroundColor = useThemeColor("backgroundSecondary");
   const tintColor = useThemeColor("tint");
 
-  function markFirstRender() {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markFirstRender();
-      })();
-    }
-  }
-
   useEffect(() => {
-    if (!isWeb) {
-      (async () => {
-        const module = await import("expo-eas-observe");
-        const AppMetrics = module.default;
-        AppMetrics.markInteractive();
-      })();
-    }
-  }, [isWeb]);
+    AppMetrics.markInteractive();
+  }, []);
 
   return (
     <View
-      onLayout={markFirstRender}
       style={{
         flex: 1,
         paddingTop: insets.top + 8,
@@ -83,7 +67,13 @@ export default function Practice() {
             <RNView style={styles.cardHeader}>
               <RNView>
                 <Text style={{ ...type.title, fontWeight: "bold" }}>{card.title}</Text>
-                <Text style={{ ...type.callout, color: textSecondaryColor, marginTop: 4 }}>
+                <Text
+                  style={{
+                    ...type.callout,
+                    color: textSecondaryColor,
+                    marginTop: 4,
+                  }}
+                >
                   {card.wordCount} words
                 </Text>
               </RNView>
@@ -104,7 +94,13 @@ export default function Practice() {
                   },
                 ]}
               >
-                <Text style={{ ...type.callout, fontWeight: "600", color: textColor }}>
+                <Text
+                  style={{
+                    ...type.callout,
+                    fontWeight: "600",
+                    color: textColor,
+                  }}
+                >
                   View Words
                 </Text>
               </Pressable>
