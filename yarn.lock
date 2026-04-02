@@ -3390,12 +3390,12 @@ expect@^29.0.0, expect@^29.7.0:
     jest-message-util "^29.7.0"
     jest-util "^29.7.0"
 
-expo-app-metrics@~0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/expo-app-metrics/-/expo-app-metrics-0.1.1.tgz#6a5ed39fd447ab73541d72e55c7612641095d39a"
-  integrity sha512-wYHkNhhwNRV/+5pYwphklaLUfJ03JxrcQWiHI9J1ZbfXSPnnjjneFvSqTvW9qX3oOdU8fkXttb95I6AyOtnoug==
+expo-app-metrics@~0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/expo-app-metrics/-/expo-app-metrics-0.1.2.tgz#271be20f27661219c8ddd5b175f2261687b70812"
+  integrity sha512-9Tuaez6L2t3qfI+0H0d1zf92JSIBdIdpiAfQSOIvRZ3qswRiNCIZVn140++7NS/A11LRCxR2ttFfutiaYQn5IA==
   dependencies:
-    expo-updates-interface "^55.0.0"
+    expo-updates-interface "~55.1.3"
 
 expo-asset@~55.0.10:
   version "55.0.10"
@@ -3444,11 +3444,6 @@ expo-dev-menu@55.0.17:
   integrity sha512-UhYYHzNEy2imyPf0CFn4+2cIypqJ8D+pNBh9LxSVJaC4c3sARcGm+n52W4JA492KKiSyRrmwcWcbCMPLNj6sKQ==
   dependencies:
     expo-dev-menu-interface "55.0.1"
-
-expo-eas-client@^55.0.0:
-  version "55.0.2"
-  resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-55.0.2.tgz#d06f721e9dd09e38b2823e308cd0b7cde33b4cb6"
-  integrity sha512-fjOgSXaZFBK2Xmzn/uw0DTF3BsYv97JEa4PYXXqVCEvNJPwJB1cV1eX6Xyq6iKGIhMPH9k62sOc+oUdt094WCw==
 
 expo-eas-client@~55.0.3:
   version "55.0.3"
@@ -3534,13 +3529,13 @@ expo-modules-core@55.0.18:
   dependencies:
     invariant "^2.2.4"
 
-expo-observe@~0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/expo-observe/-/expo-observe-0.1.1.tgz#16835bf2a8b576ab0db5f9c141de960ae3d6efc1"
-  integrity sha512-wqWktoRCfoxUNcZok9HCMF9BiKgkKYS4VOJO3sK/GJJ+mKLrYcM1jzBdnavsfLGDuoZD3NBhcuu9OZsqYqzV0g==
+expo-observe@~0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/expo-observe/-/expo-observe-0.1.2.tgz#5ddc6021bd7124be5dee52cbf9114474acf63326"
+  integrity sha512-qPP/TcDahAqXRPW2TMltyIEgzoE6DaJjyOoadnXvtvHgpiOykX2CzhueEyUZf77uI8LrPlrPKgfAkXvvatvYXg==
   dependencies:
-    expo-eas-client "^55.0.0"
-    expo-updates-interface "^55.1.3"
+    expo-app-metrics "~0.1.2"
+    expo-eas-client "~55.0.3"
 
 expo-router@~55.0.8:
   version "55.0.8"
@@ -3613,12 +3608,7 @@ expo-symbols@^55.0.5, expo-symbols@~55.0.5:
     "@expo-google-fonts/material-symbols" "^0.4.1"
     sf-symbols-typescript "^2.0.0"
 
-expo-updates-interface@^55.0.0:
-  version "55.1.1"
-  resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-55.1.1.tgz#4b67c677dc2db62c8e6a1b72172ef900e3d2054f"
-  integrity sha512-++rlh9dNRUgm+uqN+x4vB/8ELidt0gc3kbwec55YzRizdD845kn5ufjTcGpkGs9SbAYHsP0eh8axlKHpY/v7Kg==
-
-expo-updates-interface@^55.1.3, expo-updates-interface@~55.1.3:
+expo-updates-interface@~55.1.3:
   version "55.1.3"
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-55.1.3.tgz#cecc1821a9f5e773739144bea7ad93c6a485baea"
   integrity sha512-UVVIiZqymQZJL+o/jh65kXOI97xdkbqBJJM0LMabaPMNLFnc6/WvOMOzmQs7SPyKb8+0PeBaFd7tj5DzF6JeQg==

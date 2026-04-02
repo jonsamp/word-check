@@ -1,11 +1,7 @@
+import { AppMetricsRoot } from "expo-observe";
 import { Stack, useSegments } from "expo-router";
-import {
-  ThemeProvider,
-  DarkTheme,
-  DefaultTheme,
-} from "@react-navigation/native";
+import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
 import React, { type ReactNode } from "react";
-import { AppMetricsRoot } from "expo-app-metrics";
 import { Platform, View } from "react-native";
 
 import useColorScheme from "../hooks/useColorScheme";
@@ -14,13 +10,7 @@ import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
 
-function AppProviders({
-  skip,
-  children,
-}: {
-  skip: boolean;
-  children: ReactNode;
-}) {
+function AppProviders({ skip, children }: { skip: boolean; children: ReactNode }) {
   if (skip) {
     return children;
   }
@@ -39,8 +29,7 @@ function Layout() {
   const isWeb = Platform.OS === "web";
   const isDark = colorScheme === "dark";
   const segments = useSegments();
-  const isStandalonePage =
-    isWeb && (segments[0] === "home" || segments[0] === "privacy");
+  const isStandalonePage = isWeb && (segments[0] === "home" || segments[0] === "privacy");
   const backgroundColor = isStandalonePage
     ? "#EAE6DB"
     : isDark
@@ -93,9 +82,7 @@ function Layout() {
                       ? Colors.dark.backgroundSecondary
                       : Colors.light.backgroundSecondary,
                   },
-                  headerTintColor: isDark
-                    ? Colors.dark.text
-                    : Colors.light.text,
+                  headerTintColor: isDark ? Colors.dark.text : Colors.light.text,
                   headerTitleStyle: {
                     fontFamily: "New York",
                     fontWeight: "bold" as const,

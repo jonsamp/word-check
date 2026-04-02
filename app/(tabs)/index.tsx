@@ -9,7 +9,6 @@ import {
   Pressable,
   View as RNView,
 } from "react-native";
-import AppMetrics from "expo-app-metrics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
@@ -21,6 +20,7 @@ import { lookUpWord } from "../../constants/database";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { DictionaryNames } from "../../constants/dictionary";
 import { SymbolView } from "expo-symbols";
+import { AppMetrics } from "expo-observe";
 
 export default function Home() {
   const insets = useSafeAreaInsets();

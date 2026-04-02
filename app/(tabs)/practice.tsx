@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AppMetrics from "expo-app-metrics";
+import { AppMetrics } from "expo-observe";
 
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";

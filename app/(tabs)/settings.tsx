@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Linking, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
-import AppMetrics from "expo-app-metrics";
+import { AppMetrics } from "expo-observe";
 import { Path, Svg } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
