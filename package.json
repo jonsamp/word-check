@@ -26,7 +26,7 @@
     "expo-image": "~55.0.8",
     "expo-insights": "~55.0.16",
     "expo-linking": "~55.0.13",
-    "expo-observe": "~0.1.9",
+    "expo-observe": "^0.1.9",
     "expo-router": "~55.0.12",
     "expo-splash-screen": "~55.0.18",
     "expo-sqlite": "~55.0.15",
@@ -42,7 +42,7 @@
     "react-native-screens": "~4.23.0",
     "react-native-svg": "15.15.3",
     "react-native-web": "~0.21.2",
-    "react-native-worklets": "0.8.0-nightly-20260210-7a1a46673"
+    "react-native-worklets": "0.7.2"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
