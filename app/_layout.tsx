@@ -1,6 +1,5 @@
 import { AppMetricsRoot } from "expo-observe";
-import { Stack, useSegments } from "expo-router";
-import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { Stack, useSegments, ThemeProvider, DarkTheme, DefaultTheme } from "expo-router";
 import React, { type ReactNode } from "react";
 import { Platform, View } from "react-native";
 
