@@ -84,6 +84,7 @@ export default function Home() {
         flex: 1,
       }}
       colorKey="backgroundSecondary"
+      collapsable={false}
     >
       <RNView
         style={{

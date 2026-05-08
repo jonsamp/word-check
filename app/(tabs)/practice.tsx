@@ -40,6 +40,7 @@ export default function Practice() {
         paddingTop: insets.top + 8,
       }}
       colorKey="backgroundSecondary"
+      collapsable={false}
     >
       <RNView style={styles.headerRow}>
         <Text style={[styles.header, { color: textColor }]}>Practice</Text>
