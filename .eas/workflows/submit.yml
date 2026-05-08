@@ -1,0 +1,381 @@
+name: Submit for app review
+
+on:
+  workflow_dispatch:
+    inputs:
+      store:
+        type: choice
+        options:
+          - all
+          - app_store
+          - play_store
+        required: true
+        description: 'Which store(s) to submit to'
+      release_notes:
+        type: string
+        required: true
+        description: 'What''s new?'
+
+jobs:
+  submit_ios:
+    name: Submit iOS for App Review
+    if: ${{ inputs.store == 'all' || inputs.store == 'app_store' }}
+    environment: production
+    env:
+      RELEASE_NOTES: ${{ inputs.release_notes || 'General bug fixes and improvements.' }}
+    steps:
+      - uses: eas/checkout
+      - name: Submit to App Store Review
+        run: |
+          cat > /tmp/submit-ios.js << 'SCRIPT'
+          const crypto = require("crypto");
+          const fs = require("fs");
+
+          const ASC_BASE = "https://api.appstoreconnect.apple.com";
+
+          // 1. Read Apple App ID from eas.json
+          const easConfig = JSON.parse(fs.readFileSync("eas.json", "utf8"));
+          const APPLE_APP_ID = easConfig.submit?.production?.ios?.ascAppId;
+          if (!APPLE_APP_ID) {
+            console.error("Missing submit.production.ios.ascAppId in eas.json");
+            process.exit(1);
+          }
+          console.log("Apple App ID: " + APPLE_APP_ID);
+
+          // 2. Generate JWT for ASC API
+          const key = fs.readFileSync(process.env.ASC_API_KEY_P8, "utf8");
+          const header = { alg: "ES256", kid: process.env.ASC_API_KEY_ID, typ: "JWT" };
+          const now = Math.floor(Date.now() / 1000);
+          const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: "appstoreconnect-v1" };
+          const toBase64Url = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+          const headerEncoded = toBase64Url(header);
+          const payloadEncoded = toBase64Url(payload);
+          const signingInput = headerEncoded + "." + payloadEncoded;
+          const signer = crypto.createSign("SHA256");
+          signer.update(signingInput);
+          const signature = signer.sign({ key, dsaEncoding: "ieee-p1363" }, "base64url");
+          const jwt = signingInput + "." + signature;
+          console.log("JWT generated");
+
+          async function ascFetch(path, options = {}) {
+            const url = path.startsWith("http") ? path : ASC_BASE + path;
+            const response = await fetch(url, {
+              ...options,
+              headers: {
+                "Authorization": "Bearer " + jwt,
+                "Content-Type": "application/json",
+                ...options.headers,
+              },
+            });
+            if (!response.ok) {
+              const text = await response.text();
+              console.error("ASC API " + (options.method || "GET") + " " + path + " returned HTTP " + response.status + ": " + text);
+              process.exit(1);
+            }
+            if (response.status === 204) return null;
+            return response.json();
+          }
+
+          async function run() {
+            // 3. Get latest TestFlight build
+            const buildsResponse = await ascFetch(
+              "/v1/builds?filter[app]=" + APPLE_APP_ID +
+              "&sort=-uploadedDate&limit=1&filter[processingState]=VALID&include=preReleaseVersion"
+            );
+            if (!buildsResponse.data || buildsResponse.data.length === 0) {
+              console.error("No valid builds found on TestFlight");
+              process.exit(1);
+            }
+            const build = buildsResponse.data[0];
+            const buildId = build.id;
+            const preReleaseVersion = (buildsResponse.included || []).find(
+              (item) => item.type === "preReleaseVersions"
+            );
+            const versionString = preReleaseVersion
+              ? preReleaseVersion.attributes.version
+              : build.attributes.version;
+            console.log("Latest TestFlight build: " + buildId + " (version " + versionString + ")");
+
+            // 4. Check if App Store Version already exists
+            const versionsResponse = await ascFetch(
+              "/v1/apps/" + APPLE_APP_ID +
+              "/appStoreVersions?filter[versionString]=" + versionString +
+              "&filter[platform]=IOS"
+            );
+            let versionId = null;
+            const existingVersions = versionsResponse.data || [];
+
+            if (existingVersions.length > 0) {
+              const existingVersion = existingVersions[0];
+              const state = existingVersion.attributes.appStoreState;
+              if (state === "PREPARE_FOR_SUBMISSION") {
+                versionId = existingVersion.id;
+                console.log("Reusing existing App Store Version " + versionId + " in PREPARE_FOR_SUBMISSION");
+              } else {
+                console.log("App Store Version " + versionString + " already exists in state: " + state);
+                console.log("Cannot submit — version is already in review or live.");
+                process.exit(0);
+              }
+            }
+
+            // 5. Create App Store Version if needed
+            if (!versionId) {
+              const createResponse = await ascFetch("/v1/appStoreVersions", {
+                method: "POST",
+                body: JSON.stringify({
+                  data: {
+                    type: "appStoreVersions",
+                    attributes: { platform: "IOS", versionString },
+                    relationships: {
+                      app: { data: { type: "apps", id: APPLE_APP_ID } },
+                    },
+                  },
+                }),
+              });
+              versionId = createResponse.data.id;
+              console.log("Created App Store Version " + versionId);
+            }
+
+            // 6. Attach build to version
+            await ascFetch("/v1/appStoreVersions/" + versionId + "/relationships/build", {
+              method: "PATCH",
+              body: JSON.stringify({
+                data: { type: "builds", id: buildId },
+              }),
+            });
+            console.log("Attached build " + buildId + " to version " + versionId);
+
+            // 7. Set "What's New" text
+            const localizationsResponse = await ascFetch(
+              "/v1/appStoreVersions/" + versionId + "/appStoreVersionLocalizations"
+            );
+            const localizations = localizationsResponse.data || [];
+            let enUsLocalization = localizations.find(
+              (loc) => loc.attributes.locale === "en-US"
+            );
+
+            if (!enUsLocalization) {
+              const createLocResponse = await ascFetch("/v1/appStoreVersionLocalizations", {
+                method: "POST",
+                body: JSON.stringify({
+                  data: {
+                    type: "appStoreVersionLocalizations",
+                    attributes: { locale: "en-US" },
+                    relationships: {
+                      appStoreVersion: { data: { type: "appStoreVersions", id: versionId } },
+                    },
+                  },
+                }),
+              });
+              enUsLocalization = createLocResponse.data;
+              console.log("Created en-US localization");
+            }
+
+            await ascFetch("/v1/appStoreVersionLocalizations/" + enUsLocalization.id, {
+              method: "PATCH",
+              body: JSON.stringify({
+                data: {
+                  type: "appStoreVersionLocalizations",
+                  id: enUsLocalization.id,
+                  attributes: { whatsNew: process.env.RELEASE_NOTES },
+                },
+              }),
+            });
+            console.log("Set What's New text");
+
+            // 8. Submit for review
+            const reviewSubmissionResponse = await ascFetch("/v1/reviewSubmissions", {
+              method: "POST",
+              body: JSON.stringify({
+                data: {
+                  type: "reviewSubmissions",
+                  attributes: { platform: "IOS" },
+                  relationships: {
+                    app: { data: { type: "apps", id: APPLE_APP_ID } },
+                  },
+                },
+              }),
+            });
+            const reviewSubmissionId = reviewSubmissionResponse.data.id;
+            console.log("Created review submission " + reviewSubmissionId);
+
+            await ascFetch("/v1/reviewSubmissionItems", {
+              method: "POST",
+              body: JSON.stringify({
+                data: {
+                  type: "reviewSubmissionItems",
+                  relationships: {
+                    reviewSubmission: { data: { type: "reviewSubmissions", id: reviewSubmissionId } },
+                    appStoreVersion: { data: { type: "appStoreVersions", id: versionId } },
+                  },
+                },
+              }),
+            });
+            console.log("Added version to review submission");
+
+            await ascFetch("/v1/reviewSubmissions/" + reviewSubmissionId, {
+              method: "PATCH",
+              body: JSON.stringify({
+                data: {
+                  type: "reviewSubmissions",
+                  id: reviewSubmissionId,
+                  attributes: { submitted: true },
+                },
+              }),
+            });
+            console.log("Submitted for App Store review!");
+          }
+
+          run();
+          SCRIPT
+
+          node /tmp/submit-ios.js
+
+  submit_android:
+    name: Submit Android to Production
+    if: ${{ inputs.store == 'all' || inputs.store == 'play_store' }}
+    environment: production
+    env:
+      RELEASE_NOTES: ${{ inputs.release_notes || 'General bug fixes and improvements.' }}
+    steps:
+      - uses: eas/checkout
+      - name: Promote to Play Store production
+        run: |
+          cat > /tmp/submit-android.js << 'SCRIPT'
+          const crypto = require("crypto");
+          const fs = require("fs");
+
+          // 1. Read Android package name from app.config
+          let packageName;
+          const appConfigContent = fs.readFileSync("app.config.ts", "utf8");
+          const packageMatch = appConfigContent.match(/package:\s*[`"']([^`"'$]+)/);
+          if (packageMatch) {
+            packageName = packageMatch[1];
+          }
+          if (!packageName) {
+            try {
+              const appJson = JSON.parse(fs.readFileSync("app.json", "utf8"));
+              packageName = appJson.expo?.android?.package;
+            } catch {}
+          }
+          if (!packageName) {
+            console.error("Could not determine Android package name from app.config.ts or app.json");
+            process.exit(1);
+          }
+          console.log("Android package: " + packageName);
+          const PLAY_API_BASE = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + packageName;
+
+          // 2. Generate OAuth2 token from service account
+          let serviceAccount;
+          const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+          try {
+            serviceAccount = JSON.parse(rawKey);
+          } catch {
+            serviceAccount = JSON.parse(fs.readFileSync(rawKey, "utf8"));
+          }
+
+          const jwtHeader = { alg: "RS256", typ: "JWT" };
+          const now = Math.floor(Date.now() / 1000);
+          const jwtPayload = {
+            iss: serviceAccount.client_email,
+            scope: "https://www.googleapis.com/auth/androidpublisher",
+            aud: "https://oauth2.googleapis.com/token",
+            iat: now,
+            exp: now + 3600,
+          };
+
+          const toBase64Url = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+          const headerEncoded = toBase64Url(jwtHeader);
+          const payloadEncoded = toBase64Url(jwtPayload);
+          const signingInput = headerEncoded + "." + payloadEncoded;
+          const signer = crypto.createSign("RSA-SHA256");
+          signer.update(signingInput);
+          const signature = signer.sign(serviceAccount.private_key, "base64url");
+          const assertion = signingInput + "." + signature;
+
+          async function getAccessToken() {
+            const response = await fetch("https://oauth2.googleapis.com/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + assertion,
+            });
+            if (!response.ok) {
+              const text = await response.text();
+              console.error("OAuth token request failed: " + text);
+              process.exit(1);
+            }
+            const tokenData = await response.json();
+            return tokenData.access_token;
+          }
+
+          async function playFetch(path, accessToken, options = {}) {
+            const url = path.startsWith("http") ? path : PLAY_API_BASE + path;
+            const response = await fetch(url, {
+              ...options,
+              headers: {
+                "Authorization": "Bearer " + accessToken,
+                "Content-Type": "application/json",
+                ...options.headers,
+              },
+            });
+            if (!response.ok) {
+              const text = await response.text();
+              console.error("Play API " + (options.method || "GET") + " " + path + " returned HTTP " + response.status + ": " + text);
+              process.exit(1);
+            }
+            return response.json();
+          }
+
+          async function run() {
+            const accessToken = await getAccessToken();
+            console.log("OAuth token obtained");
+
+            // 3. Create an edit
+            const edit = await playFetch("/edits", accessToken, {
+              method: "POST",
+              body: JSON.stringify({}),
+            });
+            const editId = edit.id;
+            console.log("Created edit " + editId);
+
+            // 4. Get internal track
+            const internalTrack = await playFetch("/edits/" + editId + "/tracks/internal", accessToken);
+            const releases = (internalTrack.releases || []).filter(
+              (release) => release.status === "completed"
+            );
+            if (releases.length === 0) {
+              console.error("No completed releases found on the internal track");
+              process.exit(1);
+            }
+            const versionCodes = releases[releases.length - 1].versionCodes;
+            console.log("Internal track version codes: " + versionCodes.join(", "));
+
+            // 5. Set production track
+            await playFetch("/edits/" + editId + "/tracks/production", accessToken, {
+              method: "PUT",
+              body: JSON.stringify({
+                track: "production",
+                releases: [
+                  {
+                    status: "completed",
+                    versionCodes,
+                    releaseNotes: [
+                      { language: "en-US", text: process.env.RELEASE_NOTES },
+                    ],
+                  },
+                ],
+              }),
+            });
+            console.log("Set production track");
+
+            // 6. Commit the edit
+            await playFetch("/edits/" + editId + ":commit", accessToken, {
+              method: "POST",
+            });
+            console.log("Edit committed — submitted for Play Store review!");
+          }
+
+          run();
+          SCRIPT
+
+          node /tmp/submit-android.js
