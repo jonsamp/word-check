@@ -1,7 +1,7 @@
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import type { BottomTabBarProps } from "expo-router/build/react-navigation/bottom-tabs";
 import Colors from "../../constants/Colors";
 import useColorScheme from "../../hooks/useColorScheme";
 import { Text } from "../../components/Themed";

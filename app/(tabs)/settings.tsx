@@ -41,6 +41,7 @@ export default function Settings() {
         paddingTop: insets.top + 8,
       }}
       colorKey="backgroundSecondary"
+      collapsable={false}
     >
       <RNView style={{ marginBottom: 12, paddingHorizontal: 20 }}>
         <Text style={[styles.header, { color: textColor, top: 8 }]}>Settings</Text>
