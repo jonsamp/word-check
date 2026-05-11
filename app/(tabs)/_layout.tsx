@@ -1,7 +1,7 @@
+import type { ComponentProps } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import Colors from "../../constants/Colors";
 import useColorScheme from "../../hooks/useColorScheme";
 import { Text } from "../../components/Themed";
@@ -38,7 +38,9 @@ export default function TabLayout() {
   );
 }
 
-function PillTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
+
+function PillTabBar({ state, descriptors, navigation }: TabBarProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = isDark ? Colors.dark : Colors.light;

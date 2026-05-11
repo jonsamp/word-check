@@ -1,4 +1,4 @@
-name: Release to app stores
+name: Upload to app stores
 
 on:
   push:

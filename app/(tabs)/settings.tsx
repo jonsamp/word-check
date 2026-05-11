@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import { Linking, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { AppMetrics } from "expo-observe";
-import { Path, Svg } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -155,33 +154,6 @@ export default function Settings() {
             );
           })}
         </RNView>
-        <RNView
-          style={{
-            borderRadius: 16,
-            backgroundColor,
-            overflow: "hidden",
-            marginTop: 32,
-          }}
-        >
-          <Pressable
-            onPress={() => Linking.openURL("https://buymeacoffee.com/jonsamp")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingVertical: 18,
-              paddingHorizontal: 16,
-            }}
-          >
-            <RNView style={{ flex: 1, marginRight: 12 }}>
-              <Text style={{ ...type.body, fontWeight: "500" }}>Buy Me a Coffee</Text>
-              <Text style={{ ...type.footnote, color: textSecondaryColor, marginTop: 6 }}>
-                An optional donation that does not unlock any features
-              </Text>
-            </RNView>
-            <ExternalLinkIcon color={textSecondaryColor} />
-          </Pressable>
-        </RNView>
         <Text
           style={{
             ...type.body,
@@ -209,17 +181,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-function ExternalLinkIcon({ color }: { color: string }) {
-  return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M7 17L17 7M17 7H7M17 7V17"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}

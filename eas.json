@@ -7,7 +7,7 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "node": "22.12.0",
+      "node": "22.14.0",
       "android": {
         "resourceClass": "large"
       },
@@ -18,7 +18,7 @@
     "development-simulator": {
       "developmentClient": true,
       "distribution": "internal",
-      "node": "22.12.0",
+      "node": "22.14.0",
       "ios": {
         "simulator": true
       },

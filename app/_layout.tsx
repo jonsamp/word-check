@@ -1,6 +1,6 @@
 import { AppMetricsRoot } from "expo-observe";
 import { Stack, useSegments } from "expo-router";
-import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { ThemeProvider, DarkTheme, DefaultTheme } from "expo-router/react-navigation";
 import React, { type ReactNode } from "react";
 import { Platform, View } from "react-native";
 
@@ -99,21 +99,6 @@ function Layout() {
                 name="privacy"
                 options={{
                   headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="about"
-                options={{
-                  title: "About",
-                  headerShown: false,
-                  presentation: Platform.select({
-                    android: "formSheet",
-                    default: "modal",
-                  }),
-                  sheetAllowedDetents: Platform.select({
-                    android: [0.8],
-                    default: undefined,
-                  }),
                 }}
               />
             </Stack>
