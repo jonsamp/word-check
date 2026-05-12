@@ -1,4 +1,4 @@
-import { AppMetricsRoot } from "expo-observe";
+import { ObserveRoot } from "expo-observe";
 import { Stack, useSegments } from "expo-router";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "expo-router/react-navigation";
 import React, { type ReactNode } from "react";
@@ -109,4 +109,4 @@ function Layout() {
   );
 }
 
-export default AppMetricsRoot.wrap(Layout);
+export default ObserveRoot.wrap(Layout);
