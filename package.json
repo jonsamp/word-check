@@ -27,7 +27,7 @@
     "expo-insights": "~56.0.5",
     "expo-linking": "~56.0.4",
     "expo-observe": "~56.0.18",
-    "expo-router": "~56.1.1",
+    "expo-router": "~56.2.0",
     "expo-splash-screen": "~56.0.4",
     "expo-sqlite": "~56.0.3",
     "expo-status-bar": "~56.0.4",
