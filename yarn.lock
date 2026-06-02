@@ -3144,10 +3144,10 @@ expect@^29.0.0, expect@^29.7.0:
     jest-message-util "^29.7.0"
     jest-util "^29.7.0"
 
-expo-app-metrics@~56.0.6:
-  version "56.0.6"
-  resolved "https://registry.yarnpkg.com/expo-app-metrics/-/expo-app-metrics-56.0.6.tgz#83cc1dcd35f821fd69d37004d86235c362ed91b5"
-  integrity sha512-B15Kw4CPzwQKzlJ61LhKHV4mnKUBUFeXBHmm2QJPTRGhKBO1wl+372HrFj/K78Qexo9rbpG0jQ/7eBKZfHqsPw==
+expo-app-metrics@~56.0.16:
+  version "56.0.16"
+  resolved "https://registry.yarnpkg.com/expo-app-metrics/-/expo-app-metrics-56.0.16.tgz#60f34367bfcd10290ebf8490b60b9ae1437b382c"
+  integrity sha512-MNHcoqijDqZqaOi9PgsArkYP0/0krq3CrKv8lVOFXJk9lj+T0Q76rN1hyuuJbd4Cqx86TLzLcNjN5posP0rakw==
   dependencies:
     expo-updates-interface "~56.0.1"
 
@@ -3288,12 +3288,12 @@ expo-modules-jsi@~56.0.3:
   resolved "https://registry.yarnpkg.com/expo-modules-jsi/-/expo-modules-jsi-56.0.3.tgz#55345e1ca5bf041ab5ed676f2b49132a0caf7294"
   integrity sha512-HIvSCr5/TyY/4ngaxiW0WT2y2nDmjHekUvyfb1BxTuGTPCz+tp/I/6euY2z+P8oi467ImneqXXjaoSAbHkoRgw==
 
-expo-observe@~56.0.5:
-  version "56.0.6"
-  resolved "https://registry.yarnpkg.com/expo-observe/-/expo-observe-56.0.6.tgz#bdc6efd0ca011272dda1be6f49e06e85a911f917"
-  integrity sha512-X9CL0divXOnfc2bjPqzTCYUk/9DqeT1ILRPIGft4+RHRSdv9XQXOKuJ46IlpE9nHs1OBkIjHXVN/NQHFqoltSA==
+expo-observe@~56.0.18:
+  version "56.0.18"
+  resolved "https://registry.yarnpkg.com/expo-observe/-/expo-observe-56.0.18.tgz#53713bf3fda33eae1aaa34cc9a19e79838fda1d0"
+  integrity sha512-hjNf7QYUNovdVHwe1X2Dp/VmwwmF2np8OkjaV4/J0MMMh2NTbjTm1YbWM4ogaVnsafelDMNbAC85VWjMb1idzg==
   dependencies:
-    expo-app-metrics "~56.0.6"
+    expo-app-metrics "~56.0.16"
     expo-eas-client "~56.0.0"
 
 expo-router@~56.1.1:

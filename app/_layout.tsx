@@ -1,4 +1,4 @@
-import { ObserveRoot } from "expo-observe";
+import { Observe, ObserveRoot } from "expo-observe";
 import { Stack, useSegments } from "expo-router";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "expo-router/react-navigation";
 import React, { type ReactNode } from "react";
@@ -9,6 +9,13 @@ import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
+
+// Enable the expo-router integration so navigation metrics (cold_ttr, warm_ttr,
+// tti) are recorded per route. Must run at module scope, before ObserveRoot
+// mounts — the integration cannot be toggled after the app tree mounts.
+Observe.configure({
+  integrations: { "expo-router": true },
+});
 
 function AppProviders({ skip, children }: { skip: boolean; children: ReactNode }) {
   if (skip) {

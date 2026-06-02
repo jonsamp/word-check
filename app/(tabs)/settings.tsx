@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
-import { AppMetrics } from "expo-observe";
+import { Observe, useObserve } from "expo-observe";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -28,10 +28,11 @@ export default function Settings() {
   const backgroundColor = useThemeColor("background");
   const { currentDictionary, setDictionary } = useDictionary();
   const { currentDifficulty, setDifficulty } = useDifficulty();
+  const { markInteractive } = useObserve();
 
   useEffect(() => {
-    AppMetrics.markInteractive();
-  }, []);
+    markInteractive();
+  }, [markInteractive]);
 
   return (
     <View
@@ -74,7 +75,14 @@ export default function Settings() {
             return (
               <Pressable
                 key={dict}
-                onPress={() => setDictionary(dict)}
+                onPress={() => {
+                  if (dict !== currentDictionary) {
+                    Observe.logEvent("dictionary.changed", {
+                      attributes: { dictionary: dict },
+                    });
+                  }
+                  setDictionary(dict);
+                }}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -128,7 +136,14 @@ export default function Settings() {
             return (
               <Pressable
                 key={diff}
-                onPress={() => setDifficulty(diff)}
+                onPress={() => {
+                  if (diff !== currentDifficulty) {
+                    Observe.logEvent("difficulty.changed", {
+                      attributes: { difficulty: diff },
+                    });
+                  }
+                  setDifficulty(diff);
+                }}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",

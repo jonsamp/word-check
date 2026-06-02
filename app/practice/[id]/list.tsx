@@ -1,6 +1,7 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useObserve } from "expo-observe";
 import { View, Text } from "../../../components/Themed";
 import { useThemeColor } from "../../../components/Themed";
 import { type } from "../../../constants/Type";
@@ -9,6 +10,7 @@ import { PRACTICE_LISTS } from "../../../constants/PracticeLists";
 export default function WordList() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
+  const { markInteractive } = useObserve();
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundColor = useThemeColor("background");
 
@@ -20,6 +22,10 @@ export default function WordList() {
     const rootNav = navigation.getParent()?.getParent();
     rootNav?.setOptions({ title: list?.title ?? "Words" });
   }, [navigation, list?.title]);
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   return (
     <View style={{ flex: 1 }} colorKey="backgroundSecondary">

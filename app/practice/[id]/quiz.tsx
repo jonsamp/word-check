@@ -1,6 +1,7 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Platform, Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useObserve } from "expo-observe";
 import Animated, { Easing, LinearTransition } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
@@ -24,6 +25,7 @@ export default function Quiz() {
   const router = useRouter();
   const { currentDifficulty } = useDifficulty();
   const { currentDictionary } = useDictionary();
+  const { markInteractive } = useObserve();
 
   const list = PRACTICE_LISTS[id];
   const [words] = useState<PracticeWord[]>(() => {
@@ -55,6 +57,10 @@ export default function Quiz() {
     const rootNav = navigation.getParent()?.getParent();
     rootNav?.setOptions({ title: list?.title ?? "Quiz" });
   }, [navigation, list?.title]);
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   // Compute blank tile indices (indices into quizWord.tiles where isBlank is true)
   const blankTileIndices = quizWord.tiles.reduce<number[]>((acc, tile, index) => {

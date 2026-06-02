@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Observe, useObserve } from "expo-observe";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { type } from "../../../constants/Type";
 import { useTopScores } from "../../../contexts/TopScoreContext";
@@ -15,6 +16,7 @@ export default function Complete() {
   }>();
   const router = useRouter();
   const { saveScore } = useTopScores();
+  const { markInteractive } = useObserve();
 
   const correctCount = Number(correct);
   const totalWords = Number(total);
@@ -25,8 +27,22 @@ export default function Complete() {
   const backgroundColor = useThemeColor("background");
 
   useEffect(() => {
-    saveScore(id, (difficulty as Difficulty) ?? Difficulty.Level1, percentage);
+    const resolvedDifficulty = (difficulty as Difficulty) ?? Difficulty.Level1;
+    saveScore(id, resolvedDifficulty, percentage);
+    Observe.logEvent("quiz.completed", {
+      attributes: {
+        list: id,
+        difficulty: resolvedDifficulty,
+        correct: correctCount,
+        total: totalWords,
+        percentage,
+      },
+    });
   }, [id, difficulty, percentage]);
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   return (
     <View style={styles.container} colorKey="backgroundSecondary">

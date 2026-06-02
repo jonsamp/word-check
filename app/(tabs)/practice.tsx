@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AppMetrics } from "expo-observe";
+import { Observe, useObserve } from "expo-observe";
 
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -23,6 +23,7 @@ export default function Practice() {
   const insets = useSafeAreaInsets();
   const { getTopScore } = useTopScores();
   const { currentDifficulty } = useDifficulty();
+  const { markInteractive } = useObserve();
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundColor = useThemeColor("background");
@@ -30,8 +31,8 @@ export default function Practice() {
   const tintColor = useThemeColor("tint");
 
   useEffect(() => {
-    AppMetrics.markInteractive();
-  }, []);
+    markInteractive();
+  }, [markInteractive]);
 
   return (
     <View
@@ -105,7 +106,16 @@ export default function Practice() {
                 </Text>
               </Pressable>
               <Pressable
-                onPress={() => router.push(`/practice/${card.id}/quiz`)}
+                onPress={() => {
+                  Observe.logEvent("quiz.started", {
+                    attributes: {
+                      list: card.id,
+                      difficulty: currentDifficulty,
+                      wordCount: card.wordCount,
+                    },
+                  });
+                  router.push(`/practice/${card.id}/quiz`);
+                }}
                 style={[
                   styles.button,
                   {
