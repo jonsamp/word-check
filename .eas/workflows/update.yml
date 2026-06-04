@@ -1,0 +1,96 @@
+name: Publish update
+
+jobs:
+  resolve_version:
+    name: Resolve app version
+    environment: production
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: eas/checkout
+      - name: Check ASC and resolve version
+        id: check
+        run: |
+          cat > /tmp/resolve-version.js << 'SCRIPT'
+          const crypto = require("crypto");
+          const fs = require("fs");
+
+          const APPLE_APP_ID = "1489890340";
+
+          // 1. Generate JWT for ASC API
+          const key = fs.readFileSync(process.env.ASC_API_KEY_P8, "utf8");
+          const header = { alg: "ES256", kid: process.env.ASC_API_KEY_ID, typ: "JWT" };
+          const now = Math.floor(Date.now() / 1000);
+          const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: "appstoreconnect-v1" };
+          const toBase64Url = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+          const headerEnc = toBase64Url(header);
+          const payloadEnc = toBase64Url(payload);
+          const input = headerEnc + "." + payloadEnc;
+          const sign = crypto.createSign("SHA256");
+          sign.update(input);
+          const sig = sign.sign({ key, dsaEncoding: "ieee-p1363" }, "base64url");
+          const jwt = input + "." + sig;
+
+          // 2. Compare dotted numeric versions (e.g. "1.6" vs "1.5")
+          function compareVersions(versionA, versionB) {
+            const partsA = versionA.split(".").map((part) => parseInt(part, 10));
+            const partsB = versionB.split(".").map((part) => parseInt(part, 10));
+            const length = Math.max(partsA.length, partsB.length);
+            for (let index = 0; index < length; index++) {
+              const valueA = partsA[index] || 0;
+              const valueB = partsB[index] || 0;
+              if (valueA !== valueB) return valueA - valueB;
+            }
+            return 0;
+          }
+
+          // 3. Fetch the app's App Store versions from ASC
+          async function fetchVersions() {
+            const url = "https://api.appstoreconnect.apple.com/v1/apps/" + APPLE_APP_ID +
+              "/appStoreVersions?filter[platform]=IOS&limit=50";
+            const response = await fetch(url, {
+              headers: {
+                "Authorization": "Bearer " + jwt,
+                "Content-Type": "application/json",
+              },
+            });
+            if (!response.ok) {
+              const text = await response.text();
+              console.error("ASC API returned HTTP " + response.status + ": " + text);
+              process.exit(1);
+            }
+            const body = await response.json();
+            return body.data || [];
+          }
+
+          // 4. Resolve the version currently live on the store (READY_FOR_SALE)
+          async function resolve() {
+            const versions = await fetchVersions();
+            const liveVersions = versions
+              .filter((entry) => entry.attributes.appStoreState === "READY_FOR_SALE")
+              .map((entry) => entry.attributes.versionString)
+              .sort((first, second) => compareVersions(second, first));
+            if (liveVersions.length === 0) {
+              console.error("Could not find a version currently on the store (READY_FOR_SALE)");
+              process.exit(1);
+            }
+            const version = liveVersions[0];
+            console.error("Version currently on the store: " + version);
+            console.log(version);
+          }
+
+          resolve();
+          SCRIPT
+
+          VERSION=$(node /tmp/resolve-version.js)
+          echo "Resolved version: $VERSION"
+          set-output version "$VERSION"
+
+  build_ios:
+    name: Publish update
+    needs: [resolve_version]
+    type: update
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
+    params:
+      channel: production
