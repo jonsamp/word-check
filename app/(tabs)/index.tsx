@@ -20,7 +20,8 @@ import { lookUpWord } from "../../constants/database";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { DictionaryNames } from "../../constants/dictionary";
 import { SymbolView } from "expo-symbols";
-import { Observe, useObserve } from "expo-observe";
+import { useObserve } from "expo-observe";
+import { logEvent } from "../../utils/analytics";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -69,8 +70,9 @@ export default function Home() {
     try {
       const result = await lookUpWord(searchValue, currentDictionary);
       setResult(result);
-      Observe.logEvent("word.checked", {
+      logEvent("word.checked", {
         attributes: {
+          word: result.word,
           dictionary: currentDictionary,
           valid: result.isValid,
           wordLength: result.word.length,

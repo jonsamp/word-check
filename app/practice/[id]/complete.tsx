@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Observe, useObserve } from "expo-observe";
+import { useObserve } from "expo-observe";
+import { logEvent } from "../../../utils/analytics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { type } from "../../../constants/Type";
 import { useTopScores } from "../../../contexts/TopScoreContext";
@@ -29,7 +30,7 @@ export default function Complete() {
   useEffect(() => {
     const resolvedDifficulty = (difficulty as Difficulty) ?? Difficulty.Level1;
     saveScore(id, resolvedDifficulty, percentage);
-    Observe.logEvent("quiz.completed", {
+    logEvent("quiz.completed", {
       attributes: {
         list: id,
         difficulty: resolvedDifficulty,

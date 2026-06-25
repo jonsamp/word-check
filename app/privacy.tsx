@@ -24,56 +24,50 @@ function BulletItem({ children }: { children: React.ReactNode }) {
 
 export default function Privacy() {
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.contentContainer}
-    >
+    <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
       <View style={styles.content}>
         <Text style={styles.pageTitle}>Privacy Policy</Text>
         <Text style={styles.lastUpdated}>Last Updated: March 18, 2026</Text>
 
         <Paragraph>
-          Jon Samp ("we," "us," or "our") operates the Word Check mobile
-          application (the "App"). This Privacy Policy explains what information
-          we collect, how we use it, and your choices.
+          Jon Samp ("we," "us," or "our") operates the Word Check mobile application (the "App").
+          This Privacy Policy explains what information we collect, how we use it, and your choices.
         </Paragraph>
 
         <SectionTitle>Information We Collect</SectionTitle>
 
         <SubTitle>Information You Provide</SubTitle>
         <Paragraph>
-          All data you create in the App — including dictionary preferences,
-          quiz difficulty settings, and quiz scores — is stored locally on your
-          device. This data is not transmitted to us or any third party.
+          All data you create in the App — including dictionary preferences, quiz difficulty
+          settings, and quiz scores — is stored locally on your device. This data is not transmitted
+          to us or any third party.
         </Paragraph>
 
         <SubTitle>Automatically Collected Information</SubTitle>
         <Paragraph>
-          The App collects anonymous performance and usage metrics to help us
-          improve the experience. This includes app startup times, screen render
-          performance, and general usage patterns. No personal information,
-          device identifiers, or advertising IDs are included in these metrics.
+          The App collects anonymous performance and usage metrics to help us improve the
+          experience. This includes app startup times, screen render performance, and general usage
+          patterns. No personal information, device identifiers, or advertising IDs are included in
+          these metrics.
         </Paragraph>
 
         <SectionTitle>Third-Party Services</SectionTitle>
         <Paragraph>
-          The App uses the following third-party services that may process
-          limited data:
+          The App uses the following third-party services that may process limited data:
         </Paragraph>
         <View style={styles.bulletList}>
           <BulletItem>
-            Expo — Provides over-the-air app updates. Expo may process limited
-            technical information (such as app version and platform) to deliver
-            updates. No personal information is collected.
+            Expo — Provides over-the-air app updates. Expo may process limited technical information
+            (such as app version and platform) to deliver updates. No personal information is
+            collected.
           </BulletItem>
           <BulletItem>
-            EAS Observe — Collects anonymous app performance metrics such as
-            startup times, screen render durations, and frame rate data. No
-            personal information is collected.
+            EAS Observe — Collects anonymous app performance metrics such as startup times, screen
+            render durations, and frame rate data. No personal information is collected.
           </BulletItem>
           <BulletItem>
-            Expo Insights — Collects anonymous usage analytics such as session
-            counts and screen views. No personal information is collected.
+            Expo Insights — Collects anonymous usage analytics such as session counts and screen
+            views. No personal information is collected.
           </BulletItem>
         </View>
 
@@ -89,65 +83,59 @@ export default function Privacy() {
           <BulletItem>Word lookup history or quiz results</BulletItem>
         </View>
         <Paragraph>
-          The App does not require an account or login. There is no user
-          tracking across devices.
+          The App does not require an account or login. There is no user tracking across devices.
         </Paragraph>
 
         <SectionTitle>Data Storage and Security</SectionTitle>
         <Paragraph>
-          Your dictionary preferences, quiz scores, and settings are stored
-          locally on your device. The word database used for validation is
-          bundled with the App and does not require network access. No data is
-          transmitted to external servers during normal use.
+          Your dictionary preferences, quiz scores, and settings are stored locally on your device.
+          The word database used for validation is bundled with the App and does not require network
+          access. No data is transmitted to external servers during normal use.
         </Paragraph>
 
         <SectionTitle>Data Retention</SectionTitle>
         <Paragraph>
-          Locally stored data (preferences, scores) remains on your device until
-          you clear the App's data or uninstall the App.
+          Locally stored data (preferences, scores) remains on your device until you clear the App's
+          data or uninstall the App.
         </Paragraph>
 
         <SectionTitle>Your Rights and Choices</SectionTitle>
         <View style={styles.bulletList}>
+          <BulletItem>Local data: Uninstalling the App removes all locally stored data.</BulletItem>
           <BulletItem>
-            Local data: Uninstalling the App removes all locally stored data.
-          </BulletItem>
-          <BulletItem>
-            Data access and deletion: To request information about your data or
-            its deletion, contact us at sampjon@gmail.com.
+            Data access and deletion: To request information about your data or its deletion,
+            contact us at sampjon@gmail.com.
           </BulletItem>
         </View>
 
         <SectionTitle>Children's Privacy</SectionTitle>
         <Paragraph>
-          The App is not directed at children under 16. We do not knowingly
-          collect personal information from children. If you believe a child has
-          provided us with personal information, please contact us and we will
-          delete it.
+          The App is not directed at children under 16. We do not knowingly collect personal
+          information from children. If you believe a child has provided us with personal
+          information, please contact us and we will delete it.
         </Paragraph>
 
         <SectionTitle>International Users</SectionTitle>
         <Paragraph>
-          European Economic Area (GDPR): Since we do not collect or process
-          personal information, GDPR obligations are minimal. You have the right
-          to contact us with any data-related requests.
+          European Economic Area (GDPR): Since we do not collect or process personal information,
+          GDPR obligations are minimal. You have the right to contact us with any data-related
+          requests.
         </Paragraph>
         <Paragraph>
-          California (CCPA): We do not sell personal information. We do not
-          share personal information for cross-context behavioral advertising.
+          California (CCPA): We do not sell personal information. We do not share personal
+          information for cross-context behavioral advertising.
         </Paragraph>
 
         <SectionTitle>Changes to This Policy</SectionTitle>
         <Paragraph>
-          We may update this Privacy Policy from time to time. Changes will be
-          reflected by updating the "Last Updated" date above. Continued use of
-          the App after changes constitutes acceptance of the updated policy.
+          We may update this Privacy Policy from time to time. Changes will be reflected by updating
+          the "Last Updated" date above. Continued use of the App after changes constitutes
+          acceptance of the updated policy.
         </Paragraph>
 
         <SectionTitle>Contact Us</SectionTitle>
         <Paragraph>
-          If you have questions about this Privacy Policy, contact us at:
-          sampjon@gmail.com
+          If you have questions about this Privacy Policy, contact us at: sampjon@gmail.com
         </Paragraph>
       </View>
     </ScrollView>

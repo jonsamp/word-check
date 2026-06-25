@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Observe, useObserve } from "expo-observe";
+import { useObserve } from "expo-observe";
+
+import { logEvent } from "../../utils/analytics";
 
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -107,7 +109,7 @@ export default function Practice() {
               </Pressable>
               <Pressable
                 onPress={() => {
-                  Observe.logEvent("quiz.started", {
+                  logEvent("quiz.started", {
                     attributes: {
                       list: card.id,
                       difficulty: currentDifficulty,

@@ -1,11 +1,7 @@
 import { useEffect } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View as RNView,
-} from "react-native";
-import { Observe, useObserve } from "expo-observe";
+import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { useObserve } from "expo-observe";
+import { logEvent } from "../../utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -13,11 +9,7 @@ import { type } from "../../constants/Type";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import { useDifficulty } from "../../contexts/DifficultyContext";
-import {
-  Difficulty,
-  DifficultyNames,
-  DifficultyDescriptions,
-} from "../../constants/difficulty";
+import { Difficulty, DifficultyNames, DifficultyDescriptions } from "../../constants/difficulty";
 import { BlueCheckIcon } from "../../components/Icons";
 
 const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
@@ -26,16 +18,8 @@ const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
   [Dictionary.NSWL23]: "NASPA School Word List (NSWL) 2023 Edition",
 };
 
-const DICTIONARY_ORDER = [
-  Dictionary.NWL23,
-  Dictionary.CSW24,
-  Dictionary.NSWL23,
-];
-const DIFFICULTY_ORDER = [
-  Difficulty.Level1,
-  Difficulty.Level2,
-  Difficulty.Level3,
-];
+const DICTIONARY_ORDER = [Dictionary.NWL23, Dictionary.CSW24, Dictionary.NSWL23];
+const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level3];
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
@@ -60,9 +44,7 @@ export default function Settings() {
       colorKey="backgroundSecondary"
     >
       <RNView style={{ marginBottom: 12, paddingHorizontal: 20 }}>
-        <Text style={[styles.header, { color: textColor, top: 8 }]}>
-          Settings
-        </Text>
+        <Text style={[styles.header, { color: textColor, top: 8 }]}>Settings</Text>
       </RNView>
       <ScrollView
         contentContainerStyle={{
@@ -99,7 +81,7 @@ export default function Settings() {
                 key={dict}
                 onPress={() => {
                   if (dict !== currentDictionary) {
-                    Observe.logEvent("dictionary.changed", {
+                    logEvent("dictionary.changed", {
                       attributes: { dictionary: dict },
                     });
                   }
@@ -116,9 +98,7 @@ export default function Settings() {
                 }}
               >
                 <RNView style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={{ ...type.body, fontWeight: "500" }}>
-                    {DictionaryNames[dict]}
-                  </Text>
+                  <Text style={{ ...type.body, fontWeight: "500" }}>{DictionaryNames[dict]}</Text>
                   <Text
                     style={{
                       ...type.footnote,
@@ -168,7 +148,7 @@ export default function Settings() {
                 key={diff}
                 onPress={() => {
                   if (diff !== currentDifficulty) {
-                    Observe.logEvent("difficulty.changed", {
+                    logEvent("difficulty.changed", {
                       attributes: { difficulty: diff },
                     });
                   }
@@ -185,9 +165,7 @@ export default function Settings() {
                 }}
               >
                 <RNView style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={{ ...type.body, fontWeight: "500" }}>
-                    {DifficultyNames[diff]}
-                  </Text>
+                  <Text style={{ ...type.body, fontWeight: "500" }}>{DifficultyNames[diff]}</Text>
                   <Text
                     style={{
                       ...type.footnote,
@@ -218,8 +196,7 @@ export default function Settings() {
         >
           NASPA Word List © North American Scrabble Players Association.{"\n"}
           Collins Scrabble Words © HarperCollins Publishers Ltd.{"\n"}
-          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc.
-          (elsewhere).{"\n"}
+          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).{"\n"}
           App variant: h3192hrn
         </Text>
       </ScrollView>
