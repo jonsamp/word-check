@@ -5,6 +5,7 @@ import React, { type ReactNode } from "react";
 import { Platform, View } from "react-native";
 
 import useColorScheme from "../hooks/useColorScheme";
+import { XDE } from "../dev/xde";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
@@ -72,6 +73,7 @@ function Layout() {
       >
         <AppProviders skip={isStandalonePage}>
           <ThemeProvider value={navTheme}>
+            <XDE />
             <Stack>
               <Stack.Screen
                 name="(tabs)"
