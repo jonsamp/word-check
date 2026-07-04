@@ -42,7 +42,14 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-image",
-    "@sentry/react-native",
+    [
+      "@sentry/react-native/expo",
+      {
+        url: "https://sentry.io/",
+        project: "word-check",
+        organization: "jon-samp",
+      },
+    ],
     "expo-status-bar",
     "@rnrepo/expo-config-plugin",
     [
