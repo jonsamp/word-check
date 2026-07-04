@@ -10,6 +10,26 @@ import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
 import Colors from "../constants/Colors";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://dcc25b5b50053ff6cf6cbc23bec30083@o4509016320049152.ingest.us.sentry.io/4511677123526656',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 // Enable the expo-router integration so navigation metrics (cold_ttr, warm_ttr,
 // tti) are recorded per route. Must run at module scope, before ObserveRoot
@@ -118,4 +138,4 @@ function Layout() {
   );
 }
 
-export default ObserveRoot.wrap(Layout);
+export default Sentry.wrap(ObserveRoot.wrap(Layout));

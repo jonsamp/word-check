@@ -42,6 +42,8 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-image",
+    "@sentry/react-native",
+    "expo-status-bar",
     "@rnrepo/expo-config-plugin",
     [
       "expo-font",

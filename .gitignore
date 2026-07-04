@@ -45,3 +45,4 @@ android/
 ios/
 
 .vscode/
+.env.local
