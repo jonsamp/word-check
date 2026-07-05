@@ -3,7 +3,7 @@ import { ExpoConfig } from "expo/config";
 const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 const config: ExpoConfig = {
-  version: process.env.APP_VERSION || "2026.10",
+  version: process.env.APP_VERSION || "2026.13",
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
@@ -22,7 +22,7 @@ const config: ExpoConfig = {
     },
   },
   android: {
-    package: `com.jonsamp.wordcheck${isProduction ? "" : "_dev"}`,
+    package: isProduction ? "com.jonsamp.wordcheckpro" : "com.jonsamp.wordcheck_dev",
     permissions: [],
     icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
     adaptiveIcon: {
