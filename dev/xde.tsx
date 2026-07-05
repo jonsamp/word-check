@@ -78,7 +78,9 @@ export function XDE(props: XDEProps) {
   // early return is stable for the component's lifetime (it never flips at
   // runtime, so hook order below is never violated) and the inner tree is
   // dead-code-eliminated from production bundles.
-  if (!__DEV__) {return null;}
+  if (!__DEV__) {
+    return null;
+  }
   return <XDEBridge {...props} />;
 }
 
@@ -126,7 +128,9 @@ export function setNetworkEnabled(next: boolean): void {
 }
 
 function installNetworkKillSwitch(): void {
-  if (killSwitchInstalled) {return;}
+  if (killSwitchInstalled) {
+    return;
+  }
   killSwitchInstalled = true;
 
   const target = globalThis as { fetch: typeof fetch };
@@ -158,11 +162,15 @@ function useRemoteControl(client: DevToolsClient, flags: RemoteControlFlags) {
 
   // Install the fetch kill switch once, up front (network defaults to on).
   useEffect(() => {
-    if (network) {installNetworkKillSwitch();}
+    if (network) {
+      installNetworkKillSwitch();
+    }
   }, [network]);
 
   useEffect(() => {
-    if (!client) {return;}
+    if (!client) {
+      return;
+    }
 
     const subscriptions = [
       // Navigation: currently just "back".
@@ -182,11 +190,15 @@ function useRemoteControl(client: DevToolsClient, flags: RemoteControlFlags) {
 
     // Ask the desktop for the current network setting (in case it was toggled
     // off before this app connected).
-    if (network) {client.sendMessage("requestNetworkEnabled", {});}
+    if (network) {
+      client.sendMessage("requestNetworkEnabled", {});
+    }
 
     return () =>
       subscriptions.forEach((subscription) => {
-        if (subscription) {subscription.remove();}
+        if (subscription) {
+          subscription.remove();
+        }
       });
   }, [client, navigation, network]);
 }
@@ -265,9 +277,13 @@ function useThemeSync(client: DevToolsClient, enabled: boolean) {
   const lastChangeAt = useRef(0);
 
   useEffect(() => {
-    if (!client || !enabled) {return;}
+    if (!client || !enabled) {
+      return;
+    }
 
-    if (value.current == null) {value.current = resolveScheme();}
+    if (value.current == null) {
+      value.current = resolveScheme();
+    }
 
     const apply = (next: Scheme, nextEpoch: number) => {
       value.current = next;
@@ -301,12 +317,16 @@ function useThemeSync(client: DevToolsClient, enabled: boolean) {
       // break toward 'dark'. Never re-broadcast (would echo-storm the relay).
       client.addMessageListener("syncTheme", (payload?: { value?: Scheme; epoch?: number }) => {
         const next = payload?.value;
-        if (next !== "light" && next !== "dark") {return;}
+        if (next !== "light" && next !== "dark") {
+          return;
+        }
         const theirEpoch = payload?.epoch ?? 0;
         const newer =
           theirEpoch > epoch.current ||
           (theirEpoch === epoch.current && next < (value.current ?? "light"));
-        if (newer) {apply(next, theirEpoch);}
+        if (newer) {
+          apply(next, theirEpoch);
+        }
       }),
 
       // A peer is asking where the group is — announce our scheme so it converges on us.
@@ -357,7 +377,9 @@ function getStackDepth(state: NavStateNode | undefined): number {
   let depth = 0;
   let node = state;
   while (node?.routes?.length) {
-    if (node.type === "stack") {depth += node.routes.length;}
+    if (node.type === "stack") {
+      depth += node.routes.length;
+    }
     const index = node.index ?? node.routes.length - 1;
     node = node.routes[index]?.state;
   }
@@ -430,7 +452,9 @@ function useRouteSync(client: DevToolsClient, enabled: boolean) {
 
   // Observe every route change, keep `history` current, and broadcast our moves.
   useEffect(() => {
-    if (!client || !enabled) {return;}
+    if (!client || !enabled) {
+      return;
+    }
 
     // Read the pre-move state before we overwrite it.
     const prevDepth = history.current.length;
@@ -457,8 +481,12 @@ function useRouteSync(client: DevToolsClient, enabled: boolean) {
       applyingRemoteHref.current = null;
       return;
     }
-    if (!syncEnabled.current) {return;} // device↔device sync toggled off
-    if (sameRoute) {return;} // depth-only churn, not a navigational move
+    if (!syncEnabled.current) {
+      return;
+    } // device↔device sync toggled off
+    if (sameRoute) {
+      return;
+    } // depth-only churn, not a navigational move
 
     const op: SyncOp = depth > prevDepth ? "push" : depth < prevDepth ? "back" : "navigate";
     // Include our post-move depth so a follower can mirror a pop as a real
@@ -468,15 +496,21 @@ function useRouteSync(client: DevToolsClient, enabled: boolean) {
 
   // Receiver + on-demand route reply (registered once per connection).
   useEffect(() => {
-    if (!client || !enabled) {return;}
+    if (!client || !enabled) {
+      return;
+    }
 
     const subscriptions = [
       client.addMessageListener(
         "syncRoute",
         (payload?: { href?: string; op?: SyncOp; depth?: number }) => {
-          if (!syncEnabled.current) {return;} // device↔device sync toggled off
+          if (!syncEnabled.current) {
+            return;
+          } // device↔device sync toggled off
           const href = payload?.href;
-          if (!href || href === currentPathname.current) {return;}
+          if (!href || href === currentPathname.current) {
+            return;
+          }
 
           applyingRemoteHref.current = href;
           const op = payload?.op ?? "navigate";
@@ -526,7 +560,9 @@ function useRouteSync(client: DevToolsClient, enabled: boolean) {
       // together; we suppress the syncRoute echo since they already received it.
       client.addMessageListener("navigateTo", (payload?: { href?: string }) => {
         const href = payload?.href;
-        if (!href || href === currentPathname.current) {return;}
+        if (!href || href === currentPathname.current) {
+          return;
+        }
         applyingRemoteHref.current = href;
         router.navigate(href as Href);
       }),

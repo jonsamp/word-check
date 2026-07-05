@@ -27,7 +27,7 @@ export default function Privacy() {
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
       <View style={styles.content}>
         <Text style={styles.pageTitle}>Privacy Policy</Text>
-        <Text style={styles.lastUpdated}>Last Updated: March 18, 2026</Text>
+        <Text style={styles.lastUpdated}>Last Updated: July 5, 2026</Text>
 
         <Paragraph>
           Jon Samp ("we," "us," or "our") operates the Word Check mobile application (the "App").
@@ -45,10 +45,20 @@ export default function Privacy() {
 
         <SubTitle>Automatically Collected Information</SubTitle>
         <Paragraph>
-          The App collects anonymous performance and usage metrics to help us improve the
-          experience. This includes app startup times, screen render performance, and general usage
-          patterns. No personal information, device identifiers, or advertising IDs are included in
-          these metrics.
+          The App collects performance and usage metrics to help us improve the experience. This
+          includes app startup times, screen render performance, and general usage patterns. These
+          metrics do not include your name, advertising ID, or the words you look up.
+        </Paragraph>
+
+        <SubTitle>Crash and Diagnostic Data</SubTitle>
+        <Paragraph>
+          To diagnose crashes and errors, the App sends diagnostic reports to our error-monitoring
+          provider (Sentry). These reports may include your device model, operating system version,
+          app version, IP address, and technical details about the error such as stack traces and
+          logs. A sample of app sessions — and all sessions in which an error occurs — may also
+          include a session replay, which is a masked reconstruction of the screens you viewed. Text
+          you enter is masked by default in these replays. If you submit in-app feedback, the report
+          includes the message you send and any contact details you choose to provide.
         </Paragraph>
 
         <SectionTitle>Third-Party Services</SectionTitle>
@@ -69,14 +79,24 @@ export default function Privacy() {
             Expo Insights — Collects anonymous usage analytics such as session counts and screen
             views. No personal information is collected.
           </BulletItem>
+          <BulletItem>
+            Sentry — Provides crash and error monitoring. Sentry processes diagnostic data including
+            your device model, operating system version, app version, IP address, error details, and
+            session replays as described above. See Sentry's privacy policy at
+            https://sentry.io/privacy/.
+          </BulletItem>
         </View>
 
         <SectionTitle>What We Do Not Collect</SectionTitle>
-        <Paragraph>We do not collect, store, or transmit:</Paragraph>
+        <Paragraph>
+          Aside from the diagnostic data described above, we do not collect, store, or transmit:
+        </Paragraph>
         <View style={styles.bulletList}>
-          <BulletItem>Names, email addresses, or phone numbers</BulletItem>
-          <BulletItem>Location data</BulletItem>
-          <BulletItem>Device identifiers or advertising IDs</BulletItem>
+          <BulletItem>
+            Names, email addresses, or phone numbers (unless you provide them in feedback)
+          </BulletItem>
+          <BulletItem>Precise location data</BulletItem>
+          <BulletItem>Advertising IDs</BulletItem>
           <BulletItem>Photos, contacts, or calendar data</BulletItem>
           <BulletItem>Health or fitness data</BulletItem>
           <BulletItem>Browsing history</BulletItem>
@@ -90,7 +110,10 @@ export default function Privacy() {
         <Paragraph>
           Your dictionary preferences, quiz scores, and settings are stored locally on your device.
           The word database used for validation is bundled with the App and does not require network
-          access. No data is transmitted to external servers during normal use.
+          access. During normal use, the only data transmitted to external servers is the anonymous
+          performance data and crash diagnostics described above. Diagnostic data sent to Sentry is
+          processed on their servers in the United States and retained according to their retention
+          policies.
         </Paragraph>
 
         <SectionTitle>Data Retention</SectionTitle>
@@ -117,9 +140,11 @@ export default function Privacy() {
 
         <SectionTitle>International Users</SectionTitle>
         <Paragraph>
-          European Economic Area (GDPR): Since we do not collect or process personal information,
-          GDPR obligations are minimal. You have the right to contact us with any data-related
-          requests.
+          European Economic Area (GDPR): We process a limited amount of personal data (such as your
+          IP address) for the legitimate interest of diagnosing crashes and improving the App. You
+          have the right to access, correct, or delete this data, and to object to its processing.
+          Contact us with any data-related requests. Note that diagnostic data may be transferred to
+          and processed in the United States.
         </Paragraph>
         <Paragraph>
           California (CCPA): We do not sell personal information. We do not share personal
