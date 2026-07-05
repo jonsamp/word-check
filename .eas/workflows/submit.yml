@@ -248,7 +248,7 @@ jobs:
           // 1. Read Android package name from app.config
           let packageName;
           const appConfigContent = fs.readFileSync("app.config.ts", "utf8");
-          const packageMatch = appConfigContent.match(/package:\s*[`"']([^`"'$]+)/);
+          const packageMatch = appConfigContent.match(/package:.*?["'`](com\.[^"'`]+)/);
           if (packageMatch) {
             packageName = packageMatch[1];
           }
