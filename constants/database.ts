@@ -71,6 +71,7 @@ async function loadDatabaseImpl(): Promise<SQLite.SQLiteDatabase> {
       throw new Error("Failed to download database asset");
     }
 
+    const sourceUri = asset.localUri;
     const sqliteDir = new Directory(Paths.document, "SQLite");
 
     if (!sqliteDir.exists) {
@@ -79,12 +80,37 @@ async function loadDatabaseImpl(): Promise<SQLite.SQLiteDatabase> {
 
     const targetFile = new File(sqliteDir, dbName);
 
+    // Copy the bundled database into place. Delete any existing file first so a
+    // truncated copy from a previously interrupted launch can't linger.
+    const importDatabaseFromAsset = async () => {
+      if (targetFile.exists) {
+        targetFile.delete();
+      }
+      await new File(sourceUri).copy(targetFile);
+    };
+
     if (!targetFile.exists) {
-      const sourceFile = new File(asset.localUri);
-      await sourceFile.copy(targetFile);
+      await importDatabaseFromAsset();
     }
 
     database = await SQLite.openDatabaseAsync(dbName);
+
+    // `openDatabaseAsync` opens lazily and succeeds even on a corrupt/partial
+    // file — the failure only surfaces on the first prepared statement as
+    // "file is not a database" (SQLite code 26). That happens when an earlier
+    // copy was interrupted (app killed mid-copy, low disk, background launch
+    // under iOS data protection) and never self-heals, because the truncated
+    // file still exists so the copy above is skipped. Verify the database is
+    // readable and, if not, re-import once and reopen. Mirrors the web path.
+    try {
+      await database.getFirstAsync("SELECT 1 FROM words LIMIT 1");
+    } catch {
+      await database.closeAsync();
+      database = null;
+      await importDatabaseFromAsset();
+      database = await SQLite.openDatabaseAsync(dbName);
+    }
+
     return database;
   } catch (error) {
     console.error("Error loading database:", error);
