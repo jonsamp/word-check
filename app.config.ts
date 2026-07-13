@@ -12,7 +12,7 @@ const config: ExpoConfig = {
   userInterfaceStyle: "automatic",
   icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
   updates: {
-    url: "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0",
+    url: "https://u.expo.dev/3d4f1d20-2fe7-44f9-823e-12cf6850b349",
   },
   ios: {
     bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
@@ -37,7 +37,7 @@ const config: ExpoConfig = {
   },
   extra: {
     eas: {
-      projectId: "dd591e49-d2d1-4ce0-bef9-49746a819ec0",
+      projectId: "3d4f1d20-2fe7-44f9-823e-12cf6850b349",
     },
   },
   plugins: [
@@ -74,7 +74,7 @@ const config: ExpoConfig = {
       },
     ],
   ],
-  owner: "jonsamp",
+  owner: "expo-billing-madness",
 };
 
 export default config;
