@@ -95,7 +95,7 @@ jobs:
     name: Deploy web
     type: deploy
     params:
-      prod: true
+      prod: false
 
   build_ios:
     name: Build iOS

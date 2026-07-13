@@ -379,3 +379,9 @@ jobs:
           SCRIPT
 
           node /tmp/submit-android.js
+
+  deploy_web:
+    name: Deploy web
+    type: deploy
+    params:
+      prod: true
