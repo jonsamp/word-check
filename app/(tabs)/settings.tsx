@@ -197,7 +197,7 @@ export default function Settings() {
           NASPA Word List © North American Scrabble Players Association.{"\n"}
           Collins Scrabble Words © HarperCollins Publishers Ltd.{"\n"}
           SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).{"\n"}
-          App variant: h3192hrn
+          App variant: h3192hrn2
         </Text>
       </ScrollView>
     </View>

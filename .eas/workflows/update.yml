@@ -94,3 +94,9 @@ jobs:
       APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       channel: production
+
+  deploy_web:
+    name: Deploy web
+    type: deploy
+    params:
+      prod: true
