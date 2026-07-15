@@ -17,15 +17,15 @@ jobs:
 
           const APPLE_APP_ID = "1489890340";
 
-          // 1. Read current version from app.config.ts
-          const content = fs.readFileSync("app.config.ts", "utf8");
+          // 1. Read current version from app.config.js
+          const content = fs.readFileSync("app.config.js", "utf8");
           const versionMatch = content.match(/process\.env\.APP_VERSION\s*\|\|\s*["']([^"']+)["']/);
           if (!versionMatch) {
-            console.error("Could not find APP_VERSION fallback in app.config.ts");
+            console.error("Could not find APP_VERSION fallback in app.config.js");
             process.exit(1);
           }
           const currentVersion = versionMatch[1];
-          console.error("Current version from app.config.ts: " + currentVersion);
+          console.error("Current version from app.config.js: " + currentVersion);
 
           const [major, minor] = currentVersion.split(".");
           let currentMinor = parseInt(minor, 10);

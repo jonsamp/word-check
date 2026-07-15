@@ -247,7 +247,7 @@ jobs:
 
           // 1. Read Android package name from app.config
           let packageName;
-          const appConfigContent = fs.readFileSync("app.config.ts", "utf8");
+          const appConfigContent = fs.readFileSync("app.config.js", "utf8");
           const packageMatch = appConfigContent.match(/package:.*?["'`](com\.[^"'`]+)/);
           if (packageMatch) {
             packageName = packageMatch[1];
@@ -259,7 +259,7 @@ jobs:
             } catch {}
           }
           if (!packageName) {
-            console.error("Could not determine Android package name from app.config.ts or app.json");
+            console.error("Could not determine Android package name from app.config.js or app.json");
             process.exit(1);
           }
           console.log("Android package: " + packageName);

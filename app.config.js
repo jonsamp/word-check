@@ -1,8 +1,7 @@
-import { ExpoConfig } from "expo/config";
-
 const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
-const config: ExpoConfig = {
+/** @type {import("expo/config").ExpoConfig} */
+const config = {
   version: process.env.APP_VERSION || "2026.14",
   name: "Word Check",
   slug: "word-check",
@@ -77,4 +76,4 @@ const config: ExpoConfig = {
   owner: "expo-billing-madness",
 };
 
-export default config;
+module.exports = config;
