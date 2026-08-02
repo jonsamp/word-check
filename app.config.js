@@ -11,7 +11,7 @@ const config = {
   userInterfaceStyle: "automatic",
   icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
   updates: {
-    url: "https://u.expo.dev/3d4f1d20-2fe7-44f9-823e-12cf6850b349",
+    url: "https://staging-u.expo.dev/3d4f1d20-2fe7-44f9-823e-12cf6850b349",
   },
   ios: {
     bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
