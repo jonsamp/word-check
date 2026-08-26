@@ -37,6 +37,9 @@ const config = {
   extra: {
     eas: {
       projectId: "3d4f1d20-2fe7-44f9-823e-12cf6850b349",
+      observe: {
+        endpointUrl: "https://staging-o.expo.dev",
+      },
     },
   },
   plugins: [

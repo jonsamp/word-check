@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { useEffect, useRef } from "react";
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import Constants from "expo-constants";
 import { useObserve } from "expo-observe";
 import { logEvent } from "../../utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +22,30 @@ const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
 const DICTIONARY_ORDER = [Dictionary.NWL23, Dictionary.CSW24, Dictionary.NSWL23];
 const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level3];
 
+const CRASH_TAP_COUNT = 5;
+const CRASH_TAP_WINDOW_MS = 1500;
+const APP_VERSION = Constants.expoConfig?.version ?? "unknown";
+
+function throwTestCrash() {
+  setTimeout(() => {
+    throw new Error("Test crash");
+  }, 0);
+}
+
+function confirmTestCrash() {
+  if (Platform.OS === "web") {
+    if (window.confirm("Trigger test crash? This will crash the app.")) {
+      throwTestCrash();
+    }
+    return;
+  }
+
+  Alert.alert("Trigger test crash?", "This will crash the app.", [
+    { text: "Cancel", style: "cancel" },
+    { text: "Crash", style: "destructive", onPress: throwTestCrash },
+  ]);
+}
+
 export default function Settings() {
   const insets = useSafeAreaInsets();
   const textColor = useThemeColor("text");
@@ -34,6 +59,36 @@ export default function Settings() {
   useEffect(() => {
     markInteractive();
   }, [markInteractive]);
+
+  const versionTapCount = useRef(0);
+  const versionTapTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (versionTapTimeout.current) {
+        clearTimeout(versionTapTimeout.current);
+      }
+    };
+  }, []);
+
+  const handleVersionPress = () => {
+    if (versionTapTimeout.current) {
+      clearTimeout(versionTapTimeout.current);
+      versionTapTimeout.current = null;
+    }
+
+    versionTapCount.current += 1;
+
+    if (versionTapCount.current >= CRASH_TAP_COUNT) {
+      versionTapCount.current = 0;
+      confirmTestCrash();
+      return;
+    }
+
+    versionTapTimeout.current = setTimeout(() => {
+      versionTapCount.current = 0;
+    }, CRASH_TAP_WINDOW_MS);
+  };
 
   return (
     <View
@@ -199,6 +254,9 @@ export default function Settings() {
           SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).{"\n"}
           App variant: h3192hrn2
         </Text>
+        <Pressable style={styles.versionRow} onPress={handleVersionPress}>
+          <Text style={{ ...type.footnote, color: textSecondaryColor }}>Version {APP_VERSION}</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -211,5 +269,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 24,
     fontWeight: "bold",
+  },
+  versionRow: {
+    alignItems: "center",
+    marginTop: 40,
+    paddingVertical: 12,
   },
 });
