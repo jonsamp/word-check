@@ -11,7 +11,7 @@ const config = {
   userInterfaceStyle: "automatic",
   icon: isProduction ? "./assets/images/icon.png" : "./assets/images/icon-dev.png",
   updates: {
-    url: "https://staging-u.expo.dev/3d4f1d20-2fe7-44f9-823e-12cf6850b349",
+    url: "https://u.expo.dev/dd591e49-d2d1-4ce0-bef9-49746a819ec0",
   },
   ios: {
     bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
@@ -36,9 +36,9 @@ const config = {
   },
   extra: {
     eas: {
-      projectId: "3d4f1d20-2fe7-44f9-823e-12cf6850b349",
+      projectId: "dd591e49-d2d1-4ce0-bef9-49746a819ec0",
       observe: {
-        endpointUrl: "https://staging-o.expo.dev",
+        endpointUrl: "https://o.expo.dev",
       },
     },
   },
@@ -76,7 +76,7 @@ const config = {
       },
     ],
   ],
-  owner: "expo-billing-madness",
+  owner: "jonsamp",
 };
 
 module.exports = config;
