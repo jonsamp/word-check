@@ -9,6 +9,7 @@ import { XDE } from "../dev/xde";
 import { DictionaryProvider } from "../contexts/DictionaryContext";
 import { DifficultyProvider } from "../contexts/DifficultyContext";
 import { TopScoreProvider } from "../contexts/TopScoreContext";
+import { StarredWordsProvider } from "../contexts/StarredWordsContext";
 import Colors from "../constants/Colors";
 import * as Sentry from "@sentry/react-native";
 
@@ -45,9 +46,11 @@ function AppProviders({ skip, children }: { skip: boolean; children: ReactNode }
 
   return (
     <TopScoreProvider>
-      <DictionaryProvider>
-        <DifficultyProvider>{children}</DifficultyProvider>
-      </DictionaryProvider>
+      <StarredWordsProvider>
+        <DictionaryProvider>
+          <DifficultyProvider>{children}</DifficultyProvider>
+        </DictionaryProvider>
+      </StarredWordsProvider>
     </TopScoreProvider>
   );
 }

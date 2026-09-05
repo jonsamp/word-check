@@ -1,51 +1,80 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Platform, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useObserve } from "expo-observe";
 import Animated, { Easing, LinearTransition } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
-import { BackspaceIcon, CheckIcon, XIcon } from "../../../components/Icons";
-import { type } from "../../../constants/Type";
-import { PRACTICE_LISTS, PracticeWord } from "../../../constants/PracticeLists";
+import { BackspaceIcon, CheckIcon, CloseIcon, XIcon } from "../../../components/Icons";
+import { Tile, TileVariant } from "../../../components/tile";
+import { ProgressBar } from "../../../components/progress-bar";
+import { type, sansSerifType } from "../../../constants/Type";
+import { PracticeWord } from "../../../constants/PracticeLists";
+import { usePracticeList } from "../../../hooks/usePracticeList";
 import { generateQuizWord, generateChoices, shuffleArray, QuizWord } from "../../../constants/quiz";
 import { lookUpWord } from "../../../constants/database";
 import { useDifficulty } from "../../../contexts/DifficultyContext";
 import { useDictionary } from "../../../contexts/DictionaryContext";
-import { DifficultyNames } from "../../../constants/difficulty";
 
 const TILE_SIZE_LARGE = 64;
 const TILE_SIZE_MEDIUM = 44;
 const TILE_SIZE_SMALL = 38;
 const TILE_GAP = 10;
+const SWAP_AREA_HEIGHT = 220;
+const ESTIMATED_CARD_HEIGHT = 310;
+
+function parseReviewWords(raw: string | undefined): PracticeWord[] {
+  if (!raw) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+const EMPTY_QUIZ_WORD: QuizWord = { word: "", tiles: [], blanks: [] };
 
 export default function Quiz() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, review } = useLocalSearchParams<{ id: string; review?: string }>();
   const navigation = useNavigation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { currentDifficulty } = useDifficulty();
   const { currentDictionary } = useDictionary();
   const { markInteractive } = useObserve();
 
-  const list = PRACTICE_LISTS[id];
+  const list = usePracticeList(id);
   const [words] = useState<PracticeWord[]>(() => {
-    const shuffled = shuffleArray(list.words);
-    return list.quizSize ? shuffled.slice(0, list.quizSize) : shuffled;
+    const reviewWords = parseReviewWords(review);
+    if (reviewWords.length > 0) {
+      return reviewWords;
+    }
+    const shuffled = shuffleArray(list?.words ?? []);
+    return list?.quizSize ? shuffled.slice(0, list.quizSize) : shuffled;
   });
   const [wordIndex, setWordIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [missedWords, setMissedWords] = useState<PracticeWord[]>([]);
   const [submittedAnswer, setSubmittedAnswer] = useState<"correct" | "incorrect" | null>(null);
   const [lookupDefinition, setLookupDefinition] = useState<string | null>(null);
 
   const [quizWord, setQuizWord] = useState<QuizWord>(() =>
-    generateQuizWord(words[0].word, currentDifficulty, list.requiredLetters)
+    words.length > 0
+      ? generateQuizWord(words[0].word, currentDifficulty, list?.requiredLetters)
+      : EMPTY_QUIZ_WORD
   );
   const [choices, setChoices] = useState<string[]>(() => generateChoices(quizWord.blanks));
   const [selectedBlankIndex, setSelectedBlankIndex] = useState(0);
   const [filledLetters, setFilledLetters] = useState<Map<number, string>>(new Map());
   const [usedChoiceIndices, setUsedChoiceIndices] = useState<Set<number>>(new Set());
+  const [bottomCardHeight, setBottomCardHeight] = useState(ESTIMATED_CARD_HEIGHT);
 
   const textColor = useThemeColor("text");
+  const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
   const borderColor = useThemeColor("border");
   const tintColor = useThemeColor("tint");
@@ -55,8 +84,8 @@ export default function Quiz() {
 
   useLayoutEffect(() => {
     const rootNav = navigation.getParent()?.getParent();
-    rootNav?.setOptions({ title: list?.title ?? "Quiz" });
-  }, [navigation, list?.title]);
+    rootNav?.setOptions({ headerShown: false });
+  }, [navigation]);
 
   useEffect(() => {
     markInteractive();
@@ -77,12 +106,13 @@ export default function Quiz() {
   const allBlanksFilled = filledLetters.size === quizWord.blanks.length;
   const wordsAttempted = submittedAnswer !== null ? wordIndex + 1 : wordIndex;
   const percentage = wordsAttempted > 0 ? Math.round((correctCount / wordsAttempted) * 100) : 0;
+  const clue = words[wordIndex]?.definition ?? "";
 
   function initializeWord(index: number) {
     const newQuizWord = generateQuizWord(
       words[index].word,
       currentDifficulty,
-      list.requiredLetters
+      list?.requiredLetters
     );
     const newChoices = generateChoices(newQuizWord.blanks);
     setQuizWord(newQuizWord);
@@ -239,14 +269,17 @@ export default function Quiz() {
     setLookupDefinition(definition);
 
     if (result.isValid) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setCorrectCount(correctCount + 1);
       setSubmittedAnswer("correct");
     } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       // Look up the correct word's definition for display
       const correctResult = await lookUpWord(words[wordIndex].word, currentDictionary);
       const correctDefinition =
         correctResult.definition?.split("[")[0].split(", also")[0]?.trim() ?? null;
       setLookupDefinition(correctDefinition);
+      setMissedWords([...missedWords, words[wordIndex]]);
       setSubmittedAnswer("incorrect");
     }
   }
@@ -257,165 +290,212 @@ export default function Quiz() {
       setWordIndex(nextIndex);
       initializeWord(nextIndex);
     } else {
-      router.replace(
-        `/practice/${id}/complete?correct=${correctCount}&total=${words.length}&difficulty=${currentDifficulty}`
-      );
+      router.replace({
+        pathname: `/practice/${id}/complete`,
+        params: {
+          correct: String(correctCount),
+          total: String(words.length),
+          difficulty: currentDifficulty,
+          missed: JSON.stringify(missedWords),
+        },
+      });
     }
   }
 
+  const feedbackColor =
+    submittedAnswer === "correct"
+      ? successColor
+      : submittedAnswer === "incorrect"
+        ? dangerColor
+        : null;
+
   return (
-    <View style={styles.container} colorKey="backgroundSecondary">
-      {/* Status Pills */}
-      <View style={styles.pillsRow} colorKey="backgroundSecondary">
-        <StatusPill text={`${wordIndex + 1}/${words.length} words`} />
-        <StatusPill text={`${percentage}% Correct`} />
-        <StatusPill text={DifficultyNames[currentDifficulty]} />
+    <View style={[styles.container, { paddingTop: insets.top + 8 }]} colorKey="backgroundSecondary">
+      <View style={styles.headerRow} colorKey="backgroundSecondary">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Quit quiz"
+          onPress={() => router.back()}
+          hitSlop={10}
+          style={styles.quitButton}
+        >
+          <CloseIcon color={textSecondaryColor} />
+        </Pressable>
+        <ProgressBar current={wordsAttempted} total={words.length} />
+        <Text style={{ ...sansSerifType.numeric, color: textSecondaryColor }}>
+          {wordIndex + 1}/{words.length}
+        </Text>
       </View>
 
-      {/* Word Tiles */}
-      <View style={styles.wordTilesContainer} colorKey="backgroundSecondary">
+      <View style={styles.clueArea} colorKey="backgroundSecondary">
+        <Text
+          style={{
+            ...sansSerifType.sectionHeader,
+            color: textSecondaryColor,
+            marginBottom: 8,
+          }}
+        >
+          Clue
+        </Text>
+        <Text style={[type.body, styles.clueText, { color: textColor }]}>{clue}</Text>
+      </View>
+
+      <View
+        style={[
+          styles.wordTilesContainer,
+          { paddingBottom: bottomCardHeight + insets.bottom + 12 },
+        ]}
+        colorKey="backgroundSecondary"
+      >
         <View style={styles.wordTilesRow} colorKey="backgroundSecondary">
           {quizWord.tiles.map((tile, index) => {
             const isBlank = tile.isBlank;
             const filled = filledLetters.get(index);
             const isSelected = isBlank && index === currentBlankTileIndex;
-            const tileStyle = { width: tileSize, height: tileSize };
+
+            let variant: TileVariant = "filled";
+            if (isBlank) {
+              if (submittedAnswer === "correct") {
+                variant = "correct";
+              } else if (submittedAnswer === "incorrect") {
+                variant = "incorrect";
+              } else if (filled || isSelected) {
+                variant = "selected";
+              } else {
+                variant = "blank";
+              }
+            }
 
             if (!isBlank) {
-              return (
-                <View key={index} style={[styles.wordTile, tileStyle, { backgroundColor }]}>
-                  <Text style={[styles.wordTileLetter, { color: textColor }]}>{tile.letter}</Text>
-                </View>
-              );
+              return <Tile key={index} letter={tile.letter} size={tileSize} />;
             }
 
             return (
-              <Pressable key={index} onPress={() => handleBlankTap(index)}>
-                <View
-                  style={[
-                    styles.wordTile,
-                    tileStyle,
-                    {
-                      backgroundColor: filled || isSelected ? tintColor + "25" : backgroundColor,
-                      borderColor: isSelected ? tintColor + "60" : "transparent",
-                      borderWidth: 3,
-                    },
-                  ]}
-                >
-                  {filled ? (
-                    <Text style={[styles.wordTileLetter, { color: textColor }]}>{filled}</Text>
-                  ) : null}
-                </View>
+              <Pressable
+                key={index}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  filled ? `Blank filled with ${filled}` : `Empty blank ${index + 1}`
+                }
+                onPress={() => handleBlankTap(index)}
+              >
+                <Tile letter={filled} size={tileSize} variant={variant} />
               </Pressable>
             );
           })}
         </View>
       </View>
 
-      {/* Bottom Card: choices/result + button */}
       <Animated.View
+        onLayout={(event) => setBottomCardHeight(event.nativeEvent.layout.height)}
         layout={LinearTransition.duration(200).easing(Easing.out(Easing.ease))}
-        style={[styles.bottomCard, { backgroundColor }]}
+        style={[
+          styles.bottomCard,
+          {
+            backgroundColor,
+            borderColor: feedbackColor ?? "transparent",
+            borderWidth: feedbackColor ? 2 : 0,
+            bottom: insets.bottom + 12,
+          },
+        ]}
       >
-        {submittedAnswer === null ? (
-          <View style={styles.choicesContainer}>
-            <View style={styles.choicesRow}>
-              {choices.slice(0, 4).map((letter, index) => (
-                <ChoiceTile
-                  key={index}
-                  letter={letter}
-                  used={usedChoiceIndices.has(index)}
-                  onPress={() => handleChoiceTap(index)}
-                  textColor={textColor}
-                  tintColor={tintColor}
-                  backgroundColor={backgroundSecondaryColor}
-                  usedBackgroundColor={backgroundSecondaryColor}
-                  borderColor={borderColor}
-                />
-              ))}
-            </View>
-            <View style={styles.choicesRow}>
-              {choices.slice(4, 7).map((letter, index) => {
-                const choiceIndex = index + 4;
-                return (
+        <View style={[styles.swapArea, { backgroundColor: "transparent" }]}>
+          {submittedAnswer === null ? (
+            <View style={styles.choicesContainer} colorKey="background">
+              <View style={styles.choicesRow} colorKey="background">
+                {choices.slice(0, 4).map((letter, index) => (
                   <ChoiceTile
-                    key={choiceIndex}
+                    key={index}
                     letter={letter}
-                    used={usedChoiceIndices.has(choiceIndex)}
-                    onPress={() => handleChoiceTap(choiceIndex)}
-                    textColor={textColor}
-                    tintColor={tintColor}
-                    backgroundColor={backgroundSecondaryColor}
-                    usedBackgroundColor={backgroundSecondaryColor}
-                    borderColor={borderColor}
+                    used={usedChoiceIndices.has(index)}
+                    onPress={() => handleChoiceTap(index)}
                   />
-                );
-              })}
-              <Pressable onPress={handleBackspace}>
-                <View
-                  style={[
-                    styles.wordTile,
-                    {
-                      width: TILE_SIZE_LARGE,
-                      height: TILE_SIZE_LARGE,
-                      backgroundColor: backgroundSecondaryColor,
-                    },
-                  ]}
+                ))}
+              </View>
+              <View style={styles.choicesRow} colorKey="background">
+                {choices.slice(4, 7).map((letter, index) => {
+                  const choiceIndex = index + 4;
+                  return (
+                    <ChoiceTile
+                      key={choiceIndex}
+                      letter={letter}
+                      used={usedChoiceIndices.has(choiceIndex)}
+                      onPress={() => handleChoiceTap(choiceIndex)}
+                    />
+                  );
+                })}
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove last letter"
+                  onPress={handleBackspace}
                 >
-                  <BackspaceIcon color={textColor} size={26} />
-                </View>
-              </Pressable>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.resultContent}>
-            {submittedAnswer === "correct" ? (
-              <>
-                <CheckIcon />
-                <Text style={[type.title, { marginTop: 8 }]}>Correct!</Text>
-                {lookupDefinition ? (
-                  <Text
-                    style={[type.subhead, { color: textColor, marginTop: 4, textAlign: "center" }]}
+                  <View
+                    style={[
+                      styles.backspace,
+                      {
+                        width: TILE_SIZE_LARGE,
+                        height: TILE_SIZE_LARGE,
+                        backgroundColor: backgroundSecondaryColor,
+                      },
+                    ]}
                   >
-                    {lookupDefinition}
-                  </Text>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <XIcon />
-                <Text style={[type.title, { marginTop: 8 }]}>Answer:</Text>
-                <View style={styles.resultTilesRow}>
-                  {quizWord.tiles.map((tile, index) => (
-                    <View
-                      key={index}
+                    <BackspaceIcon color={textColor} size={26} />
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.resultContent} colorKey="background">
+              {submittedAnswer === "correct" ? (
+                <>
+                  <CheckIcon />
+                  <Text style={[type.title, { marginTop: 8, color: successColor }]}>Correct</Text>
+                  {lookupDefinition ? (
+                    <Text
                       style={[
-                        styles.resultTile,
-                        {
-                          backgroundColor: tile.isBlank
-                            ? tintColor + "30"
-                            : backgroundSecondaryColor,
-                        },
+                        sansSerifType.subhead,
+                        { color: textSecondaryColor, marginTop: 6, textAlign: "center" },
                       ]}
                     >
-                      <Text style={[styles.resultTileLetter, { color: textColor }]}>
-                        {tile.letter}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-                {lookupDefinition ? (
-                  <Text
-                    style={[type.subhead, { color: textColor, marginTop: 8, textAlign: "center" }]}
-                  >
-                    {lookupDefinition}
-                  </Text>
-                ) : null}
-              </>
-            )}
-          </View>
-        )}
+                      {lookupDefinition}
+                    </Text>
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  <XIcon />
+                  <Text style={[type.title, { marginTop: 8, color: dangerColor }]}>Answer</Text>
+                  <View style={styles.resultTilesRow} colorKey="background">
+                    {quizWord.tiles.map((tile, index) => (
+                      <Tile
+                        key={index}
+                        letter={tile.letter}
+                        size={34}
+                        showValue={false}
+                        variant={tile.isBlank ? "selected" : "filled"}
+                      />
+                    ))}
+                  </View>
+                  {lookupDefinition ? (
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        sansSerifType.subhead,
+                        { color: textSecondaryColor, marginTop: 8, textAlign: "center" },
+                      ]}
+                    >
+                      {lookupDefinition}
+                    </Text>
+                  ) : null}
+                </>
+              )}
+            </View>
+          )}
+        </View>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={submittedAnswer !== null ? "Continue" : "Submit answer"}
+          accessibilityState={{ disabled: submittedAnswer === null && !allBlanksFilled }}
           onPress={submittedAnswer !== null ? handleNext : handleSubmit}
           disabled={submittedAnswer === null && !allBlanksFilled}
           style={[
@@ -426,22 +506,19 @@ export default function Quiz() {
             },
           ]}
         >
-          <Text style={[type.headline, styles.submitButtonText]}>
-            {submittedAnswer !== null ? "Next" : "Submit"}
+          <Text
+            style={[
+              sansSerifType.headline,
+              styles.submitButtonText,
+              {
+                color: submittedAnswer !== null || allBlanksFilled ? "#FFFFFF" : textSecondaryColor,
+              },
+            ]}
+          >
+            {submittedAnswer !== null ? "Continue" : "Submit"}
           </Text>
         </Pressable>
       </Animated.View>
-    </View>
-  );
-}
-
-function StatusPill({ text }: { text: string }) {
-  const textSecondaryColor = useThemeColor("textSecondary");
-  const backgroundColor = useThemeColor("background");
-
-  return (
-    <View style={[styles.pill, { backgroundColor }]}>
-      <Text style={[type.subhead, { color: textSecondaryColor }]}>{text}</Text>
     </View>
   );
 }
@@ -450,37 +527,20 @@ function ChoiceTile({
   letter,
   used,
   onPress,
-  textColor,
-  tintColor,
-  backgroundColor,
-  usedBackgroundColor,
-  borderColor,
 }: {
   letter: string;
   used: boolean;
   onPress: () => void;
-  textColor: string;
-  tintColor: string;
-  backgroundColor: string;
-  usedBackgroundColor: string;
-  borderColor: string;
 }) {
   return (
-    <Pressable onPress={onPress} disabled={used}>
-      <View
-        style={[
-          styles.wordTile,
-          {
-            width: TILE_SIZE_LARGE,
-            height: TILE_SIZE_LARGE,
-            backgroundColor: used ? usedBackgroundColor : backgroundColor,
-          },
-        ]}
-      >
-        <Text style={[styles.wordTileLetter, { color: used ? borderColor : textColor }]}>
-          {letter}
-        </Text>
-      </View>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Letter ${letter}`}
+      accessibilityState={{ disabled: used }}
+      onPress={onPress}
+      disabled={used}
+    >
+      <Tile letter={letter} size={TILE_SIZE_LARGE} variant={used ? "used" : "filled"} />
     </Pressable>
   );
 }
@@ -488,25 +548,30 @@ function ChoiceTile({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 16,
     paddingHorizontal: 16,
   },
-  pillsRow: {
+  headerRow: {
     flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-    marginBottom: 32,
+    alignItems: "center",
+    gap: 14,
+    paddingHorizontal: 4,
+    marginBottom: 24,
   },
-  pill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+  quitButton: {
+    padding: 2,
+  },
+  clueArea: {
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  clueText: {
+    textAlign: "center",
+    lineHeight: 26,
   },
   wordTilesContainer: {
     flex: 1,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: Platform.OS === "web" ? 40 : "30%",
   },
   wordTilesRow: {
     flexDirection: "row",
@@ -514,14 +579,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: TILE_GAP,
   },
-  wordTile: {
+  backspace: {
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-  },
-  wordTileLetter: {
-    ...type.titleOne,
-    fontWeight: "600",
   },
   resultTilesRow: {
     flexDirection: "row",
@@ -530,31 +591,22 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: 12,
   },
-  resultTile: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  resultTileLetter: {
-    ...type.callout,
-    fontWeight: "600",
-  },
   bottomCard: {
     position: "absolute",
-    bottom: 20,
     left: 20,
     right: 20,
-    borderRadius: 44,
-    paddingTop: 24,
+    borderRadius: 40,
+    paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 16,
+  },
+  swapArea: {
+    height: SWAP_AREA_HEIGHT,
+    justifyContent: "center",
   },
   choicesContainer: {
     alignItems: "center",
     gap: TILE_GAP,
-    marginBottom: 24,
   },
   choicesRow: {
     flexDirection: "row",
@@ -563,8 +615,7 @@ const styles = StyleSheet.create({
   },
   resultContent: {
     alignItems: "center",
-    paddingVertical: 24,
-    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   submitButton: {
     borderRadius: 100,

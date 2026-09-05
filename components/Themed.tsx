@@ -28,7 +28,10 @@ type ThemeProps = {
     | "backgroundSecondary"
     | "border"
     | "success"
-    | "danger";
+    | "danger"
+    | "tile"
+    | "tileText"
+    | "tileEdge";
 };
 
 export type TextProps = ThemeProps & DefaultText["props"];

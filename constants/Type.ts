@@ -1,3 +1,7 @@
+import type { TextStyle } from "react-native";
+
+const tabularNumerals: TextStyle["fontVariant"] = ["tabular-nums"];
+
 export const type = {
   largeTitle: {
     fontFamily: "New York",
@@ -43,5 +47,58 @@ export const type = {
   label: {
     fontFamily: "New York",
     fontSize: 13,
+  },
+};
+
+export const sansSerifType = {
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: "700" as const,
+    letterSpacing: 0.37,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "600" as const,
+    letterSpacing: -0.45,
+  },
+  headline: {
+    fontSize: 17,
+    fontWeight: "600" as const,
+    letterSpacing: -0.43,
+  },
+  body: {
+    fontSize: 17,
+    fontWeight: "400" as const,
+    letterSpacing: -0.41,
+  },
+  callout: {
+    fontSize: 16,
+    fontWeight: "400" as const,
+    letterSpacing: -0.32,
+  },
+  subhead: {
+    fontSize: 15,
+    fontWeight: "400" as const,
+    letterSpacing: -0.24,
+  },
+  footnote: {
+    fontSize: 13,
+    fontWeight: "400" as const,
+    letterSpacing: -0.08,
+  },
+  caption: {
+    fontSize: 12,
+    fontWeight: "400" as const,
+  },
+  sectionHeader: {
+    fontSize: 12,
+    fontWeight: "600" as const,
+    letterSpacing: 0.6,
+    textTransform: "uppercase" as const,
+  },
+  numeric: {
+    fontSize: 15,
+    fontWeight: "600" as const,
+    fontVariant: tabularNumerals,
   },
 };

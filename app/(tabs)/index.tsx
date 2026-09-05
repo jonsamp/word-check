@@ -14,8 +14,10 @@ import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
-import { type } from "../../constants/Type";
+import { type, sansSerifType } from "../../constants/Type";
 import { CancelIcon, XIcon, CheckIcon } from "../../components/Icons";
+import { WordTiles } from "../../components/tile";
+import { getWordValue } from "../../constants/letterValues";
 import { lookUpWord } from "../../constants/database";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { DictionaryNames } from "../../constants/dictionary";
@@ -107,6 +109,8 @@ export default function Home() {
       >
         <Text style={[{ ...styles.header, color: textColor }, { top: 8 }]}>Word Check</Text>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Dictionary: ${DictionaryNames[currentDictionary]}. Opens settings.`}
           onPress={() => router.navigate("/settings")}
           style={{
             flexDirection: "row",
@@ -121,7 +125,7 @@ export default function Home() {
             tintColor={textSecondaryColor}
             size={22}
           />
-          <Text style={{ ...type.callout, color: textSecondaryColor }}>
+          <Text style={{ ...sansSerifType.subhead, color: textSecondaryColor }}>
             {DictionaryNames[currentDictionary].replace(" Dictionary", "")}
           </Text>
         </Pressable>
@@ -162,6 +166,8 @@ export default function Home() {
         />
         {Boolean(searchValue) && (
           <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Clear search"
             style={{
               position: "absolute",
               right: 24,
@@ -209,6 +215,7 @@ export default function Home() {
                 style={{ width: "100%", paddingHorizontal: 16 }}
               >
                 <TouchableOpacity
+                  accessibilityRole="button"
                   style={[
                     styles.searchButton,
                     {
@@ -247,24 +254,33 @@ export default function Home() {
                 alignItems: "center",
                 gap: 16,
                 borderRadius: 12,
-                paddingVertical: 48,
+                paddingVertical: 40,
+                paddingHorizontal: 16,
               }}
             >
-              <RNView style={{ marginBottom: 8 }}>
+              <RNView style={{ marginBottom: 4 }}>
                 {result.isValid ? <CheckIcon /> : <XIcon />}
               </RNView>
-              <Text style={{ ...type.largeTitle, fontWeight: "bold", padding: 0 }}>
-                {capitalizeFirstLetter(result.word.toLowerCase())}
-              </Text>
+              <WordTiles word={result.word} />
               <Text
                 style={{
                   ...type.body,
-                  marginTop: -12,
                   color: textSecondaryColor,
                 }}
               >
                 is {result.isValid ? "a playable word" : "not a playable word"}
               </Text>
+              {result.isValid && (
+                <Text
+                  style={{
+                    ...sansSerifType.numeric,
+                    color: textSecondaryColor,
+                    marginTop: -8,
+                  }}
+                >
+                  {getWordValue(result.word)} points
+                </Text>
+              )}
             </RNView>
             {Boolean(definition) && (
               <RNView
@@ -277,14 +293,18 @@ export default function Home() {
                 }}
               >
                 <RNView style={styles.definitionContainer}>
-                  <RNView>
-                    <Text style={type.headline}>Definition</Text>
-                  </RNView>
-                  <RNView>
-                    <Text style={{ ...type.body, color: textSecondaryColor }}>
-                      {capitalizeFirstLetter(definition)}.
-                    </Text>
-                  </RNView>
+                  <Text
+                    style={{
+                      ...sansSerifType.sectionHeader,
+                      color: textSecondaryColor,
+                      marginBottom: 6,
+                    }}
+                  >
+                    Definition
+                  </Text>
+                  <Text style={{ ...type.body, color: textSecondaryColor }}>
+                    {capitalizeFirstLetter(definition)}.
+                  </Text>
                 </RNView>
               </RNView>
             )}
@@ -313,7 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   searchButtonText: {
-    ...type.headline,
+    ...sansSerifType.headline,
   },
   scrollContainer: {
     flex: 1,

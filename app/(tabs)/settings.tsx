@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import Constants from "expo-constants";
 import { useObserve } from "expo-observe";
@@ -6,12 +6,12 @@ import { logEvent } from "../../utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
-import { type } from "../../constants/Type";
+import { type, sansSerifType } from "../../constants/Type";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import { useDifficulty } from "../../contexts/DifficultyContext";
 import { Difficulty, DifficultyNames, DifficultyDescriptions } from "../../constants/difficulty";
-import { BlueCheckIcon } from "../../components/Icons";
+import { BlueCheckIcon, ChevronDownIcon } from "../../components/Icons";
 
 const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
   [Dictionary.NWL23]: "NASPA Word List (NWL) 2023 Edition",
@@ -25,6 +25,12 @@ const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level
 const CRASH_TAP_COUNT = 5;
 const CRASH_TAP_WINDOW_MS = 1500;
 const APP_VERSION = Constants.expoConfig?.version ?? "unknown";
+
+const LEGAL_TEXT = [
+  "NASPA Word List © North American Scrabble Players Association.",
+  "Collins Scrabble Words © HarperCollins Publishers Ltd.",
+  "SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).",
+].join("\n");
 
 function throwTestCrash() {
   setTimeout(() => {
@@ -55,6 +61,7 @@ export default function Settings() {
   const { currentDictionary, setDictionary } = useDictionary();
   const { currentDifficulty, setDifficulty } = useDifficulty();
   const { markInteractive } = useObserve();
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
 
   useEffect(() => {
     markInteractive();
@@ -104,64 +111,50 @@ export default function Settings() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 20,
-          paddingBottom: insets.bottom + 80,
+          paddingBottom: insets.bottom + 100,
         }}
       >
-        <Text
-          style={{
-            ...type.footnote,
-            color: textSecondaryColor,
-            fontWeight: "500",
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-            marginBottom: 12,
-            marginLeft: 4,
-          }}
-        >
-          Dictionary
-        </Text>
-        <RNView
-          style={{
-            borderRadius: 16,
-            backgroundColor,
-            overflow: "hidden",
-          }}
-        >
-          {DICTIONARY_ORDER.map((dict, index) => {
-            const isSelected = currentDictionary === dict;
+        <Text style={[styles.sectionHeader, { color: textSecondaryColor }]}>Dictionary</Text>
+        <RNView style={[styles.group, { backgroundColor }]}>
+          {DICTIONARY_ORDER.map((dictionary, index) => {
+            const isSelected = currentDictionary === dictionary;
             const isLast = index === DICTIONARY_ORDER.length - 1;
 
             return (
               <Pressable
-                key={dict}
+                key={dictionary}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: isSelected }}
+                accessibilityLabel={DictionaryNames[dictionary]}
+                accessibilityHint={DICTIONARY_DESCRIPTIONS[dictionary]}
                 onPress={() => {
-                  if (dict !== currentDictionary) {
+                  if (dictionary !== currentDictionary) {
                     logEvent("dictionary.changed", {
-                      attributes: { dictionary: dict },
+                      attributes: { dictionary },
                     });
                   }
-                  setDictionary(dict);
+                  setDictionary(dictionary);
                 }}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingVertical: 18,
-                  paddingHorizontal: 16,
-                  borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
-                  borderBottomColor: borderColor,
-                }}
+                style={[
+                  styles.row,
+                  {
+                    borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
+                    borderBottomColor: borderColor,
+                  },
+                ]}
               >
-                <RNView style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={{ ...type.body, fontWeight: "500" }}>{DictionaryNames[dict]}</Text>
+                <RNView style={styles.rowText}>
+                  <Text style={{ ...type.body, fontWeight: "500" }}>
+                    {DictionaryNames[dictionary]}
+                  </Text>
                   <Text
                     style={{
-                      ...type.footnote,
+                      ...sansSerifType.footnote,
                       color: textSecondaryColor,
-                      marginTop: 6,
+                      marginTop: 5,
                     }}
                   >
-                    {DICTIONARY_DESCRIPTIONS[dict]}
+                    {DICTIONARY_DESCRIPTIONS[dictionary]}
                   </Text>
                 </RNView>
                 {isSelected && (
@@ -173,62 +166,50 @@ export default function Settings() {
             );
           })}
         </RNView>
-        <Text
-          style={{
-            ...type.footnote,
-            color: textSecondaryColor,
-            fontWeight: "500",
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-            marginBottom: 12,
-            marginTop: 32,
-            marginLeft: 4,
-          }}
-        >
+
+        <Text style={[styles.sectionHeader, { color: textSecondaryColor, marginTop: 32 }]}>
           Quiz Difficulty
         </Text>
-        <RNView
-          style={{
-            borderRadius: 16,
-            backgroundColor,
-            overflow: "hidden",
-          }}
-        >
-          {DIFFICULTY_ORDER.map((diff, index) => {
-            const isSelected = currentDifficulty === diff;
+        <RNView style={[styles.group, { backgroundColor }]}>
+          {DIFFICULTY_ORDER.map((difficulty, index) => {
+            const isSelected = currentDifficulty === difficulty;
             const isLast = index === DIFFICULTY_ORDER.length - 1;
 
             return (
               <Pressable
-                key={diff}
+                key={difficulty}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: isSelected }}
+                accessibilityLabel={DifficultyNames[difficulty]}
+                accessibilityHint={DifficultyDescriptions[difficulty]}
                 onPress={() => {
-                  if (diff !== currentDifficulty) {
+                  if (difficulty !== currentDifficulty) {
                     logEvent("difficulty.changed", {
-                      attributes: { difficulty: diff },
+                      attributes: { difficulty },
                     });
                   }
-                  setDifficulty(diff);
+                  setDifficulty(difficulty);
                 }}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingVertical: 18,
-                  paddingHorizontal: 16,
-                  borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
-                  borderBottomColor: borderColor,
-                }}
+                style={[
+                  styles.row,
+                  {
+                    borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
+                    borderBottomColor: borderColor,
+                  },
+                ]}
               >
-                <RNView style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={{ ...type.body, fontWeight: "500" }}>{DifficultyNames[diff]}</Text>
+                <RNView style={styles.rowText}>
+                  <Text style={{ ...type.body, fontWeight: "500" }}>
+                    {DifficultyNames[difficulty]}
+                  </Text>
                   <Text
                     style={{
-                      ...type.footnote,
+                      ...sansSerifType.footnote,
                       color: textSecondaryColor,
-                      marginTop: 6,
+                      marginTop: 5,
                     }}
                   >
-                    {DifficultyDescriptions[diff]}
+                    {DifficultyDescriptions[difficulty]}
                   </Text>
                 </RNView>
                 {isSelected && (
@@ -240,23 +221,75 @@ export default function Settings() {
             );
           })}
         </RNView>
-        <Text
-          style={{
-            ...type.body,
-            marginTop: 32,
-            fontSize: 13,
-            lineHeight: 22,
-            opacity: 0.6,
-          }}
-        >
-          NASPA Word List © North American Scrabble Players Association.{"\n"}
-          Collins Scrabble Words © HarperCollins Publishers Ltd.{"\n"}
-          SCRABBLE® is a trademark of Hasbro, Inc. (US/Canada) and Mattel, Inc. (elsewhere).{"\n"}
-          App variant: h3192hrn2
+
+        <Text style={[styles.sectionHeader, { color: textSecondaryColor, marginTop: 32 }]}>
+          About
         </Text>
-        <Pressable style={styles.versionRow} onPress={handleVersionPress}>
-          <Text style={{ ...type.footnote, color: textSecondaryColor }}>Version {APP_VERSION}</Text>
-        </Pressable>
+        <RNView style={[styles.group, { backgroundColor }]}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Legal and attribution"
+            accessibilityState={{ expanded: isAboutExpanded }}
+            onPress={() => setIsAboutExpanded(!isAboutExpanded)}
+            style={[
+              styles.row,
+              {
+                borderBottomWidth: isAboutExpanded ? StyleSheet.hairlineWidth : 0,
+                borderBottomColor: borderColor,
+              },
+            ]}
+          >
+            <RNView style={styles.rowText}>
+              <Text style={{ ...type.body, fontWeight: "500" }}>Legal and attribution</Text>
+            </RNView>
+            <RNView
+              style={{
+                marginRight: 4,
+                transform: [{ rotate: isAboutExpanded ? "180deg" : "0deg" }],
+              }}
+            >
+              <ChevronDownIcon color={textSecondaryColor} size={18} />
+            </RNView>
+          </Pressable>
+          {isAboutExpanded && (
+            <RNView style={styles.legalBlock}>
+              <Text
+                style={{
+                  ...sansSerifType.footnote,
+                  color: textSecondaryColor,
+                  lineHeight: 20,
+                }}
+              >
+                {LEGAL_TEXT}
+              </Text>
+            </RNView>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Version ${APP_VERSION}`}
+            onPress={handleVersionPress}
+            style={[
+              styles.row,
+              {
+                borderTopWidth: StyleSheet.hairlineWidth,
+                borderTopColor: borderColor,
+              },
+            ]}
+          >
+            <RNView style={styles.rowText}>
+              <Text style={{ ...type.body, fontWeight: "500" }}>Version</Text>
+            </RNView>
+            <Text
+              style={{
+                ...sansSerifType.numeric,
+                color: textSecondaryColor,
+                marginRight: 4,
+              }}
+            >
+              {APP_VERSION}
+            </Text>
+          </Pressable>
+        </RNView>
       </ScrollView>
     </View>
   );
@@ -270,9 +303,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  versionRow: {
+  sectionHeader: {
+    ...sansSerifType.sectionHeader,
+    marginBottom: 10,
+    marginLeft: 4,
+  },
+  group: {
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  row: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 40,
-    paddingVertical: 12,
+    justifyContent: "space-between",
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+  },
+  rowText: {
+    flex: 1,
+    marginRight: 12,
+  },
+  legalBlock: {
+    paddingHorizontal: 16,
+    paddingBottom: 18,
   },
 });

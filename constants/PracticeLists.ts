@@ -2358,3 +2358,30 @@ export const PRACTICE_LISTS: Record<string, PracticeList> = {
     ],
   },
 };
+
+export const STARRED_LIST_ID = "starred";
+
+export type PracticeSection = {
+  title: string;
+  listIds: string[];
+};
+
+export const PRACTICE_SECTIONS: PracticeSection[] = [
+  {
+    title: "Essentials",
+    listIds: ["2-letter", "3-letter", "q-words", "j-words", "x-words", "z-words"],
+  },
+  {
+    title: "Advanced",
+    listIds: [
+      "bingo-tisane",
+      "bingo-satire",
+      "bingo-retina",
+      "high-prob-7s",
+      "high-prob-8s",
+      "i-dumps",
+      "u-dumps",
+      "vowel-dumps",
+    ],
+  },
+];
