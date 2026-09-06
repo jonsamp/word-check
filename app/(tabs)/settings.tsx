@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Platform, Pressable, StyleSheet, View as RNView } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -18,9 +18,7 @@ import { Dictionary, DictionaryNames } from "../../constants/dictionary";
 import { useDifficulty } from "../../contexts/DifficultyContext";
 import { Difficulty, DifficultyNames, DifficultyDescriptions } from "../../constants/difficulty";
 import { BlueCheckIcon, ChevronDownIcon } from "../../components/Icons";
-import { ScrollEdgeFade } from "../../components/scroll-edge-fade";
 import { Collapsible } from "../../components/collapsible";
-import { useScrollFade } from "../../hooks/useScrollFade";
 
 const DICTIONARY_DESCRIPTIONS: Record<Dictionary, string> = {
   [Dictionary.NWL23]: "NASPA Word List (NWL) 2023 Edition",
@@ -34,7 +32,6 @@ const DIFFICULTY_ORDER = [Difficulty.Level1, Difficulty.Level2, Difficulty.Level
 const CRASH_TAP_COUNT = 5;
 const CRASH_TAP_WINDOW_MS = 1500;
 const APP_VERSION = Constants.expoConfig?.version ?? "unknown";
-const FADE_HEIGHT = 48;
 const COLLAPSE_DURATION = 260;
 
 const LEGAL_TEXT = [
@@ -73,7 +70,6 @@ export default function Settings() {
   const { currentDifficulty, setDifficulty } = useDifficulty();
   const { markInteractive } = useObserve();
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
-  const { onScroll, fadeStyle } = useScrollFade(FADE_HEIGHT);
   const aboutProgress = useSharedValue(0);
   const chevronStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${aboutProgress.value * 180}deg` }],
@@ -132,13 +128,11 @@ export default function Settings() {
         <Text style={[styles.header, { color: textColor, top: 8 }]}>Settings</Text>
       </RNView>
       <RNView style={{ flex: 1 }}>
-        <Animated.ScrollView
+        <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingBottom: insets.bottom + 100,
           }}
-          onScroll={onScroll}
-          scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
         >
           <Text style={[styles.sectionHeader, { color: textSecondaryColor }]}>Dictionary</Text>
@@ -311,8 +305,7 @@ export default function Settings() {
               </Text>
             </Pressable>
           </RNView>
-        </Animated.ScrollView>
-        <ScrollEdgeFade height={FADE_HEIGHT} edge="top" style={fadeStyle} />
+        </ScrollView>
       </RNView>
     </View>
   );

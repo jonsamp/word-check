@@ -6,12 +6,11 @@ import {
   TextInput,
   TouchableOpacity,
   Pressable,
+  ScrollView,
   View as RNView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
-import { ScrollEdgeFade } from "../../components/scroll-edge-fade";
-import { useScrollFade } from "../../hooks/useScrollFade";
 import { useRouter } from "expo-router";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
@@ -25,7 +24,6 @@ import { SymbolView } from "expo-symbols";
 import { useObserve } from "expo-observe";
 import { logEvent } from "../../utils/analytics";
 
-const FADE_HEIGHT = 48;
 const ESTIMATED_SEARCH_HEIGHT = 68;
 
 export default function Home() {
@@ -40,7 +38,6 @@ export default function Home() {
   const { markInteractive } = useObserve();
   const [searchValue, setSearchValue] = useState("");
   const [searchHeight, setSearchHeight] = useState(ESTIMATED_SEARCH_HEIGHT);
-  const { onScroll, fadeStyle } = useScrollFade(FADE_HEIGHT);
   const [result, setResult] = useState<{
     isValid: boolean;
     definition?: string | null;
@@ -137,12 +134,10 @@ export default function Home() {
         </Pressable>
       </RNView>
       <RNView style={styles.scrollArea}>
-        <Animated.ScrollView
+        <ScrollView
           contentContainerStyle={[styles.scrollContent, { paddingTop: searchHeight + 16 }]}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
-          onScroll={onScroll}
-          scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
         >
           {result == null && (
@@ -260,12 +255,7 @@ export default function Home() {
               )}
             </Animated.View>
           )}
-        </Animated.ScrollView>
-        <ScrollEdgeFade
-          height={FADE_HEIGHT}
-          edge="top"
-          style={[fadeStyle, { top: searchHeight }]}
-        />
+        </ScrollView>
         <RNView
           style={[styles.searchHeader, { backgroundColor: backgroundSecondaryColor }]}
           onLayout={(event) => setSearchHeight(event.nativeEvent.layout.height)}

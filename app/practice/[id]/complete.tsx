@@ -1,20 +1,15 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Pressable, StyleSheet, View as RNView } from "react-native";
-import Animated from "react-native-reanimated";
+import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useObserve } from "expo-observe";
 import { logEvent } from "../../../utils/analytics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { ProgressRing } from "../../../components/progress-ring";
-import { ScrollEdgeFade } from "../../../components/scroll-edge-fade";
-import { useScrollFade } from "../../../hooks/useScrollFade";
 import { type } from "../../../constants/Type";
 import { useTopScores } from "../../../contexts/TopScoreContext";
 import { Difficulty } from "../../../constants/difficulty";
 import { PracticeWord } from "../../../constants/PracticeLists";
-
-const FADE_HEIGHT = 48;
 
 function parseMissedWords(raw: string | undefined): PracticeWord[] {
   if (!raw) {
@@ -50,7 +45,6 @@ export default function Complete() {
 
   // Snapshot the previous best before the save effect overwrites it.
   const [previousBest] = useState<number | null>(() => getTopScore(id, resolvedDifficulty));
-  const { onScroll, fadeStyle } = useScrollFade(FADE_HEIGHT);
 
   const tintColor = useThemeColor("tint");
   const textColor = useThemeColor("text");
@@ -138,10 +132,8 @@ export default function Complete() {
             Missed ({missedWords.length})
           </Text>
           <RNView style={styles.missedScrollArea}>
-            <Animated.ScrollView
+            <ScrollView
               contentContainerStyle={styles.missedScrollContent}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
             >
               {missedWords.map((entry) => (
@@ -158,9 +150,7 @@ export default function Complete() {
                   </Text>
                 </RNView>
               ))}
-            </Animated.ScrollView>
-            <ScrollEdgeFade height={FADE_HEIGHT} edge="top" style={fadeStyle} />
-            <ScrollEdgeFade height={FADE_HEIGHT} edge="bottom" />
+            </ScrollView>
           </RNView>
         </RNView>
       ) : (
@@ -227,7 +217,6 @@ const styles = StyleSheet.create({
   },
   missedScrollContent: {
     paddingTop: 4,
-    paddingBottom: FADE_HEIGHT,
   },
   missedCard: {
     borderRadius: 16,
