@@ -2,7 +2,7 @@ const isProduction = process.env.EAS_BUILD_PROFILE === "production";
 
 /** @type {import("expo/config").ExpoConfig} */
 const config = {
-  version: process.env.APP_VERSION || "2026.14",
+  version: process.env.APP_VERSION || "2026.15",
   name: "Word Check",
   slug: "word-check",
   scheme: "wordcheck",
