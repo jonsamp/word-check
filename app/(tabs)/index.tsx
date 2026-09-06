@@ -4,26 +4,29 @@ import {
   Platform,
   StyleSheet,
   TextInput,
-  ScrollView,
   TouchableOpacity,
   Pressable,
   View as RNView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
+import { ScrollEdgeFade } from "../../components/scroll-edge-fade";
+import { useScrollFade } from "../../hooks/useScrollFade";
 import { useRouter } from "expo-router";
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
-import { type, sansSerifType } from "../../constants/Type";
+import { type } from "../../constants/Type";
 import { CancelIcon, XIcon, CheckIcon } from "../../components/Icons";
 import { WordTiles } from "../../components/tile";
-import { getWordValue } from "../../constants/letterValues";
 import { lookUpWord } from "../../constants/database";
 import { useDictionary } from "../../contexts/DictionaryContext";
 import { DictionaryNames } from "../../constants/dictionary";
 import { SymbolView } from "expo-symbols";
 import { useObserve } from "expo-observe";
 import { logEvent } from "../../utils/analytics";
+
+const FADE_HEIGHT = 48;
+const ESTIMATED_SEARCH_HEIGHT = 68;
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -32,9 +35,12 @@ export default function Home() {
   const textSecondaryColor = useThemeColor("textSecondary");
   const borderColor = useThemeColor("border");
   const backgroundColor = useThemeColor("background");
+  const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
   const { currentDictionary, isLoading } = useDictionary();
   const { markInteractive } = useObserve();
   const [searchValue, setSearchValue] = useState("");
+  const [searchHeight, setSearchHeight] = useState(ESTIMATED_SEARCH_HEIGHT);
+  const { onScroll, fadeStyle } = useScrollFade(FADE_HEIGHT);
   const [result, setResult] = useState<{
     isValid: boolean;
     definition?: string | null;
@@ -125,192 +131,190 @@ export default function Home() {
             tintColor={textSecondaryColor}
             size={22}
           />
-          <Text style={{ ...sansSerifType.subhead, color: textSecondaryColor }}>
+          <Text style={{ ...type.subhead, color: textSecondaryColor }}>
             {DictionaryNames[currentDictionary].replace(" Dictionary", "")}
           </Text>
         </Pressable>
       </RNView>
-      <RNView
-        style={{
-          paddingHorizontal: 16,
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <TextInput
-          style={{
-            color: textColor,
-            backgroundColor,
-            paddingLeft: 20,
-            paddingRight: 50,
-            paddingVertical: 20,
-            borderRadius: 16,
-            overflow: "hidden",
-            ...type.body,
-            fontSize: 24,
-            lineHeight: 28,
-            flex: 1,
-            opacity: isLoading ? 0.5 : 1,
-          }}
-          placeholderTextColor={textSecondaryColor}
-          autoCorrect={false}
-          onSubmitEditing={() => handleSubmit()}
-          onChangeText={(text) => {
-            setResult(null);
-            setSearchValue(text.trim());
-          }}
-          value={searchValue}
-          placeholder="Search"
-          returnKeyType="search"
-          editable={!isLoading}
-        />
-        {Boolean(searchValue) && (
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Clear search"
-            style={{
-              position: "absolute",
-              right: 24,
-            }}
-            onPress={() => {
-              setResult(null);
-              setSearchValue("");
-            }}
-          >
-            <CancelIcon />
-          </TouchableOpacity>
-        )}
-      </RNView>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        {result == null && (
-          <RNView style={{ alignItems: "center", marginTop: 8 }}>
-            {(!searchValue || Platform.OS === "ios") && !result && (
-              <Animated.View
-                key="helper-text"
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
+      <RNView style={styles.scrollArea}>
+        <Animated.ScrollView
+          contentContainerStyle={[styles.scrollContent, { paddingTop: searchHeight + 16 }]}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        >
+          {result == null && (
+            <RNView style={{ alignItems: "center" }}>
+              {(!searchValue || Platform.OS === "ios") && !result && (
+                <Animated.View
+                  key="helper-text"
+                  entering={FadeIn.duration(200)}
+                  exiting={FadeOut.duration(200)}
+                >
+                  <Text
+                    style={{
+                      ...type.body,
+                      textAlign: "center",
+                      marginHorizontal: 40,
+                      lineHeight: 26,
+                      color: textSecondaryColor,
+                    }}
+                  >
+                    Check if a word is playable.
+                  </Text>
+                </Animated.View>
+              )}
+              {Boolean(searchValue) && Platform.OS === "android" && (
+                <Animated.View
+                  key="search-button"
+                  entering={FadeIn.duration(200)}
+                  exiting={FadeOut.duration(200)}
+                  style={{ width: "100%", paddingHorizontal: 16 }}
+                >
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    style={[
+                      styles.searchButton,
+                      {
+                        width: "100%",
+                        alignItems: "center",
+                        backgroundColor: textColor,
+                      },
+                    ]}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={[styles.searchButtonText, { color: backgroundColor }]}>
+                      Search
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              )}
+            </RNView>
+          )}
+          {result != null && (
+            <Animated.View
+              entering={FadeInDown.duration(600).springify()}
+              style={{
+                borderRadius: 16,
+                backgroundColor,
+                shadowColor: "#000",
+                marginHorizontal: 16,
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                elevation: 3,
+              }}
+            >
+              <RNView
+                style={{
+                  alignItems: "center",
+                  gap: 16,
+                  borderRadius: 12,
+                  paddingVertical: 40,
+                  paddingHorizontal: 16,
+                }}
               >
+                <RNView style={{ marginBottom: 4 }}>
+                  {result.isValid ? <CheckIcon /> : <XIcon />}
+                </RNView>
+                <WordTiles word={result.word} showValues={false} />
                 <Text
                   style={{
                     ...type.body,
-                    textAlign: "center",
-                    marginHorizontal: 40,
-                    lineHeight: 26,
                     color: textSecondaryColor,
-                    marginTop: 16,
                   }}
                 >
-                  Check if a word is playable.
+                  is {result.isValid ? "a playable word" : "not a playable word"}
                 </Text>
-              </Animated.View>
-            )}
-            {Boolean(searchValue) && Platform.OS === "android" && (
-              <Animated.View
-                key="search-button"
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
-                style={{ width: "100%", paddingHorizontal: 16 }}
-              >
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  style={[
-                    styles.searchButton,
-                    {
-                      width: "100%",
-                      alignItems: "center",
-                      backgroundColor: textColor,
-                    },
-                  ]}
-                  onPress={handleSubmit}
+              </RNView>
+              {Boolean(definition) && (
+                <RNView
+                  style={{
+                    borderTopWidth: StyleSheet.hairlineWidth,
+                    borderTopColor: borderColor,
+                    width: "100%",
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                  }}
                 >
-                  <Text style={[styles.searchButtonText, { color: backgroundColor }]}>Search</Text>
-                </TouchableOpacity>
-              </Animated.View>
-            )}
-          </RNView>
-        )}
-        {result != null && (
-          <Animated.View
-            entering={FadeInDown.duration(600).springify()}
+                  <RNView style={styles.definitionContainer}>
+                    <Text
+                      style={{
+                        ...type.sectionHeader,
+                        color: textSecondaryColor,
+                        marginBottom: 6,
+                      }}
+                    >
+                      Definition
+                    </Text>
+                    <Text style={{ ...type.body, color: textSecondaryColor }}>
+                      {capitalizeFirstLetter(definition)}.
+                    </Text>
+                  </RNView>
+                </RNView>
+              )}
+            </Animated.View>
+          )}
+        </Animated.ScrollView>
+        <ScrollEdgeFade
+          height={FADE_HEIGHT}
+          edge="top"
+          style={[fadeStyle, { top: searchHeight }]}
+        />
+        <RNView
+          style={[styles.searchHeader, { backgroundColor: backgroundSecondaryColor }]}
+          onLayout={(event) => setSearchHeight(event.nativeEvent.layout.height)}
+        >
+          <TextInput
             style={{
-              borderRadius: 16,
+              color: textColor,
               backgroundColor,
-              shadowColor: "#000",
-              marginHorizontal: 16,
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.05,
-              shadowRadius: 8,
-              elevation: 3,
+              paddingLeft: 20,
+              paddingRight: 50,
+              paddingVertical: 20,
+              borderRadius: 16,
+              overflow: "hidden",
+              ...type.body,
+              fontSize: 24,
+              lineHeight: 28,
+              flex: 1,
+              opacity: isLoading ? 0.5 : 1,
             }}
-          >
-            <RNView
+            placeholderTextColor={textSecondaryColor}
+            autoCorrect={false}
+            onSubmitEditing={() => handleSubmit()}
+            onChangeText={(text) => {
+              setResult(null);
+              setSearchValue(text.trim());
+            }}
+            value={searchValue}
+            placeholder="Search"
+            returnKeyType="search"
+            editable={!isLoading}
+          />
+          {Boolean(searchValue) && (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
               style={{
-                alignItems: "center",
-                gap: 16,
-                borderRadius: 12,
-                paddingVertical: 40,
-                paddingHorizontal: 16,
+                position: "absolute",
+                right: 24,
+              }}
+              onPress={() => {
+                setResult(null);
+                setSearchValue("");
               }}
             >
-              <RNView style={{ marginBottom: 4 }}>
-                {result.isValid ? <CheckIcon /> : <XIcon />}
-              </RNView>
-              <WordTiles word={result.word} />
-              <Text
-                style={{
-                  ...type.body,
-                  color: textSecondaryColor,
-                }}
-              >
-                is {result.isValid ? "a playable word" : "not a playable word"}
-              </Text>
-              {result.isValid && (
-                <Text
-                  style={{
-                    ...sansSerifType.numeric,
-                    color: textSecondaryColor,
-                    marginTop: -8,
-                  }}
-                >
-                  {getWordValue(result.word)} points
-                </Text>
-              )}
-            </RNView>
-            {Boolean(definition) && (
-              <RNView
-                style={{
-                  borderTopWidth: StyleSheet.hairlineWidth,
-                  borderTopColor: borderColor,
-                  width: "100%",
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                }}
-              >
-                <RNView style={styles.definitionContainer}>
-                  <Text
-                    style={{
-                      ...sansSerifType.sectionHeader,
-                      color: textSecondaryColor,
-                      marginBottom: 6,
-                    }}
-                  >
-                    Definition
-                  </Text>
-                  <Text style={{ ...type.body, color: textSecondaryColor }}>
-                    {capitalizeFirstLetter(definition)}.
-                  </Text>
-                </RNView>
-              </RNView>
-            )}
-          </Animated.View>
-        )}
-      </ScrollView>
+              <CancelIcon />
+            </TouchableOpacity>
+          )}
+        </RNView>
+      </RNView>
     </View>
   );
 }
@@ -318,10 +322,8 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: {
     ...type.largeTitle,
-    fontFamily: "New York",
     marginBottom: 16,
     fontSize: 24,
-    fontWeight: "bold",
   },
   displayHorizontal: {
     flexDirection: "row",
@@ -333,11 +335,22 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   searchButtonText: {
-    ...sansSerifType.headline,
+    ...type.headline,
   },
-  scrollContainer: {
+  scrollArea: {
     flex: 1,
-    marginTop: 16,
+  },
+  scrollContent: {
+    paddingBottom: 120,
+  },
+  searchHeader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
   },
   validationContainer: {
     padding: 16,

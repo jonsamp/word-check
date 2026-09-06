@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 import { useThemeColor } from "../Themed";
 
@@ -16,7 +16,10 @@ export function ProgressBar({ current, total, height = 8 }: ProgressBarProps) {
   const ratio = total > 0 ? Math.max(0, Math.min(1, current / total)) : 0;
 
   const fillStyle = useAnimatedStyle(() => ({
-    width: withSpring(`${ratio * 100}%`, { damping: 18, stiffness: 140 }),
+    width: withTiming(`${ratio * 100}%`, {
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+    }),
   }));
 
   return (

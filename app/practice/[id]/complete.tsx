@@ -1,15 +1,20 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View as RNView } from "react-native";
+import { Pressable, StyleSheet, View as RNView } from "react-native";
+import Animated from "react-native-reanimated";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useObserve } from "expo-observe";
 import { logEvent } from "../../../utils/analytics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { ProgressRing } from "../../../components/progress-ring";
-import { type, sansSerifType } from "../../../constants/Type";
+import { ScrollEdgeFade } from "../../../components/scroll-edge-fade";
+import { useScrollFade } from "../../../hooks/useScrollFade";
+import { type } from "../../../constants/Type";
 import { useTopScores } from "../../../contexts/TopScoreContext";
 import { Difficulty } from "../../../constants/difficulty";
 import { PracticeWord } from "../../../constants/PracticeLists";
+
+const FADE_HEIGHT = 48;
 
 function parseMissedWords(raw: string | undefined): PracticeWord[] {
   if (!raw) {
@@ -45,13 +50,13 @@ export default function Complete() {
 
   // Snapshot the previous best before the save effect overwrites it.
   const [previousBest] = useState<number | null>(() => getTopScore(id, resolvedDifficulty));
+  const { onScroll, fadeStyle } = useScrollFade(FADE_HEIGHT);
 
   const tintColor = useThemeColor("tint");
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundColor = useThemeColor("background");
   const successColor = useThemeColor("success");
-  const dangerColor = useThemeColor("danger");
 
   useLayoutEffect(() => {
     const rootNav = navigation.getParent()?.getParent();
@@ -77,6 +82,7 @@ export default function Complete() {
 
   const isNewBest = previousBest === null || percentage > previousBest;
   const delta = previousBest === null ? 0 : percentage - previousBest;
+  const hasMissedWords = missedWords.length > 0;
 
   function startReview() {
     router.replace({
@@ -90,111 +96,101 @@ export default function Complete() {
       style={[styles.container, { paddingTop: insets.top + 16 }]}
       colorKey="backgroundSecondary"
     >
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + (missedWords.length > 0 ? 160 : 110) },
-        ]}
-      >
-        <RNView style={[styles.resultsCard, { backgroundColor }]}>
-          <Text style={{ ...sansSerifType.sectionHeader, color: textSecondaryColor }}>
-            Quiz Results
-          </Text>
-          <RNView style={styles.ringWrapper}>
-            <ProgressRing percentage={percentage} size={140} strokeWidth={10} showPercentSign />
-          </RNView>
-          <Text style={[type.title, { color: textSecondaryColor, textAlign: "center" }]}>
-            You got {correctCount} out of {totalWords} words correct
-          </Text>
-          <RNView
-            style={[
-              styles.deltaPill,
-              { backgroundColor: isNewBest ? `${successColor}22` : `${textSecondaryColor}18` },
-            ]}
+      <RNView style={[styles.resultsCard, { backgroundColor }]}>
+        <Text style={{ ...type.sectionHeader, color: textSecondaryColor }}>Quiz Results</Text>
+        <RNView style={styles.ringWrapper}>
+          <ProgressRing percentage={percentage} size={140} strokeWidth={10} showPercentSign />
+        </RNView>
+        <Text style={[type.title, { color: textSecondaryColor, textAlign: "center" }]}>
+          You got {correctCount} out of {totalWords} words correct
+        </Text>
+        <RNView
+          style={[
+            styles.deltaPill,
+            { backgroundColor: isNewBest ? `${successColor}22` : `${textSecondaryColor}18` },
+          ]}
+        >
+          <Text
+            style={{
+              ...type.footnote,
+              color: isNewBest ? successColor : textSecondaryColor,
+            }}
           >
-            <Text
-              style={{
-                ...sansSerifType.footnote,
-                fontWeight: "600",
-                color: isNewBest ? successColor : textSecondaryColor,
-              }}
+            {previousBest === null
+              ? "First attempt"
+              : isNewBest
+                ? `New best, up ${delta} points`
+                : `Your best is ${previousBest}%`}
+          </Text>
+        </RNView>
+      </RNView>
+
+      {hasMissedWords ? (
+        <RNView style={styles.missedArea}>
+          <Text
+            style={{
+              ...type.sectionHeader,
+              color: textSecondaryColor,
+              marginBottom: 10,
+              marginLeft: 4,
+            }}
+          >
+            Missed ({missedWords.length})
+          </Text>
+          <RNView style={styles.missedScrollArea}>
+            <Animated.ScrollView
+              contentContainerStyle={styles.missedScrollContent}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
             >
-              {previousBest === null
-                ? "First attempt"
-                : isNewBest
-                  ? `New best, up ${delta} points`
-                  : `Your best is ${previousBest}%`}
-            </Text>
+              {missedWords.map((entry) => (
+                <RNView key={entry.word} style={[styles.missedCard, { backgroundColor }]}>
+                  <Text style={{ ...type.wordTitle, color: textColor }}>{entry.word}</Text>
+                  <Text
+                    style={{
+                      ...type.footnote,
+                      color: textSecondaryColor,
+                      marginTop: 4,
+                    }}
+                  >
+                    {entry.definition}
+                  </Text>
+                </RNView>
+              ))}
+            </Animated.ScrollView>
+            <ScrollEdgeFade height={FADE_HEIGHT} edge="top" style={fadeStyle} />
+            <ScrollEdgeFade height={FADE_HEIGHT} edge="bottom" />
           </RNView>
         </RNView>
+      ) : (
+        <RNView style={styles.spacer} />
+      )}
 
-        {missedWords.length > 0 && (
-          <RNView style={styles.missedSection}>
-            <Text
-              style={{
-                ...sansSerifType.sectionHeader,
-                color: textSecondaryColor,
-                marginBottom: 10,
-                marginLeft: 4,
-              }}
-            >
-              Missed ({missedWords.length})
-            </Text>
-            {missedWords.map((entry) => (
-              <RNView key={entry.word} style={[styles.missedCard, { backgroundColor }]}>
-                <RNView style={styles.missedRow}>
-                  <Text style={{ ...type.title, fontWeight: "bold", color: textColor }}>
-                    {entry.word}
-                  </Text>
-                  <RNView style={[styles.missedDot, { backgroundColor: dangerColor }]} />
-                </RNView>
-                <Text
-                  style={{
-                    ...sansSerifType.footnote,
-                    color: textSecondaryColor,
-                    marginTop: 4,
-                  }}
-                >
-                  {entry.definition}
-                </Text>
-              </RNView>
-            ))}
-          </RNView>
-        )}
-      </ScrollView>
-
-      <RNView style={[styles.bottomCard, { backgroundColor, bottom: insets.bottom + 12 }]}>
-        {missedWords.length > 0 && (
+      <RNView style={[styles.actions, { paddingBottom: insets.bottom + 16 }]}>
+        {hasMissedWords && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Practice the ${missedWords.length} words you missed`}
             onPress={startReview}
-            style={[styles.primaryButton, { backgroundColor: tintColor }]}
+            style={({ pressed }) => [
+              styles.actionButton,
+              { backgroundColor, opacity: pressed ? 0.85 : 1 },
+            ]}
           >
-            <Text style={[sansSerifType.headline, { color: "#FFFFFF" }]}>
-              Practice the {missedWords.length} you missed
-            </Text>
+            <Text style={{ ...type.headline, color: textColor }}>Practice Missed</Text>
           </Pressable>
         )}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Done"
           onPress={() => router.back()}
-          style={[
-            styles.secondaryButton,
-            missedWords.length > 0
-              ? { backgroundColor: "transparent" }
-              : { backgroundColor: tintColor },
+          style={({ pressed }) => [
+            styles.actionButton,
+            { backgroundColor: tintColor, opacity: pressed ? 0.85 : 1 },
           ]}
         >
-          <Text
-            style={[
-              sansSerifType.headline,
-              { color: missedWords.length > 0 ? textSecondaryColor : "#FFFFFF" },
-            ]}
-          >
-            Done
-          </Text>
+          <Text style={{ ...type.headline, color: "#FFFFFF" }}>Done</Text>
         </Pressable>
       </RNView>
     </View>
@@ -204,8 +200,6 @@ export default function Complete() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
     paddingHorizontal: 20,
   },
   resultsCard: {
@@ -224,8 +218,16 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 100,
   },
-  missedSection: {
-    marginTop: 28,
+  missedArea: {
+    flex: 1,
+    marginTop: 24,
+  },
+  missedScrollArea: {
+    flex: 1,
+  },
+  missedScrollContent: {
+    paddingTop: 4,
+    paddingBottom: FADE_HEIGHT,
   },
   missedCard: {
     borderRadius: 16,
@@ -233,34 +235,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     marginBottom: 10,
   },
-  missedRow: {
+  spacer: {
+    flex: 1,
+  },
+  actions: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    gap: 12,
+    paddingTop: 12,
   },
-  missedDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  bottomCard: {
-    position: "absolute",
-    left: 20,
-    right: 20,
-    borderRadius: 36,
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 4,
-  },
-  primaryButton: {
+  actionButton: {
+    flex: 1,
     borderRadius: 100,
     paddingVertical: 16,
-    alignItems: "center",
-  },
-  secondaryButton: {
-    borderRadius: 100,
-    paddingVertical: 14,
     alignItems: "center",
   },
 });

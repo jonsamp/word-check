@@ -8,7 +8,7 @@ import { logEvent } from "../../utils/analytics";
 
 import { View, Text } from "../../components/Themed";
 import { useThemeColor } from "../../components/Themed";
-import { type, sansSerifType } from "../../constants/Type";
+import { type } from "../../constants/Type";
 import { ProgressRing } from "../../components/progress-ring";
 import { PRACTICE_LISTS, PRACTICE_SECTIONS, STARRED_LIST_ID } from "../../constants/PracticeLists";
 import { useTopScores } from "../../contexts/TopScoreContext";
@@ -16,6 +16,7 @@ import { useDifficulty } from "../../contexts/DifficultyContext";
 import { useStarredWords } from "../../contexts/StarredWordsContext";
 import { DifficultyNames } from "../../constants/difficulty";
 import { STARRED_LIST_TITLE } from "../../hooks/usePracticeList";
+import { formatNumber } from "../../utils/formatNumber";
 
 type PracticeCardData = {
   id: string;
@@ -67,7 +68,7 @@ export default function Practice() {
     >
       <RNView style={styles.headerRow}>
         <Text style={[styles.header, { color: textColor }]}>Practice</Text>
-        <Text style={{ ...sansSerifType.subhead, color: textSecondaryColor, marginRight: 4 }}>
+        <Text style={{ ...type.subhead, color: textSecondaryColor, marginRight: 4 }}>
           {DifficultyNames[currentDifficulty]}
         </Text>
       </RNView>
@@ -82,7 +83,7 @@ export default function Practice() {
           <RNView key={section.title} style={styles.section}>
             <Text
               style={{
-                ...sansSerifType.sectionHeader,
+                ...type.sectionHeader,
                 color: textSecondaryColor,
                 marginBottom: 10,
                 marginLeft: 4,
@@ -126,47 +127,54 @@ function PracticeCard({
   onOpenList: () => void;
   onStartQuiz: () => void;
 }) {
+  const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
   const backgroundColor = useThemeColor("background");
+  const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
   const tintColor = useThemeColor("tint");
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${card.title}, ${card.wordCount} words${
-        topScore === null ? "" : `, high score ${topScore} percent`
-      }`}
-      accessibilityHint="Opens the word list"
-      onPress={onOpenList}
-      style={({ pressed }) => [styles.card, { backgroundColor, opacity: pressed ? 0.85 : 1 }]}
-    >
+    <RNView style={[styles.card, { backgroundColor }]}>
       <RNView style={styles.cardHeader}>
         <RNView style={styles.cardHeaderText}>
-          <Text style={{ ...type.title, fontWeight: "bold" }}>{card.title}</Text>
+          <Text style={type.title}>{card.title}</Text>
           <Text
             style={{
-              ...sansSerifType.footnote,
+              ...type.footnote,
               color: textSecondaryColor,
               marginTop: 4,
             }}
           >
-            {card.wordCount} words
+            {formatNumber(card.wordCount)} words
           </Text>
         </RNView>
         <ProgressRing percentage={topScore} />
       </RNView>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Start quiz: ${card.title}`}
-        onPress={onStartQuiz}
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: tintColor, opacity: pressed ? 0.85 : 1 },
-        ]}
-      >
-        <Text style={{ ...sansSerifType.headline, color: "#fff" }}>Start Quiz</Text>
-      </Pressable>
-    </Pressable>
+      <RNView style={styles.cardButtons}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`View words: ${card.title}`}
+          onPress={onOpenList}
+          style={({ pressed }) => [
+            styles.button,
+            { backgroundColor: backgroundSecondaryColor, opacity: pressed ? 0.85 : 1 },
+          ]}
+        >
+          <Text style={{ ...type.headline, color: textColor }}>View Words</Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Start quiz: ${card.title}`}
+          onPress={onStartQuiz}
+          style={({ pressed }) => [
+            styles.button,
+            { backgroundColor: tintColor, opacity: pressed ? 0.85 : 1 },
+          ]}
+        >
+          <Text style={{ ...type.headline, color: "#fff" }}>Start Quiz</Text>
+        </Pressable>
+      </RNView>
+    </RNView>
   );
 }
 
@@ -180,9 +188,7 @@ const styles = StyleSheet.create({
   },
   header: {
     ...type.largeTitle,
-    fontFamily: "New York",
     fontSize: 24,
-    fontWeight: "bold",
   },
   section: {
     marginBottom: 28,
@@ -202,7 +208,12 @@ const styles = StyleSheet.create({
   cardHeaderText: {
     flex: 1,
   },
+  cardButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
   button: {
+    flex: 1,
     paddingVertical: 12,
     borderRadius: 100,
     alignItems: "center",

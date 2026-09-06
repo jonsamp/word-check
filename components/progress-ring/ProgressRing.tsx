@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Circle, Svg } from "react-native-svg";
 
 import { Text, useThemeColor } from "../Themed";
-import { sansSerifType } from "../../constants/Type";
+import { type } from "../../constants/Type";
 
 type ProgressRingProps = {
   percentage: number | null;
@@ -19,12 +19,17 @@ export function ProgressRing({
 }: ProgressRingProps) {
   const borderColor = useThemeColor("border");
   const tintColor = useThemeColor("tint");
+  const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = percentage === null ? 0 : Math.max(0, Math.min(100, percentage));
   const dashOffset = circumference * (1 - clamped / 100);
+
+  const label = percentage === null ? "--" : `${percentage}${showPercentSign ? "%" : ""}`;
+  const innerWidth = size - strokeWidth * 2 - size * 0.1;
+  const fontSize = Math.min(size * 0.32, (innerWidth / Math.max(label.length, 2)) * 1.5);
 
   return (
     <View style={{ width: size, height: size }}>
@@ -55,13 +60,15 @@ export function ProgressRing({
       </Svg>
       <View style={styles.center}>
         <Text
+          numberOfLines={1}
           style={{
-            ...sansSerifType.numeric,
-            fontSize: size * 0.3,
-            color: percentage === null ? textSecondaryColor : undefined,
+            ...type.numeric,
+            fontSize,
+            lineHeight: fontSize * 1.2,
+            color: percentage === null ? textSecondaryColor : textColor,
           }}
         >
-          {percentage === null ? "--" : `${percentage}${showPercentSign ? "%" : ""}`}
+          {label}
         </Text>
       </View>
     </View>

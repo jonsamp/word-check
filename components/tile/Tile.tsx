@@ -56,7 +56,7 @@ export function Tile({ letter, size = 64, variant = "filled", showValue = true }
             style={{
               fontFamily: "New York",
               fontSize: size * 0.46,
-              fontWeight: "600",
+              fontWeight: "500",
               color: letterColor,
               lineHeight: size * 0.56,
             }}

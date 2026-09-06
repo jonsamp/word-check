@@ -1,10 +1,18 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Pressable, SectionList, StyleSheet, TextInput, View as RNView } from "react-native";
+import {
+  GestureResponderEvent,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View as RNView,
+} from "react-native";
+import { SectionList, type SectionListRef } from "@legendapp/list/section-list";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useObserve } from "expo-observe";
+import * as Haptics from "expo-haptics";
 import { View, Text } from "../../../components/Themed";
 import { useThemeColor } from "../../../components/Themed";
-import { type, sansSerifType } from "../../../constants/Type";
+import { type } from "../../../constants/Type";
 import { PracticeWord } from "../../../constants/PracticeLists";
 import { usePracticeList } from "../../../hooks/usePracticeList";
 import { useStarredWords } from "../../../contexts/StarredWordsContext";
@@ -12,6 +20,11 @@ import { CancelIcon, SearchIcon, StarIcon } from "../../../components/Icons";
 
 const ROW_HEIGHT = 82;
 const SECTION_HEADER_HEIGHT = 38;
+const RAIL_LETTER_MAX_HEIGHT = 21;
+const RAIL_LETTER_MIN_HEIGHT = 13;
+const RAIL_VERTICAL_MARGIN = 12;
+const RAIL_WIDTH = 28;
+const RAIL_BUBBLE_SIZE = 48;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 type WordSection = {
@@ -40,41 +53,12 @@ function groupByFirstLetter(words: PracticeWord[]): WordSection[] {
     }));
 }
 
-function createGetItemLayout(sections: WordSection[]) {
-  return (_data: unknown, index: number) => {
-    let offset = 0;
-    let remaining = index;
-
-    for (const section of sections) {
-      if (remaining === 0) {
-        return { length: SECTION_HEADER_HEIGHT, offset, index };
-      }
-      offset += SECTION_HEADER_HEIGHT;
-      remaining -= 1;
-
-      if (remaining < section.data.length) {
-        offset += remaining * ROW_HEIGHT;
-        return { length: ROW_HEIGHT, offset, index };
-      }
-      offset += section.data.length * ROW_HEIGHT;
-      remaining -= section.data.length;
-
-      if (remaining === 0) {
-        return { length: 0, offset, index };
-      }
-      remaining -= 1;
-    }
-
-    return { length: 0, offset, index };
-  };
-}
-
 export default function WordList() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const { markInteractive } = useObserve();
   const list = usePracticeList(id);
-  const sectionListRef = useRef<SectionList<PracticeWord, WordSection>>(null);
+  const sectionListRef = useRef<SectionListRef>(null);
   const [query, setQuery] = useState("");
 
   const textColor = useThemeColor("text");
@@ -82,7 +66,6 @@ export default function WordList() {
   const backgroundColor = useThemeColor("background");
   const backgroundSecondaryColor = useThemeColor("backgroundSecondary");
   const borderColor = useThemeColor("border");
-  const tintColor = useThemeColor("tint");
 
   useLayoutEffect(() => {
     // Navigate up through Slot layers to reach the root Stack
@@ -105,18 +88,28 @@ export default function WordList() {
     : words;
 
   const sections = groupByFirstLetter(filtered);
-  const availableLetters = new Set(sections.map((section) => section.title));
 
   function scrollToLetter(letter: string) {
-    const sectionIndex = sections.findIndex((section) => section.title === letter);
+    // Fall back to the closest preceding section so dragging never stalls on a
+    // letter the list does not contain.
+    let sectionIndex = -1;
+    for (let index = 0; index < sections.length; index++) {
+      if (sections[index].title <= letter) {
+        sectionIndex = index;
+      }
+    }
+    if (sectionIndex === -1) {
+      sectionIndex = sections.length > 0 ? 0 : -1;
+    }
     if (sectionIndex === -1) {
       return;
     }
+
     sectionListRef.current?.scrollToLocation({
       sectionIndex,
       itemIndex: 0,
       viewOffset: SECTION_HEADER_HEIGHT,
-      animated: true,
+      animated: false,
     });
   }
 
@@ -126,7 +119,7 @@ export default function WordList() {
         <RNView style={[styles.searchField, { backgroundColor }]}>
           <SearchIcon color={textSecondaryColor} />
           <TextInput
-            style={{ ...sansSerifType.body, color: textColor, flex: 1, paddingVertical: 0 }}
+            style={{ ...type.body, color: textColor, flex: 1, paddingVertical: 0 }}
             placeholder="Search words"
             placeholderTextColor={textSecondaryColor}
             autoCorrect={false}
@@ -155,7 +148,7 @@ export default function WordList() {
           </Text>
           <Text
             style={{
-              ...sansSerifType.subhead,
+              ...type.subhead,
               color: textSecondaryColor,
               textAlign: "center",
               marginTop: 8,
@@ -173,12 +166,19 @@ export default function WordList() {
             sections={sections}
             keyExtractor={(item) => item.word}
             stickySectionHeadersEnabled
-            getItemLayout={createGetItemLayout(sections)}
+            estimatedItemSize={ROW_HEIGHT}
+            getFixedItemSize={(info) => {
+              if (info.type === "header") {
+                return SECTION_HEADER_HEIGHT;
+              }
+              return info.type === "item" ? ROW_HEIGHT : 0;
+            }}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             contentContainerStyle={styles.listContent}
             renderSectionHeader={({ section }) => (
               <RNView style={[styles.sectionHeader, { backgroundColor: backgroundSecondaryColor }]}>
-                <Text style={{ ...sansSerifType.sectionHeader, color: textSecondaryColor }}>
+                <Text style={{ ...type.sectionHeader, color: textSecondaryColor }}>
                   {section.title}
                 </Text>
               </RNView>
@@ -187,37 +187,117 @@ export default function WordList() {
               <WordRow entry={item} backgroundColor={backgroundColor} borderColor={borderColor} />
             )}
           />
-          <RNView style={styles.rail} pointerEvents="box-none">
-            {ALPHABET.map((letter) => {
-              const enabled = availableLetters.has(letter);
-              return (
-                <Pressable
-                  key={letter}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Jump to ${letter}`}
-                  disabled={!enabled}
-                  onPress={() => scrollToLetter(letter)}
-                  hitSlop={{ left: 10, right: 6, top: 1, bottom: 1 }}
-                >
-                  <Text
-                    style={{
-                      ...sansSerifType.caption,
-                      fontSize: 10,
-                      fontWeight: "600",
-                      lineHeight: 13,
-                      color: enabled ? tintColor : textSecondaryColor,
-                      opacity: enabled ? 1 : 0.3,
-                    }}
-                  >
-                    {letter}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </RNView>
+          <AlphabetRail
+            availableLetters={new Set(sections.map((section) => section.title))}
+            onSelectLetter={scrollToLetter}
+          />
         </RNView>
       )}
     </View>
+  );
+}
+
+function AlphabetRail({
+  availableLetters,
+  onSelectLetter,
+}: {
+  availableLetters: Set<string>;
+  onSelectLetter: (letter: string) => void;
+}) {
+  const textSecondaryColor = useThemeColor("textSecondary");
+  const backgroundColor = useThemeColor("background");
+  const tintColor = useThemeColor("tint");
+
+  const [areaHeight, setAreaHeight] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const letterHeight = Math.max(
+    RAIL_LETTER_MIN_HEIGHT,
+    Math.min(RAIL_LETTER_MAX_HEIGHT, (areaHeight - RAIL_VERTICAL_MARGIN * 2) / ALPHABET.length)
+  );
+  const railHeight = letterHeight * ALPHABET.length;
+  const railTop = (areaHeight - railHeight) / 2;
+  const bubbleTop =
+    railTop + selectedIndex * letterHeight + letterHeight / 2 - RAIL_BUBBLE_SIZE / 2;
+
+  function selectIndex(index: number, force: boolean) {
+    const clamped = Math.min(ALPHABET.length - 1, Math.max(0, index));
+    if (!force && clamped === selectedIndex) {
+      return;
+    }
+    setSelectedIndex(clamped);
+    Haptics.selectionAsync();
+    onSelectLetter(ALPHABET[clamped]);
+  }
+
+  function indexFromEvent(event: GestureResponderEvent) {
+    return Math.floor(event.nativeEvent.locationY / letterHeight);
+  }
+
+  return (
+    <RNView
+      style={styles.railArea}
+      pointerEvents="box-none"
+      onLayout={(event) => setAreaHeight(event.nativeEvent.layout.height)}
+    >
+      {isDragging && (
+        <RNView
+          style={[styles.railBubble, { backgroundColor, top: bubbleTop }]}
+          pointerEvents="none"
+        >
+          <Text style={{ ...type.titleOne, color: tintColor }}>{ALPHABET[selectedIndex]}</Text>
+        </RNView>
+      )}
+      <RNView
+        accessibilityRole="adjustable"
+        accessibilityLabel="Jump to letter"
+        accessibilityValue={{ text: ALPHABET[selectedIndex] }}
+        accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
+        onAccessibilityAction={(event) => {
+          if (event.nativeEvent.actionName === "increment") {
+            selectIndex(selectedIndex + 1, false);
+          } else if (event.nativeEvent.actionName === "decrement") {
+            selectIndex(selectedIndex - 1, false);
+          }
+        }}
+        style={[styles.rail, { height: railHeight }]}
+        onStartShouldSetResponder={() => true}
+        onMoveShouldSetResponder={() => true}
+        onResponderGrant={(event) => {
+          setIsDragging(true);
+          selectIndex(indexFromEvent(event), true);
+        }}
+        onResponderMove={(event) => selectIndex(indexFromEvent(event), false)}
+        onResponderRelease={() => setIsDragging(false)}
+        onResponderTerminate={() => setIsDragging(false)}
+      >
+        <RNView pointerEvents="none">
+          {ALPHABET.map((letter, index) => {
+            const enabled = availableLetters.has(letter);
+            const isActive = isDragging && index === selectedIndex;
+            return (
+              <Text
+                key={letter}
+                style={{
+                  ...type.caption,
+                  fontSize: 13,
+                  fontWeight: isActive ? "600" : "400",
+                  height: letterHeight,
+                  lineHeight: letterHeight,
+                  textAlign: "center",
+                  width: RAIL_WIDTH,
+                  color: isActive ? tintColor : textSecondaryColor,
+                  opacity: enabled || isActive ? 1 : 0.35,
+                }}
+              >
+                {letter}
+              </Text>
+            );
+          })}
+        </RNView>
+      </RNView>
+    </RNView>
   );
 }
 
@@ -238,10 +318,10 @@ function WordRow({
   return (
     <RNView style={[styles.card, { backgroundColor }]}>
       <RNView style={styles.cardText}>
-        <Text style={styles.word}>{entry.word}</Text>
+        <Text style={type.wordTitle}>{entry.word}</Text>
         <Text
           numberOfLines={2}
-          style={{ ...sansSerifType.footnote, color: textSecondaryColor, marginTop: 4 }}
+          style={{ ...type.footnote, color: textSecondaryColor, marginTop: 4 }}
         >
           {entry.definition}
         </Text>
@@ -279,7 +359,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingRight: 40,
+    paddingRight: 48,
     paddingBottom: 40,
   },
   sectionHeader: {
@@ -300,20 +380,35 @@ const styles = StyleSheet.create({
   cardText: {
     flex: 1,
   },
-  word: {
-    ...type.title,
-    fontWeight: "bold",
-  },
   starButton: {
     padding: 4,
   },
-  rail: {
+  railArea: {
     position: "absolute",
-    right: 6,
+    right: 0,
     top: 0,
     bottom: 0,
+    width: 110,
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  rail: {
+    paddingHorizontal: 6,
+    justifyContent: "center",
+  },
+  railBubble: {
+    position: "absolute",
+    right: 44,
+    width: RAIL_BUBBLE_SIZE,
+    height: RAIL_BUBBLE_SIZE,
+    borderRadius: RAIL_BUBBLE_SIZE / 2,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   emptyState: {
     flex: 1,

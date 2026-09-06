@@ -30,10 +30,3 @@ export const LETTER_VALUES: Record<string, number> = {
 export function getLetterValue(letter: string): number {
   return LETTER_VALUES[letter.toUpperCase()] ?? 0;
 }
-
-export function getWordValue(word: string): number {
-  return word
-    .toUpperCase()
-    .split("")
-    .reduce((total, letter) => total + getLetterValue(letter), 0);
-}

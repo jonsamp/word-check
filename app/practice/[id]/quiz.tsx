@@ -3,13 +3,18 @@ import { Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useObserve } from "expo-observe";
-import Animated, { Easing, LinearTransition } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { View, Text, useThemeColor } from "../../../components/Themed";
 import { BackspaceIcon, CheckIcon, CloseIcon, XIcon } from "../../../components/Icons";
 import { Tile, TileVariant } from "../../../components/tile";
 import { ProgressBar } from "../../../components/progress-bar";
-import { type, sansSerifType } from "../../../constants/Type";
+import { type } from "../../../constants/Type";
 import { PracticeWord } from "../../../constants/PracticeLists";
 import { usePracticeList } from "../../../hooks/usePracticeList";
 import { generateQuizWord, generateChoices, shuffleArray, QuizWord } from "../../../constants/quiz";
@@ -22,7 +27,9 @@ const TILE_SIZE_MEDIUM = 44;
 const TILE_SIZE_SMALL = 38;
 const TILE_GAP = 10;
 const SWAP_AREA_HEIGHT = 220;
-const ESTIMATED_CARD_HEIGHT = 310;
+const SWAP_AREA_HEIGHT_ANSWERED = 264;
+const RESTING_CARD_HEIGHT = 310;
+const CARD_GROWTH = SWAP_AREA_HEIGHT_ANSWERED - SWAP_AREA_HEIGHT;
 
 function parseReviewWords(raw: string | undefined): PracticeWord[] {
   if (!raw) {
@@ -71,7 +78,6 @@ export default function Quiz() {
   const [selectedBlankIndex, setSelectedBlankIndex] = useState(0);
   const [filledLetters, setFilledLetters] = useState<Map<number, string>>(new Map());
   const [usedChoiceIndices, setUsedChoiceIndices] = useState<Set<number>>(new Set());
-  const [bottomCardHeight, setBottomCardHeight] = useState(ESTIMATED_CARD_HEIGHT);
 
   const textColor = useThemeColor("text");
   const textSecondaryColor = useThemeColor("textSecondary");
@@ -90,6 +96,16 @@ export default function Quiz() {
   useEffect(() => {
     markInteractive();
   }, [markInteractive]);
+
+  const swapAreaHeight = useSharedValue(SWAP_AREA_HEIGHT);
+  const swapAreaStyle = useAnimatedStyle(() => ({ height: swapAreaHeight.value }));
+
+  useEffect(() => {
+    swapAreaHeight.value = withTiming(
+      submittedAnswer === null ? SWAP_AREA_HEIGHT : SWAP_AREA_HEIGHT_ANSWERED,
+      { duration: 240, easing: Easing.out(Easing.cubic) }
+    );
+  }, [submittedAnswer, swapAreaHeight]);
 
   // Compute blank tile indices (indices into quizWord.tiles where isBlank is true)
   const blankTileIndices = quizWord.tiles.reduce<number[]>((acc, tile, index) => {
@@ -322,7 +338,7 @@ export default function Quiz() {
           <CloseIcon color={textSecondaryColor} />
         </Pressable>
         <ProgressBar current={wordsAttempted} total={words.length} />
-        <Text style={{ ...sansSerifType.numeric, color: textSecondaryColor }}>
+        <Text style={{ ...type.numeric, color: textSecondaryColor }}>
           {wordIndex + 1}/{words.length}
         </Text>
       </View>
@@ -330,7 +346,7 @@ export default function Quiz() {
       <View style={styles.clueArea} colorKey="backgroundSecondary">
         <Text
           style={{
-            ...sansSerifType.sectionHeader,
+            ...type.sectionHeader,
             color: textSecondaryColor,
             marginBottom: 8,
           }}
@@ -343,7 +359,7 @@ export default function Quiz() {
       <View
         style={[
           styles.wordTilesContainer,
-          { paddingBottom: bottomCardHeight + insets.bottom + 12 },
+          { paddingBottom: RESTING_CARD_HEIGHT + CARD_GROWTH + insets.bottom + 12 },
         ]}
         colorKey="backgroundSecondary"
       >
@@ -387,8 +403,6 @@ export default function Quiz() {
       </View>
 
       <Animated.View
-        onLayout={(event) => setBottomCardHeight(event.nativeEvent.layout.height)}
-        layout={LinearTransition.duration(200).easing(Easing.out(Easing.ease))}
         style={[
           styles.bottomCard,
           {
@@ -399,7 +413,7 @@ export default function Quiz() {
           },
         ]}
       >
-        <View style={[styles.swapArea, { backgroundColor: "transparent" }]}>
+        <Animated.View style={[styles.swapArea, swapAreaStyle]}>
           {submittedAnswer === null ? (
             <View style={styles.choicesContainer} colorKey="background">
               <View style={styles.choicesRow} colorKey="background">
@@ -453,7 +467,7 @@ export default function Quiz() {
                   {lookupDefinition ? (
                     <Text
                       style={[
-                        sansSerifType.subhead,
+                        type.subhead,
                         { color: textSecondaryColor, marginTop: 6, textAlign: "center" },
                       ]}
                     >
@@ -480,7 +494,7 @@ export default function Quiz() {
                     <Text
                       numberOfLines={2}
                       style={[
-                        sansSerifType.subhead,
+                        type.subhead,
                         { color: textSecondaryColor, marginTop: 8, textAlign: "center" },
                       ]}
                     >
@@ -491,7 +505,7 @@ export default function Quiz() {
               )}
             </View>
           )}
-        </View>
+        </Animated.View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={submittedAnswer !== null ? "Continue" : "Submit answer"}
@@ -508,7 +522,7 @@ export default function Quiz() {
         >
           <Text
             style={[
-              sansSerifType.headline,
+              type.headline,
               styles.submitButtonText,
               {
                 color: submittedAnswer !== null || allBlanksFilled ? "#FFFFFF" : textSecondaryColor,
@@ -601,7 +615,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   swapArea: {
-    height: SWAP_AREA_HEIGHT,
     justifyContent: "center",
   },
   choicesContainer: {

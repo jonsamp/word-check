@@ -2,103 +2,71 @@ import type { TextStyle } from "react-native";
 
 const tabularNumerals: TextStyle["fontVariant"] = ["tabular-nums"];
 
+const serif = "New York";
+
 export const type = {
   largeTitle: {
-    fontFamily: "New York",
-    fontWeight: "bold",
+    fontFamily: serif,
+    fontWeight: "bold" as const,
     fontSize: 36,
   },
   titleOne: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 28,
   },
   titleTwo: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 22,
   },
   title: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 20,
   },
   headline: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 17,
+    fontWeight: "600" as const,
   },
   body: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 18,
   },
   callout: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 16,
   },
   subhead: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 15,
   },
   footnote: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 13,
   },
   caption: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 12,
   },
   label: {
-    fontFamily: "New York",
+    fontFamily: serif,
     fontSize: 13,
   },
-};
-
-export const sansSerifType = {
-  largeTitle: {
-    fontSize: 34,
-    fontWeight: "700" as const,
-    letterSpacing: 0.37,
-  },
-  title: {
+  wordTitle: {
+    fontFamily: serif,
     fontSize: 20,
-    fontWeight: "600" as const,
-    letterSpacing: -0.45,
-  },
-  headline: {
-    fontSize: 17,
-    fontWeight: "600" as const,
-    letterSpacing: -0.43,
-  },
-  body: {
-    fontSize: 17,
-    fontWeight: "400" as const,
-    letterSpacing: -0.41,
-  },
-  callout: {
-    fontSize: 16,
-    fontWeight: "400" as const,
-    letterSpacing: -0.32,
-  },
-  subhead: {
-    fontSize: 15,
-    fontWeight: "400" as const,
-    letterSpacing: -0.24,
-  },
-  footnote: {
-    fontSize: 13,
-    fontWeight: "400" as const,
-    letterSpacing: -0.08,
-  },
-  caption: {
-    fontSize: 12,
-    fontWeight: "400" as const,
+    fontWeight: "500" as const,
   },
   sectionHeader: {
+    fontFamily: serif,
     fontSize: 12,
-    fontWeight: "600" as const,
-    letterSpacing: 0.6,
+    fontWeight: "400" as const,
+    letterSpacing: 1,
     textTransform: "uppercase" as const,
   },
   numeric: {
+    fontFamily: serif,
     fontSize: 15,
-    fontWeight: "600" as const,
+    fontWeight: "400" as const,
     fontVariant: tabularNumerals,
   },
 };
