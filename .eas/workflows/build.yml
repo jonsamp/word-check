@@ -1,21 +1,46 @@
 name: Create development builds
 
 jobs:
+  resolve_version:
+    name: Resolve app version
+    environment: production
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - uses: eas/checkout
+      - name: Resolve next available version
+        id: resolve
+        run: |
+          VERSION=$(node .eas/scripts/resolve-version.mjs --mode next)
+          echo "Resolved version: $VERSION"
+          set-output version "$VERSION"
+
   android_development_build:
     name: Build Android
+    needs: [resolve_version]
     type: build
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: android
       profile: development
+
   ios_device_development_build:
     name: Build iOS device
+    needs: [resolve_version]
     type: build
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: ios
       profile: development
+
   ios_simulator_development_build:
     name: Build iOS simulator
+    needs: [resolve_version]
     type: build
+    env:
+      APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: ios
       profile: development-simulator

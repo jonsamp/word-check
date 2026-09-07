@@ -5,89 +5,13 @@ jobs:
     name: Resolve app version
     environment: production
     outputs:
-      version: ${{ steps.check.outputs.version }}
+      version: ${{ steps.resolve.outputs.version }}
     steps:
       - uses: eas/checkout
-      - name: Check ASC and resolve version
-        id: check
+      - name: Resolve next available version
+        id: resolve
         run: |
-          cat > /tmp/resolve-version.js << 'SCRIPT'
-          const crypto = require("crypto");
-          const fs = require("fs");
-
-          const APPLE_APP_ID = "1489890340";
-
-          // 1. Read current version from app.config.js
-          const content = fs.readFileSync("app.config.js", "utf8");
-          const versionMatch = content.match(/process\.env\.APP_VERSION\s*\|\|\s*["']([^"']+)["']/);
-          if (!versionMatch) {
-            console.error("Could not find APP_VERSION fallback in app.config.js");
-            process.exit(1);
-          }
-          const currentVersion = versionMatch[1];
-          console.error("Current version from app.config.js: " + currentVersion);
-
-          const [major, minor] = currentVersion.split(".");
-          let currentMinor = parseInt(minor, 10);
-          console.error("Major: " + major + ", Minor: " + currentMinor);
-
-          // 2. Generate JWT for ASC API
-          const key = fs.readFileSync(process.env.ASC_API_KEY_P8, "utf8");
-          const header = { alg: "ES256", kid: process.env.ASC_API_KEY_ID, typ: "JWT" };
-          const now = Math.floor(Date.now() / 1000);
-          const payload = { iss: process.env.ASC_API_ISSUER_ID, iat: now, exp: now + 1200, aud: "appstoreconnect-v1" };
-          const toBase64Url = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
-          const headerEnc = toBase64Url(header);
-          const payloadEnc = toBase64Url(payload);
-          const input = headerEnc + "." + payloadEnc;
-          const sign = crypto.createSign("SHA256");
-          sign.update(input);
-          const sig = sign.sign({ key, dsaEncoding: "ieee-p1363" }, "base64url");
-          const jwt = input + "." + sig;
-
-          // 3. Check versions against ASC API
-          async function checkVersion(version) {
-            const url = "https://api.appstoreconnect.apple.com/v1/apps/" + APPLE_APP_ID +
-              "/appStoreVersions?filter[versionString]=" + version + "&filter[platform]=IOS";
-            const response = await fetch(url, {
-              headers: {
-                "Authorization": "Bearer " + jwt,
-                "Content-Type": "application/json",
-              },
-            });
-            if (!response.ok) {
-              const text = await response.text();
-              console.error("ASC API returned HTTP " + response.status + ": " + text);
-              process.exit(1);
-            }
-            const body = await response.json();
-            const submitted = (body.data || []).filter(
-              (entry) => entry.attributes.appStoreState !== "PREPARE_FOR_SUBMISSION"
-            );
-            return submitted.length;
-          }
-
-          // 4. Bump minor until we find an available version
-          async function resolve() {
-            let version = currentVersion;
-            while (true) {
-              console.error("Checking if " + version + " exists on ASC...");
-              const count = await checkVersion(version);
-              if (count === 0) {
-                console.error("Version " + version + " is available");
-                console.log(version);
-                return;
-              }
-              console.error("Version " + version + " already submitted on ASC");
-              currentMinor++;
-              version = major + "." + currentMinor;
-            }
-          }
-
-          resolve();
-          SCRIPT
-
-          VERSION=$(node /tmp/resolve-version.js)
+          VERSION=$(node .eas/scripts/resolve-version.mjs --mode next)
           echo "Resolved version: $VERSION"
           set-output version "$VERSION"
 
@@ -105,6 +29,7 @@ jobs:
       APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: ios
+      profile: production
 
   app_store:
     name: Send to App Store
@@ -121,6 +46,7 @@ jobs:
       APP_VERSION: ${{ needs.resolve_version.outputs.version }}
     params:
       platform: android
+      profile: production
 
   play_store:
     name: Send to Play Store
