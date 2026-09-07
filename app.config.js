@@ -15,6 +15,7 @@ const config = {
   },
   ios: {
     bundleIdentifier: `jonsamp.words${isProduction ? "" : "-dev"}`,
+    icon: isProduction ? "./assets/images/word-check.icon" : "./assets/images/word-check-dev.icon",
     supportsTablet: true,
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
