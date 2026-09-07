@@ -10,7 +10,10 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest"
+    "test": "jest",
+    "build": "eas workflow:run build.yml",
+    "upload": "eas workflow:run upload.yml",
+    "sendit": "eas workflow:run build.yml && eas workflow:run upload.yml"
   },
   "dependencies": {
     "@expo-google-fonts/material-symbols": "^0.4.16",
