@@ -1,11 +1,9 @@
 {
-  "features": ["refractivity"],
   "fill": {
     "automatic-gradient": "display-p3:0.96783,0.77098,0.64288,1.00000"
   },
   "groups": [
     {
-      "blur-material": null,
       "layers": [
         {
           "glass": true,
@@ -33,11 +31,8 @@
           "name": "adaptive-background"
         }
       ],
-      "refractivity": {
-        "depth": 0,
-        "enabled": true,
-        "strength": 0.5
-      },
+      "refractivity-depth": 0,
+      "refractivity-strength": 0.5,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
