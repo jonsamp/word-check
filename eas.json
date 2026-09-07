@@ -4,12 +4,19 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "base": {
+      "ios": {
+        "image": "macos-tahoe-26.4-xcode-26.4"
+      }
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "node": "22.14.0"
     },
     "development-simulator": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "node": "22.14.0",
@@ -21,15 +28,18 @@
       }
     },
     "preview": {
+      "extends": "base",
       "distribution": "internal",
       "channel": "preview"
     },
     "preview-simulator": {
+      "extends": "base",
       "ios": {
         "simulator": true
       }
     },
     "production": {
+      "extends": "base",
       "autoIncrement": true,
       "channel": "production"
     }

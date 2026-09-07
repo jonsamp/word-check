@@ -30,6 +30,9 @@ const config = {
         ? "./assets/images/adaptive-foreground.png"
         : "./assets/images/adaptive-foreground-dev.png",
       backgroundImage: "./assets/images/adaptive-background.png",
+      monochromeImage: isProduction
+        ? "./assets/images/adaptive-monochrome.png"
+        : "./assets/images/adaptive-monochrome-dev.png",
     },
   },
   runtimeVersion: {
