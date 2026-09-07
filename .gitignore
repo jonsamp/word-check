@@ -46,3 +46,8 @@ ios/
 
 .vscode/
 .env.local
+
+# Release smoke test screenshots
+/artifacts/release-smoke/
+
+.env.eas-simulator
