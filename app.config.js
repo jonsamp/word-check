@@ -1,4 +1,4 @@
-const isProduction = process.env.EAS_BUILD_PROFILE === "production";
+const isProduction = process.env.APP_VARIANT === "production";
 
 /** @type {import("expo/config").ExpoConfig} */
 const config = {
